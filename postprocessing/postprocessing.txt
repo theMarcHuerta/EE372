@@ -1,0 +1,1 @@
+After we get a hardware result, it will go through something like denoising to get a result
