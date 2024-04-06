@@ -26,12 +26,17 @@ according to Snell's law and Fresnel equations.
 #include "rtweekend.h"
 #include "color.h"
 #include "hittable.h"
+#include "texture.h"
 
 class hit_record;  // Forward declaration for usage in material methods.
 
 class material {
   public:
     virtual ~material() = default;  // Virtual destructor ensures derived class destructors are called.
+
+    virtual color emitted(double u, double v, const point3& p) const {
+        return color(0,0,0);
+    }
 
     // Pure virtual function for scattering rays off material. Must be implemented by derived classes.
     virtual bool scatter(
@@ -40,7 +45,8 @@ class material {
 
 class lambertian : public material {
   public:
-    lambertian(const color& a) : albedo(a) {}
+    lambertian(const color& a) : albedo(make_shared<solid_color>(a)) {}
+    lambertian(shared_ptr<texture> a) : albedo(a) {}
 
     // Implements the scattering function for a diffuse material.
     // Scatters rays in random directions with no reflection.
@@ -53,13 +59,13 @@ class lambertian : public material {
             scatter_direction = rec.normal;
 
         scattered = ray(rec.p, scatter_direction);
-        attenuation = albedo;  // The color is affected by the material's albedo.
+        attenuation = albedo->value(rec.u, rec.v, rec.p);  // The color is affected by the material's albedo.
         return true;
     }
 
   private:
   // It's a measure of how much light that hits a surface is diffusely reflected, as opposed to being absorbed or transmitted through
-    color albedo;  // Represents the color and intensity of the scattered light.
+    shared_ptr<texture> albedo;  // Represents the color and intensity of the scattered light.
 };
 
 class metal : public material {
@@ -118,6 +124,24 @@ class dielectric : public material {
         r0 = r0*r0;
         return r0 + (1-r0)*pow((1 - cosine),5);
     }
+};
+
+class diffuse_light : public material {
+  public:
+    diffuse_light(shared_ptr<texture> a) : emit(a) {}
+    diffuse_light(color c) : emit(make_shared<solid_color>(c)) {}
+
+    bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered)
+    const override {
+        return false;
+    }
+
+    color emitted(double u, double v, const point3& p) const override {
+        return emit->value(u, v, p);
+    }
+
+  private:
+    shared_ptr<texture> emit;
 };
 
 #endif

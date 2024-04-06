@@ -1,5 +1,4 @@
 /*
-
 */
 
 #ifndef SPHERE_H
@@ -13,7 +12,11 @@ class sphere : public hittable {
   public:
     // Constructor for creating a sphere with a center point, radius, and material.
     sphere(point3 _center, double _radius, shared_ptr<material> _material)
-      : center(_center), radius(_radius), mat(_material) {}
+      : center(_center), radius(_radius), mat(_material)
+    {
+        auto rvec = vec3(radius, radius, radius);
+        bbox = aabb(center - rvec, center + rvec);
+    }
 
     // Override the hit function to provide an implementation specific to spheres.
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
@@ -46,10 +49,13 @@ class sphere : public hittable {
         return true;  // Intersection found.
     }
 
+    aabb bounding_box() const override { return bbox; }
+
   private:
     point3 center;  // Center of the sphere.
     double radius;  // Radius of the sphere.
     shared_ptr<material> mat;  // Material of the sphere.
+    aabb bbox;
 };
 
 #endif

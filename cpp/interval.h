@@ -16,6 +16,9 @@ class interval {
     // Constructor with specific min and max values.
     interval(double _min, double _max) : min(_min), max(_max) {}
 
+    interval(const interval& a, const interval& b)
+    : min(fmin(a.min, b.min)), max(fmax(a.max, b.max)) {}
+
     // Checks if a value is within the interval [min, max].
     bool contains(double x) const {
         return min <= x && x <= max;
@@ -33,6 +36,15 @@ class interval {
         return x;
     }
 
+    double size() const {
+        return max - min;
+    }
+
+    interval expand(double delta) const {
+        auto padding = delta/2;
+        return interval(min - padding, max + padding);
+    }
+
     // Predefined intervals representing "empty" and "universe" (all-encompassing) cases.
     static const interval empty, universe;
 };
@@ -40,5 +52,13 @@ class interval {
 // Definitions for the static members `empty` and `universe`.
 const static interval empty(+infinity, -infinity);
 const static interval universe(-infinity, +infinity);
+
+interval operator+(const interval& ival, double displacement) {
+    return interval(ival.min + displacement, ival.max + displacement);
+}
+
+interval operator+(double displacement, const interval& ival) {
+    return ival + displacement;
+}
 
 #endif
