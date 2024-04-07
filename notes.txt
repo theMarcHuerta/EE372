@@ -1,0 +1,15 @@
+Ray Generation Unit: Generates initial rays based on camera parameters and the scene's geometry. This unit calculates the direction and origin of rays that need to be traced through the scene.
+
+Intersection Engine: Determines where rays intersect with objects in the scene. This is a critical component that requires efficient algorithms to minimize computation time.
+
+Shading Unit: Calculates the color and intensity of light at the intersection points. This includes direct illumination, shadow checking, and reflection handling.
+
+Reflection and Refraction Unit: Handles rays that need to be bounced off surfaces (reflection) or passed through transparent objects (refraction). This unit is essential for simulating realistic lighting effects and is involved in both the first and second bounces.
+
+Indirect Illumination Unit: Specifically manages the limited indirect illumination from the second bounce. This unit calculates how light from the first bounce contributes to illuminating other parts of the scene.
+
+Memory Management: Coordinates data storage and access for the geometry, materials, and textures in the scene. Efficient memory management is crucial for maintaining high performance, especially for storing and accessing the BVH (Bounding Volume Hierarchy) or other acceleration structures.
+
+Output Assembly: Compiles the final color values from the shading and indirect illumination calculations into a coherent image. This unit also handles any necessary post-processing steps.
+
+Control Unit: Oversees the operation of the entire pipeline, ensuring data flows correctly between units and managing synchronization and resource allocation.
