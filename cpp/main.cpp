@@ -266,6 +266,9 @@ void cornell_w_sphere() {
     auto white = make_shared<lambertian>(color(.73, .73, .73));
     auto green = make_shared<lambertian>(color(.12, .45, .15));
     auto light = make_shared<diffuse_light>(color(15, 15, 15));
+    //invisible wall
+    auto invisible_mat = make_shared<lambertian>(color(.05, .05, .65));
+    invisible_mat->set_invis();
 
     world.add(make_shared<quad>(point3(555,0,0), vec3(0,555,0), vec3(0,0,555), green));
     world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), red));
@@ -273,8 +276,11 @@ void cornell_w_sphere() {
     world.add(make_shared<quad>(point3(0,0,0), vec3(555,0,0), vec3(0,0,555), white));
     world.add(make_shared<quad>(point3(555,555,555), vec3(-555,0,0), vec3(0,0,-555), white));
     world.add(make_shared<quad>(point3(0,0,555), vec3(555,0,0), vec3(0,555,0), white));
+    //invisible metal wall
+    world.add(make_shared<quad>(point3(0, 0, 0), vec3(0,555,0), vec3(555,0,0), invisible_mat));
 
-    auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.3);
+
+    auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0);
     world.add(make_shared<sphere>(point3(265 + 82.5, 430, 295 + 82.5), 100.0, material3));
 
     auto material1 = make_shared<dielectric>(1.33);
@@ -290,12 +296,74 @@ void cornell_w_sphere() {
     box2 = make_shared<translate>(box2, vec3(130,0,65));
     world.add(box2);
 
+    world = hittable_list(make_shared<bvh_node>(world));
+
     camera cam;
 
     cam.aspect_ratio      = 1.0;
-    cam.image_width       = 1080;
-    cam.samples_per_pixel = 2048;
-    cam.max_depth         = 128;
+    cam.image_width       = 720;
+    cam.samples_per_pixel = 512;
+    cam.max_depth         = 16;
+    cam.background        = color(0,0,0);
+
+    cam.vfov     = 40;
+    cam.lookfrom = point3(278, 278, -800);
+    cam.lookat   = point3(278, 278, 0);
+    cam.vup      = vec3(0,1,0);
+
+    cam.render(world);
+}
+
+void cornl_mir_flr() {
+    hittable_list world;
+
+    auto red   = make_shared<lambertian>(color(.65, .05, .05));
+    auto white = make_shared<lambertian>(color(.73, .73, .73));
+    auto green = make_shared<lambertian>(color(.12, .45, .15));
+    auto light = make_shared<diffuse_light>(color(15, 15, 15));
+    //mirror
+    auto white_metal = make_shared<metal>(color(.8, .15, .7), 0.6);
+    //invisible wall
+    auto invisible_mat = make_shared<lambertian>(color(.05, .05, .65));
+    invisible_mat->set_invis();
+
+    world.add(make_shared<quad>(point3(555,0,0), vec3(0,555,0), vec3(0,0,555), green));
+    world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), red));
+    world.add(make_shared<quad>(point3(343, 554, 332), vec3(-130,0,0), vec3(0,0,-105), light));
+    //floor
+    world.add(make_shared<quad>(point3(0,0,0), vec3(555,0,0), vec3(0,0,555), white_metal));
+    //celing
+    world.add(make_shared<quad>(point3(555,555,555), vec3(-555,0,0), vec3(0,0,-555), white));
+    // backwall
+    world.add(make_shared<quad>(point3(0,0,555), vec3(555,0,0), vec3(0,555,0), white));
+    //invisible metal wall for front
+    world.add(make_shared<quad>(point3(0, 0, 0), vec3(0,555,0), vec3(555,0,0), invisible_mat));
+
+
+    auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0);
+    world.add(make_shared<sphere>(point3(265 + 82.5, 430, 295 + 82.5), 100.0, material3));
+
+    auto material1 = make_shared<dielectric>(1.33);
+    world.add(make_shared<sphere>(point3(182, 240, 148), 75.0, material1));
+
+    shared_ptr<hittable> box1 = box(point3(0,0,0), point3(165,330,165), white);
+    box1 = make_shared<rotate_y>(box1, 15);
+    box1 = make_shared<translate>(box1, vec3(265,0,295));
+    world.add(box1);
+
+    shared_ptr<hittable> box2 = box(point3(0,0,0), point3(165,165,165), white);
+    box2 = make_shared<rotate_y>(box2, -18);
+    box2 = make_shared<translate>(box2, vec3(130,0,65));
+    world.add(box2);
+
+    world = hittable_list(make_shared<bvh_node>(world));
+
+    camera cam;
+
+    cam.aspect_ratio      = 1.0;
+    cam.image_width       = 540;
+    cam.samples_per_pixel = 64;
+    cam.max_depth         = 8;
     cam.background        = color(0,0,0);
 
     cam.vfov     = 40;
@@ -307,7 +375,7 @@ void cornell_w_sphere() {
 }
 
 int main() {
-    switch (7) {
+    switch (8) {
         case 1:  random_spheres();     break;
         case 2:  two_spheres();        break;
         case 3:  quads();              break;
@@ -315,5 +383,6 @@ int main() {
         case 5:  cornell_box();        break;
         case 6:  full_cornell_box();   break;
         case 7:  cornell_w_sphere();   break;
+        case 8:  cornl_mir_flr();      break;
     }
 }

@@ -37,6 +37,7 @@ class hit_record {
     double u;
     double v;
     bool front_face;    // True if the ray hits the front face of the object, false if the back.
+    bool is_secondary_ray = false;
 
     // Determines the correct orientation for the normal vector. Ensures normal points against the ray.
     void set_face_normal(const ray& r, const vec3& outward_normal) {
