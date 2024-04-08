@@ -1,1 +1,5 @@
 We'll use this folder for trying to contain the HLS code.
+
+src/ contains C++ source code
+ccs/ contains synthesis .tcl scripts
+dat/  contains any file I/O for the testbench
