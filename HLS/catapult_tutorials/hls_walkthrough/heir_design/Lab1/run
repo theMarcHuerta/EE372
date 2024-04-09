@@ -1,0 +1,6 @@
+#!/bin/csh
+
+clear
+$MGC_HOME/bin/g++ -g -O0 -I$MGC_HOME/shared/include avg2.cpp tb.cpp -o tb.exe
+
+./tb.exe
