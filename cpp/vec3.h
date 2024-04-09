@@ -42,6 +42,14 @@ class vec3 {
         return *this;
     }
 
+    // Multiplies the components by a scalar. Useful for scaling vectors.
+    vec3& operator*=(const vec3 &t) {
+        e[0] *= t.e[0];
+        e[1] *= t.e[1];
+        e[2] *= t.e[2];
+        return *this;
+    }
+
     // Divides the components by a scalar. Useful for normalizing vectors or scaling them down.
     vec3& operator/=(double t) {
         return *this *= 1/t;

@@ -65,6 +65,57 @@ class camera {
         std::clog << "\rDone.                 \n";  // Completion message.
     }
 
+    void render_iterative(const hittable& world) {
+        initialize();  // Sets up the camera based on its current settings.
+
+        std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";  // PPM header.
+
+        // Loop over each pixel in the image, from top to bottom.
+        for (int j = 0; j < image_height; ++j) {
+            std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
+            // Loop over each pixel in a row, from left to right.
+            for (int i = 0; i < image_width; ++i) {
+                color pixel_color(0,0,0);
+                // Sample the pixel color multiple times and average the results for anti-aliasing.
+                for (int sample = 0; sample < samples_per_pixel; ++sample) {
+                    color accumulated_color(0, 0, 0);
+                    color current_attenuation(1.0, 1.0, 1.0);
+                    ray current_ray = get_ray(i, j);  // Generate a ray for this pixel and sample.
+
+                    // Iteratively trace the ray up to max_depth times.
+                    for (int d = 0; d < max_depth; ++d) {
+                        hit_record rec;
+                        if (!world.hit(current_ray, interval(0.001, infinity), rec)) {
+                            // If the ray hits nothing, add background color and break.
+                            accumulated_color += current_attenuation * background;
+                            break;
+                        }
+
+                        ray scattered;
+                        color attenuation;
+                        color emitted = rec.mat->emitted(rec.u, rec.v, rec.p);
+                        accumulated_color += current_attenuation * emitted;
+
+                        rec.is_secondary_ray = d > 0;
+
+                        if (!rec.mat->scatter(current_ray, rec, attenuation, scattered)) {
+                            accumulated_color += current_attenuation * emitted;
+                            break; // No further scattering, break the loop.
+                        }
+
+                        current_attenuation *= attenuation;
+                        current_ray = scattered; // Update the ray to the scattered ray.
+                    }
+
+                    pixel_color += accumulated_color;  // Accumulate color.
+                }
+                write_color(std::cout, pixel_color, samples_per_pixel);  // Output color to PPM.
+            }
+        }
+
+        std::clog << "\rDone.                 \n";  // Completion message.
+    }
+
   private:
     int    image_height;   // Height of the image, computed from width and aspect ratio.
     point3 center;         // The position of the camera (same as lookfrom).

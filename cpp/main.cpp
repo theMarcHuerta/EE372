@@ -302,8 +302,8 @@ void cornell_w_sphere() {
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = 720;
-    cam.samples_per_pixel = 512;
-    cam.max_depth         = 16;
+    cam.samples_per_pixel = 128;
+    cam.max_depth         = 3;
     cam.background        = color(0,0,0);
 
     cam.vfov     = 40;
@@ -362,8 +362,8 @@ void cornl_mir_flr() {
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = 540;
-    cam.samples_per_pixel = 64;
-    cam.max_depth         = 8;
+    cam.samples_per_pixel = 128;
+    cam.max_depth         = 4;
     cam.background        = color(0,0,0);
 
     cam.vfov     = 40;
@@ -371,7 +371,8 @@ void cornl_mir_flr() {
     cam.lookat   = point3(278, 278, 0);
     cam.vup      = vec3(0,1,0);
 
-    cam.render(world);
+    // cam.render(world);
+    cam.render_iterative(world);
 }
 
 int main() {
