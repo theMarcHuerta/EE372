@@ -3,28 +3,30 @@
 
 #include <cmath>
 #include <iostream>
-
-using std::sqrt;
+#include <ac_int.h>
+#include <ac_fixed.h>
+#include <ac_math.h>
 
 // Defines a three-dimensional vector used for points, colors, etc.
+template<int W, int I, bool SIGNED>
 class vec3 {
   public:
-    double e[3];  // Stores the three components of the vector.
+    ac_fixed<W, I, true> e[3];  // Stores the three components of the vector.
 
     // Constructors.
     vec3() : e{0,0,0} {}  // Default constructor initializes to zero.
-    vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}  // Initializes with specified values.
+    vec3(ac_fixed<W, I, SIGNED> e0, ac_fixed<W, I, SIGNED> e1, ac_fixed<W, I, SIGNED> e2) : e{e0, e1, e2} {}  // Initializes with specified values.
 
     // Accessors for the vector components, useful for readability and when using the vector as a point or color.
-    double x() const { return e[0]; }
-    double y() const { return e[1]; }
-    double z() const { return e[2]; }
+    ac_fixed<W, I, SIGNED> x() const { return e[0]; }
+    ac_fixed<W, I, SIGNED> y() const { return e[1]; }
+    ac_fixed<W, I, SIGNED> z() const { return e[2]; }
 
     // Unary minus returns the negation of the vector, useful for reversing directions.
     vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }
     // Subscript operators for accessing components by index.
-    double operator[](int i) const { return e[i]; }
-    double& operator[](int i) { return e[i]; }
+    ac_fixed<W, I, SIGNED> operator[](int i) const { return e[i]; }
+    ac_fixed<W, I, SIGNED>& operator[](int i) { return e[i]; }
 
     // Adds the components of another vec3 to this one. Useful for vector addition.
     vec3& operator+=(const vec3 &v) {
@@ -35,7 +37,7 @@ class vec3 {
     }
 
     // Multiplies the components by a scalar. Useful for scaling vectors.
-    vec3& operator*=(double t) {
+    vec3& operator*=(ac_fixed<W, I, SIGNED> t) {
         e[0] *= t;
         e[1] *= t;
         e[2] *= t;
@@ -51,17 +53,21 @@ class vec3 {
     }
 
     // Divides the components by a scalar. Useful for normalizing vectors or scaling them down.
-    vec3& operator/=(double t) {
-        return *this *= 1/t;
+    vec3& operator/=(ac_fixed<W, I, SIGNED> t) {
+        e[0] /= t;
+        e[1] /= t;
+        e[2] /= t;
+        return *this;
     }
 
     // Computes the length (magnitude) of the vector. Essential for normalization and distance calculations.
-    double length() const {
-        return sqrt(length_squared());
+    ac_fixed<W, I, SIGNED> length() const {
+        ac_fixed<W, I, SIGNED> result;
+        return sqrt(length_squared(), result);
     }
 
     // Computes the square of the length. Faster than length() as it avoids a square root. Useful for comparisons.
-    double length_squared() const {
+    ac_fixed<W, I, SIGNED> length_squared() const {
         return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
     }
 
@@ -73,12 +79,12 @@ class vec3 {
 
     // Generates a random vec3. Useful for creating randomized scenes, diffuse materials, etc.
     static vec3 random() {
-        return vec3(random_double(), random_double(), random_double());
+        return vec3(random_ac_fixed<W, I, SIGNED>(), random_ac_fixed<W, I, SIGNED>(), random_ac_fixed<W, I, SIGNED>());
     }
 
     // Generates a random vec3 within a specified range. Useful for bounded random values.
-    static vec3 random(double min, double max) {
-        return vec3(random_double(min,max), random_double(min,max), random_double(min,max));
+    static vec3 random(ac_fixed<W, I, SIGNED> min, ac_fixed<W, I, SIGNED> max) {
+        return vec3(random_ac_fixed<W, I, SIGNED>(min,max), random_ac_fixed<W, I, SIGNED>(min,max), random_ac_fixed<W, I, SIGNED>(min,max));
     }
 };
 
@@ -107,22 +113,22 @@ inline vec3 operator*(const vec3 &u, const vec3 &v) {
 }
 
 // Multiplies a vec3 vector by a scalar and returns the result. Useful for scaling vectors.
-inline vec3 operator*(double t, const vec3 &v) {
+inline vec3 operator*(ac_fixed<W, I, SIGNED> t, const vec3 &v) {
     return vec3(t*v.e[0], t*v.e[1], t*v.e[2]);
 }
 
 // Equivalent to the previous function, demonstrating commutativity of scalar multiplication.
-inline vec3 operator*(const vec3 &v, double t) {
+inline vec3 operator*(const vec3 &v, ac_fixed<W, I, SIGNED> t) {
     return t * v;
 }
 
 // Divides a vec3 vector by a scalar (performs the multiplication by the reciprocal of the scalar).
-inline vec3 operator/(vec3 v, double t) {
+inline vec3 operator/(vec3 v, ac_fixed<W, I, SIGNED> t) {
     return (1/t) * v;
 }
 
 // Computes the dot product of two vec3 vectors. Fundamental in calculating angles between vectors and for many shading calculations.
-inline double dot(const vec3 &u, const vec3 &v) {
+inline ac_fixed<W, I, SIGNED> dot(const vec3 &u, const vec3 &v) {
     return u.e[0] * v.e[0] + u.e[1] * v.e[1] + u.e[2] * v.e[2];
 }
 
@@ -165,12 +171,12 @@ vec3 reflect(const vec3& v, const vec3& n) {
     return v - 2*dot(v,n)*n;
 }
 
-// Refracts a vector uv through a surface with normal n, according to Snell's law. Key in simulating transparent materials.
-inline vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat) {
-    auto cos_theta = fmin(dot(-uv, n), 1.0);
-    vec3 r_out_perp =  etai_over_etat * (uv + cos_theta*n);
-    vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * n;
-    return r_out_perp + r_out_parallel;
-}
+// // Refracts a vector uv through a surface with normal n, according to Snell's law. Key in simulating transparent materials.
+// inline vec3 refract(const vec3& uv, const vec3& n, ac_fixed<W, I, SIGNED> etai_over_etat) {
+//     auto cos_theta = fmin(dot(-uv, n), 1.0);
+//     vec3 r_out_perp =  etai_over_etat * (uv + cos_theta*n);
+//     vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * n;
+//     return r_out_perp + r_out_parallel;
+// }
 
 #endif
