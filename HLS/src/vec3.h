@@ -1,182 +1,155 @@
-#ifndef VEC3_H
-#define VEC3_H
-
-#include <cmath>
-#include <iostream>
+#pragma once
 #include <ac_int.h>
 #include <ac_fixed.h>
 #include <ac_math.h>
+#include <sc_verify.h>
 
 // Defines a three-dimensional vector used for points, colors, etc.
 template<int W, int I, bool SIGNED>
-class vec3 {
+class vec3 {    
   public:
-    ac_fixed<W, I, true> e[3];  // Stores the three components of the vector.
+    ac_fixed<W, I, true> x;
+    ac_fixed<W, I, true> y;
+    ac_fixed<W, I, true> z;  
 
     // Constructors.
-    vec3() : e{0,0,0} {}  // Default constructor initializes to zero.
-    vec3(ac_fixed<W, I, SIGNED> e0, ac_fixed<W, I, SIGNED> e1, ac_fixed<W, I, SIGNED> e2) : e{e0, e1, e2} {}  // Initializes with specified values.
-
-    // Accessors for the vector components, useful for readability and when using the vector as a point or color.
-    ac_fixed<W, I, SIGNED> x() const { return e[0]; }
-    ac_fixed<W, I, SIGNED> y() const { return e[1]; }
-    ac_fixed<W, I, SIGNED> z() const { return e[2]; }
+    vec3() : x(0), y(0), z(0) {}  // Default constructor initializes to zero.
+    vec3(ac_fixed<W, I, SIGNED> e0, ac_fixed<W, I, SIGNED> e1, ac_fixed<W, I, SIGNED> e2) : x(e0), y(e1), z(e2) {}  // Initializes with specified values.
 
     // Unary minus returns the negation of the vector, useful for reversing directions.
-    vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }
-    // Subscript operators for accessing components by index.
-    ac_fixed<W, I, SIGNED> operator[](int i) const { return e[i]; }
-    ac_fixed<W, I, SIGNED>& operator[](int i) { return e[i]; }
+    #pragma hls_design ccore
+    vec3<W, I, SIGNED> negate() {
+      return vec3<W, I, SIGNED>(-x, -y, -z);
+    }
 
     // Adds the components of another vec3 to this one. Useful for vector addition.
-    vec3& operator+=(const vec3 &v) {
-        e[0] += v.e[0];
-        e[1] += v.e[1];
-        e[2] += v.e[2];
-        return *this;
+    #pragma hls_design ccore
+    vec3<W, I, SIGNED> add(vec3<W, I, SIGNED>& v) {
+      return vec3<W, I, SIGNED>(x + v.x, y + v.y, z + v.z);
+    }
+
+    // Adds the components of another vec3 to this one. Useful for vector addition.
+    #pragma hls_design ccore
+    vec3<W, I, SIGNED> sub(vec3<W, I, SIGNED>& v) {
+      return vec3<W, I, SIGNED>(x - v.x, y - v.y, z - v.z);
     }
 
     // Multiplies the components by a scalar. Useful for scaling vectors.
-    vec3& operator*=(ac_fixed<W, I, SIGNED> t) {
-        e[0] *= t;
-        e[1] *= t;
-        e[2] *= t;
-        return *this;
+    #pragma hls_design ccore
+    vec3<W, I, SIGNED> mult(ac_fixed<W, I, SIGNED>& t) {
+      return vec3<W, I, SIGNED>(x * t, y * t, z * t);
     }
 
-    // Multiplies the components by a scalar. Useful for scaling vectors.
-    vec3& operator*=(const vec3 &t) {
-        e[0] *= t.e[0];
-        e[1] *= t.e[1];
-        e[2] *= t.e[2];
-        return *this;
+    // Multiplies the components by a vector.
+    #pragma hls_design ccore
+    vec3<W, I, SIGNED> mult(vec3<W, I, SIGNED>& v) {
+      return vec3<W, I, SIGNED>(x * v.x, y * v.y, z * v.z);
     }
 
-    // Divides the components by a scalar. Useful for normalizing vectors or scaling them down.
-    vec3& operator/=(ac_fixed<W, I, SIGNED> t) {
-        e[0] /= t;
-        e[1] /= t;
-        e[2] /= t;
-        return *this;
+    // Divides the components by a scalar.
+    #pragma hls_design ccore
+    vec3<W, I, SIGNED> div(ac_fixed<W, I, SIGNED>& t) {
+      return vec3<W, I, SIGNED>(x / t, y / t, z / t);
     }
 
-    // Computes the length (magnitude) of the vector. Essential for normalization and distance calculations.
-    ac_fixed<W, I, SIGNED> length() const {
-        ac_fixed<W, I, SIGNED> result;
-        return sqrt(length_squared(), result);
+    // Divides the components by a vector.
+    #pragma hls_design ccore
+    vec3<W, I, SIGNED> div(vec3<W, I, SIGNED>& v) {
+      return vec3<W, I, SIGNED>(x / v.x, y / v.y, z / v.z);
     }
 
     // Computes the square of the length. Faster than length() as it avoids a square root. Useful for comparisons.
-    ac_fixed<W, I, SIGNED> length_squared() const {
-        return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
+    #pragma hls_design ccore
+    ac_fixed<W, I, SIGNED> length_squared() {
+      return x*x + y*y + z*z;
     }
 
-    // Determines if the vector is close to zero in all dimensions. Important for avoiding divide-by-zero errors.
-    bool near_zero() const {
-        const auto s = 1e-8;
-        return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
+    // Computes the length (magnitude) of the vector. Essential for normalization and distance calculations.
+    #pragma hls_design ccore
+    ac_fixed<W, I, false> length() {
+      ac_fixed<W, I, false> result;
+      sqrt(length_squared(), result);
+      return result;
     }
 
-    // Generates a random vec3. Useful for creating randomized scenes, diffuse materials, etc.
-    static vec3 random() {
-        return vec3(random_ac_fixed<W, I, SIGNED>(), random_ac_fixed<W, I, SIGNED>(), random_ac_fixed<W, I, SIGNED>());
+    // Computes the dot product of two vec3 vectors. Fundamental in calculating angles between vectors and for many shading calculations.
+    #pragma hls_design ccore
+    ac_fixed<W, I, SIGNED> dot(vec3<W, I, SIGNED>& v) {
+      return x * v.x + y * v.y + z * v.z;
     }
 
-    // Generates a random vec3 within a specified range. Useful for bounded random values.
-    static vec3 random(ac_fixed<W, I, SIGNED> min, ac_fixed<W, I, SIGNED> max) {
-        return vec3(random_ac_fixed<W, I, SIGNED>(min,max), random_ac_fixed<W, I, SIGNED>(min,max), random_ac_fixed<W, I, SIGNED>(min,max));
+    // Computes the cross product of two vec3 vectors. Useful for finding a vector perpendicular to the plane defined by two vectors.
+    #pragma hls_design ccore
+    vec3<W, I, SIGNED> cross(vec3<W, I, SIGNED>& v) {
+      return vec3(y * v.z - z * v.y,
+                  z * v.x - x * v.z,
+                  x * v.y - y * v.x);
     }
-};
 
-// Aliasing vec3 as point3 for semantic clarity: points represent positions in space.
-using point3 = vec3;
-
-// Vector Utility Functions
-// Utility function to output a vec3 to an ostream, typically used for debugging.
-inline std::ostream& operator<<(std::ostream &out, const vec3 &v) {
-    return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
-}
-
-// Adds two vec3 vectors and returns the result. Useful for position, direction, and color calculations.
-inline vec3 operator+(const vec3 &u, const vec3 &v) {
-    return vec3(u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]);
-}
-
-// Subtracts vector v from vector u and returns the result. Useful for vector calculations like finding a ray direction.
-inline vec3 operator-(const vec3 &u, const vec3 &v) {
-    return vec3(u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]);
-}
-
-// Multiplies two vec3 vectors component-wise and returns the result. This can represent color blending.
-inline vec3 operator*(const vec3 &u, const vec3 &v) {
-    return vec3(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
-}
-
-// Multiplies a vec3 vector by a scalar and returns the result. Useful for scaling vectors.
-inline vec3 operator*(ac_fixed<W, I, SIGNED> t, const vec3 &v) {
-    return vec3(t*v.e[0], t*v.e[1], t*v.e[2]);
-}
-
-// Equivalent to the previous function, demonstrating commutativity of scalar multiplication.
-inline vec3 operator*(const vec3 &v, ac_fixed<W, I, SIGNED> t) {
-    return t * v;
-}
-
-// Divides a vec3 vector by a scalar (performs the multiplication by the reciprocal of the scalar).
-inline vec3 operator/(vec3 v, ac_fixed<W, I, SIGNED> t) {
-    return (1/t) * v;
-}
-
-// Computes the dot product of two vec3 vectors. Fundamental in calculating angles between vectors and for many shading calculations.
-inline ac_fixed<W, I, SIGNED> dot(const vec3 &u, const vec3 &v) {
-    return u.e[0] * v.e[0] + u.e[1] * v.e[1] + u.e[2] * v.e[2];
-}
-
-// Computes the cross product of two vec3 vectors. Useful for finding a vector perpendicular to the plane defined by two vectors.
-inline vec3 cross(const vec3 &u, const vec3 &v) {
-    return vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
-                u.e[2] * v.e[0] - u.e[0] * v.e[2],
-                u.e[0] * v.e[1] - u.e[1] * v.e[0]);
-}
-
-// Normalizes a vec3 vector, scaling it to a length of 1. This is often required when dealing with directions.
-inline vec3 unit_vector(vec3 v) {
-    return v / v.length();
-}
-
-// Utility function to generate a random point inside a unit sphere. Frequently used in generating diffuse materials.
-inline vec3 random_in_unit_sphere() {
-    while (true) {
-        auto p = vec3::random(-1,1);
-        if (p.length_squared() < 1) return p;
+    // Normalizes a vec3 vector, scaling it to a length of 1. This is often required when dealing with directions.
+    #pragma hls_design ccore
+    vec3<W, I, SIGNED> unit() {
+      vec3<W, I, SIGNED> v(x, y, z);
+      return v.div(v.length());
     }
-}
 
-// Generates a random unit vector. Useful in simulating diffuse reflections.
-inline vec3 random_unit_vector() {
-    return unit_vector(random_in_unit_sphere());
-}
+    // Reflects this vector about a normal n. Essential in simulating specular reflections.
+    #pragma hls_design ccore
+    vec3 reflect(vec3<W, I, SIGNED>& n) {
+      vec3<W, I, SIGNED> v(x, y, z);
+      return v.sub((n.mult(v.dot(n))).mult(2));
+    }
 
-// Generates a random vector in the same hemisphere as a given normal vector. Important for hemisphere sampling in lighting.
-inline vec3 random_on_hemisphere(const vec3& normal) {
-    vec3 on_unit_sphere = random_unit_vector();
-    if (dot(on_unit_sphere, normal) > 0.0)  // In the same hemisphere as the normal
-        return on_unit_sphere;
-    else
-        return -on_unit_sphere;
-}
+    // // Reflects a vector v about a normal n. Essential in simulating specular reflections.
+    // vec3 reflect(vec3& v, const vec3& n) {
+    //     return v - 2*dot(v,n)*n;
+    // }
 
-// Reflects a vector v about a normal n. Essential in simulating specular reflections.
-vec3 reflect(const vec3& v, const vec3& n) {
-    return v - 2*dot(v,n)*n;
-}
+  // // Refracts a vector uv through a surface with normal n, according to Snell's law. Key in simulating transparent materials.
+  // inline vec3 refract(const vec3& uv, const vec3& n, ac_fixed<W, I, SIGNED> etai_over_etat) {
+  //     auto cos_theta = fmin(dot(-uv, n), 1.0);
+  //     vec3 r_out_perp =  etai_over_etat * (uv + cos_theta*n);
+  //     vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * n;
+  //     return r_out_perp + r_out_parallel;
+  // }
 
-// // Refracts a vector uv through a surface with normal n, according to Snell's law. Key in simulating transparent materials.
-// inline vec3 refract(const vec3& uv, const vec3& n, ac_fixed<W, I, SIGNED> etai_over_etat) {
-//     auto cos_theta = fmin(dot(-uv, n), 1.0);
-//     vec3 r_out_perp =  etai_over_etat * (uv + cos_theta*n);
-//     vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * n;
-//     return r_out_perp + r_out_parallel;
+//     // Determines if the vector is close to zero in all dimensions. Important for avoiding divide-by-zero errors.
+//     bool near_zero() const {
+//         const auto s = 1e-8;
+//         return (fabs(x) < s) && (fabs(y) < s) && (fabs(z) < s);
+//     }
+
+//     // Generates a random vec3. Useful for creating randomized scenes, diffuse materials, etc.
+//     static vec3 random() {
+//         return vec3(random_ac_fixed<W, I, SIGNED>(), random_ac_fixed<W, I, SIGNED>(), random_ac_fixed<W, I, SIGNED>());
+//     }
+
+//     // Generates a random vec3 within a specified range. Useful for bounded random values.
+//     static vec3 random(ac_fixed<W, I, SIGNED> min, ac_fixed<W, I, SIGNED> max) {
+//         return vec3(random_ac_fixed<W, I, SIGNED>(min,max), random_ac_fixed<W, I, SIGNED>(min,max), random_ac_fixed<W, I, SIGNED>(min,max));
+//     }
+// };
+
+// // Utility function to generate a random point inside a unit sphere. Frequently used in generating diffuse materials.
+// inline vec3 random_in_unit_sphere() {
+//     while (true) {
+//         auto p = vec3::random(-1,1);
+//         if (p.length_squared() < 1) return p;
+//     }
 // }
 
-#endif
+// // Generates a random unit vector. Useful in simulating diffuse reflections.
+// inline vec3 random_unit_vector() {
+//     return unit_vector(random_in_unit_sphere());
+// }
+
+// // Generates a random vector in the same hemisphere as a given normal vector. Important for hemisphere sampling in lighting.
+// inline vec3 random_on_hemisphere(const vec3& normal) {
+//     vec3 on_unit_sphere = random_unit_vector();
+//     if (dot(on_unit_sphere, normal) > 0.0)  // In the same hemisphere as the normal
+//         return on_unit_sphere;
+//     else
+//         return -on_unit_sphere;
+// }
+
+}
