@@ -74,7 +74,7 @@ void jpgencoder(const char * bmpfilename, const char * jpgfilename)
           rgbstream.write(rgb[i]);
         
         blocktype.write(type);
-        
+        // THE HLS CODE AND BLOCK RIGTH HERE LOCATED IN JPEG
         pixelpipe(blocktype, rgbstream, hufstream);
 
         for (int i=0; i<64; i++) 
