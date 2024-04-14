@@ -17,4 +17,10 @@ clean:
 	rm -rf build.ccs
 	rm -rf build
 	rm -rf test*
-
+	rm -rf Catapult.ccs
+	rm -rf catapult.log
+	rm -rf waves.shm/
+	rm -rf Catapult/
+	rm -rf .simvision/
+	rm -rf design_checker_constraints.tcl
+	rm -rf design_checker_pre_build.tcl
