@@ -26,35 +26,35 @@ class vec3 {
       return vec3<T>(x + v.x, y + v.y, z + v.z);
     }
 
-//     // Adds the components of another vec3 to this one. Useful for vector addition.
-//     #pragma hls_design ccore
-//     vec3<T> sub(vec3<T>& v) {
-//       return vec3<T>(x - v.x, y - v.y, z - v.z);
-//     }
+    // Adds the components of another vec3 to this one. Useful for vector addition.
+    #pragma hls_design ccore
+    vec3<T> sub(vec3<T>& v) {
+      return vec3<T>(x - v.x, y - v.y, z - v.z);
+    }
 
-//     // Multiplies the components by a scalar. Useful for scaling vectors.
-//     #pragma hls_design ccore
-//     vec3<T> mult(T& t) {
-//       return vec3<T>(x * t, y * t, z * t);
-//     }
+    // Multiplies the components by a scalar. Useful for scaling vectors.
+    #pragma hls_design ccore
+    vec3<T> mult(T& t) {
+      return vec3<T>(x * t, y * t, z * t);
+    }
 
-//     // Multiplies the components by a vector.
-//     #pragma hls_design ccore
-//     vec3<T> mult(vec3<T>& v) {
-//       return vec3<T>(x * v.x, y * v.y, z * v.z);
-//     }
+    // Multiplies the components by a vector.
+    #pragma hls_design ccore
+    vec3<T> mult(vec3<T>& v) {
+      return vec3<T>(x * v.x, y * v.y, z * v.z);
+    }
 
-//     // Divides the components by a scalar.
-//     #pragma hls_design ccore
-//     vec3<T> div(T& t) {
-//       return vec3<T>(x / t, y / t, z / t);
-//     }
+    // Divides the components by a scalar.
+    #pragma hls_design ccore
+    vec3<T> div(T& t) {
+      return vec3<T>(x / t, y / t, z / t);
+    }
 
-//     // Divides the components by a vector.
-//     #pragma hls_design ccore
-//     vec3<T> div(vec3<T>& v) {
-//       return vec3<T>(x / v.x, y / v.y, z / v.z);
-//     }
+    // Divides the components by a vector.
+    #pragma hls_design ccore
+    vec3<T> div(vec3<T>& v) {
+      return vec3<T>(x / v.x, y / v.y, z / v.z);
+    }
 
 //     // Computes the square of the length. Faster than length() as it avoids a square root. Useful for comparisons.
 //     #pragma hls_design ccore
