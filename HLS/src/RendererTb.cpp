@@ -8,12 +8,18 @@ CCS_MAIN(int argc, char** argv) {
 
     Renderer inst; // DUT
 
-    vec3<fxp_32> in(-2.5, -2.5, -2.5); // input
-    vec3<fxp_32> out; // output
+    vec3<fxp_32> a(0.25, 0.50, 0); // input
+    vec3<fxp_32> b(0.50, 0.50, -0.25); // input
 
-    inst.run(in, out);
+    vec3<fxp_32> cross; // output
+    fxp_32 dot; // output
+    vec3<fxp_32> unit; // output
 
-    cout << "(" << out.x << ", " << out.y << ", " << out.z << ")" << endl;
+    inst.run(a, b, cross, dot, unit);
+
+    cout << dot << endl;
+    cout << "(" << cross.x << ", " << cross.y << ", " << cross.z << ")" << endl;
+    cout << "(" << unit.x << ", " << unit.y << ", " << unit.z << ")" << endl;
     cout << "Done!  " << endl;
 
     CCS_RETURN(0);
