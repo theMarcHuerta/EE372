@@ -15,13 +15,13 @@ class vec3 {
     vec3(T e0, T e1, T e2) : x(e0), y(e1), z(e2) {}  // Initializes with specified values.
 
     // Unary minus returns the negation of the vector, useful for reversing directions.
-    // #pragma hls_design ccore
+    #pragma hls_design ccore
     vec3<T> negate() {
       return vec3<T>(-x, -y, -z);
     }
 
     // Adds the components of another vec3 to this one. Useful for vector addition.
-    // #pragma hls_design ccore
+    #pragma hls_design ccore
     vec3<T> add(vec3<T>& v) {
       return vec3<T>(x + v.x, y + v.y, z + v.z);
     }

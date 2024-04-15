@@ -6,7 +6,6 @@
     #define LABEL(x) {}
 #endif
 
-#include "vec3.h"
 #include "Renderer.h"
 
 #pragma hls_design top
