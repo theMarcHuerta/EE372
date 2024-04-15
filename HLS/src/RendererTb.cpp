@@ -13,6 +13,7 @@ CCS_MAIN(int argc, char** argv) {
 
     inst.run(in, out);
 
+    cout << "(" << out.x << ", " << out.y << ", " << out.z << ")" << endl;
     cout << "Done!  " << endl;
 
     CCS_RETURN(0);

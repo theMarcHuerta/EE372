@@ -16,10 +16,7 @@ class Renderer {
     #pragma hls_design interface
     void CCS_BLOCK(run)(vec3<fxp_32>& in, vec3<fxp_32>& out) {
         vec3<fxp_32> v(2.5, 2.5, 2.5);
-        fxp_32 a = 2;
 
-        fxp_32 b = 4;
-
-        out = in.negate().add(v).mult(a).div(b);
+        out = in.negate().add(v).unit();
     }
 };

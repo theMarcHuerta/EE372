@@ -6,6 +6,7 @@ if {[file isdirectory build]} {
     project save
 }
 
+options set Input/CppStandard c++11
 options set Input/TargetPlatform x86_64
 options set Input/SearchPath ./src
 options set Output/OutputVHDL false

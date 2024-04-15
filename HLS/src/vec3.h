@@ -1,6 +1,7 @@
 #pragma once
 
-// #include <ac_math.h>
+#include <ac_math.h>
+#include <ac_fixed.h>
 
 // Defines a three-dimensional vector used for points, colors, etc.
 template<typename T>
@@ -56,40 +57,48 @@ class vec3 {
       return vec3<T>(x / v.x, y / v.y, z / v.z);
     }
 
-//     // Computes the square of the length. Faster than length() as it avoids a square root. Useful for comparisons.
-//     #pragma hls_design ccore
-//     T length_squared() {
-//       return x*x + y*y + z*z;
-//     }
+    // Computes the square of the length. Faster than length() as it avoids a square root. Useful for comparisons.
+    #pragma hls_design ccore
+    T length_squared() {
+      return x*x + y*y + z*z;
+    }
 
-//     // Computes the length (magnitude) of the vector. Essential for normalization and distance calculations.
-//     #pragma hls_design ccore
-//     ac_fixed<W, I, false> length() {
-//       ac_fixed<W, I, false> result;
-//       sqrt(length_squared(), result);
-//       return result;
-//     }
+    // Computes the length (magnitude) of the vector. Essential for normalization and distance calculations.
+    #pragma hls_design ccore
+    T length() {
+      T l_sq = length_squared();
+      T result;
 
-//     // Computes the dot product of two vec3 vectors. Fundamental in calculating angles between vectors and for many shading calculations.
-//     #pragma hls_design ccore
-//     T dot(vec3<T>& v) {
-//       return x * v.x + y * v.y + z * v.z;
-//     }
+      // unsigned variables for ac_sqrt()
+      ac_fixed<l_sq.width-1, l_sq.i_width-1, false> u_l_sq = l_sq.to_double();   // TODO: optimize bit widths
+      ac_fixed<l_sq.width-1, l_sq.i_width-1, false> u_result;
 
-//     // Computes the cross product of two vec3 vectors. Useful for finding a vector perpendicular to the plane defined by two vectors.
-//     #pragma hls_design ccore
-//     vec3<T> cross(vec3<T>& v) {
-//       return vec3(y * v.z - z * v.y,
-//                   z * v.x - x * v.z,
-//                   x * v.y - y * v.x);
-//     }
+      ac_math::ac_sqrt(u_l_sq, u_result);
+      result = u_result.to_double();  // convert back to signed
+      return result;
+    }
 
-//     // Normalizes a vec3 vector, scaling it to a length of 1. This is often required when dealing with directions.
-//     #pragma hls_design ccore
-//     vec3<T> unit() {
-//       vec3<T> v(x, y, z);
-//       return v.div(v.length());
-//     }
+    // Computes the dot product of two vec3 vectors. Fundamental in calculating angles between vectors and for many shading calculations.
+    #pragma hls_design ccore
+    T dot(vec3<T>& v) {
+      return x * v.x + y * v.y + z * v.z;
+    }
+
+    // Computes the cross product of two vec3 vectors. Useful for finding a vector perpendicular to the plane defined by two vectors.
+    #pragma hls_design ccore
+    vec3<T> cross(vec3<T>& v) {
+      return vec3(y * v.z - z * v.y,
+                  z * v.x - x * v.z,
+                  x * v.y - y * v.x);
+    }
+
+    // Normalizes a vec3 vector, scaling it to a length of 1. This is often required when dealing with directions.
+    #pragma hls_design ccore
+    vec3<T> unit() {
+      vec3<T> v(x, y, z);
+      T length = v.length();
+      return v.div(length);
+    }
 
 //     // Reflects this vector about a normal n. Essential in simulating specular reflections.
 //     #pragma hls_design ccore
