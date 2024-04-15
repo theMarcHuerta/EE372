@@ -70,11 +70,11 @@ class vec3 {
       T result;
 
       // unsigned variables for ac_sqrt()
-      ac_fixed<l_sq.width-1, l_sq.i_width-1, false> u_l_sq = l_sq.to_double();   // TODO: optimize bit widths
+      ac_fixed<l_sq.width-1, l_sq.i_width-1, false> u_l_sq = l_sq;   // TODO: optimize bit widths
       ac_fixed<l_sq.width-1, l_sq.i_width-1, false> u_result;
 
       ac_math::ac_sqrt(u_l_sq, u_result);
-      result = u_result.to_double();  // convert back to signed
+      result = u_result;  // convert back to signed
       return result;
     }
 
