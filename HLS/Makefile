@@ -1,7 +1,7 @@
 CATAPULT = /cad/mentor/2019.11/Catapult_Synthesis_10.4b-841621/Mgc_home/bin/catapult
 
 gui:
-	$(CATAPULT) build.ccs
+	$(CATAPULT) build.ccs &
 
 build/Renderer.v1/rtl.v:
 	$(CATAPULT) -shell -file scripts/Renderer.tcl
@@ -17,10 +17,8 @@ clean:
 	rm -rf build.ccs
 	rm -rf build
 	rm -rf test*
-	rm -rf Catapult.ccs
 	rm -rf catapult.log
 	rm -rf waves.shm/
-	rm -rf Catapult/
 	rm -rf .simvision/
 	rm -rf design_checker_constraints.tcl
 	rm -rf design_checker_pre_build.tcl
