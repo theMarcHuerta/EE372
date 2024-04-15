@@ -3,8 +3,14 @@ CATAPULT = /cad/mentor/2019.11/Catapult_Synthesis_10.4b-841621/Mgc_home/bin/cata
 gui:
 	$(CATAPULT) build.ccs &
 
+test/Renderer.v1: 
+	$(CATAPULT) -shell -file scripts/run_c_test.tcl
+
 build/Renderer.v1/rtl.v:
 	$(CATAPULT) -shell -file scripts/Renderer.tcl
+
+c_test: test/Renderer.v1
+	cd test/Renderer.v1 && make -f scverify/Verify_orig_cxx_osci.mk sim
 
 rtl_test_no_gui: build/Renderer.v1/rtl.v
 	$(CATAPULT) -shell -file scripts/run_rtl_test_no_gui.tcl
