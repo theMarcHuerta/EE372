@@ -2,9 +2,7 @@ set blockname [file rootname [file tail [info script] ]]
 
 source scripts/common.tcl
 
-directive set -DESIGN_HIERARCHY { 
-    {Renderer}
-}
+directive set -DESIGN_HIERARCHY "$module"
 
 go compile
 

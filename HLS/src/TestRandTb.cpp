@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Renderer.cpp"
+#include "TestRand.cpp"
 
 using namespace std;
 

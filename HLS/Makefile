@@ -1,21 +1,28 @@
+MODULE ?= Renderer
+
 CATAPULT = /cad/mentor/2019.11/Catapult_Synthesis_10.4b-841621/Mgc_home/bin/catapult
 
 gui:
 	$(CATAPULT) build.ccs &
 
-test/Renderer.v1: 
+test/$(MODULE).v1: 
+	export MODULE=$(MODULE); \
 	$(CATAPULT) -shell -file scripts/run_c_test.tcl
 
-build/Renderer.v1/rtl.v:
-	$(CATAPULT) -shell -file scripts/Renderer.tcl
+build/$(MODULE).v1/rtl.v:
+	export MODULE=$(MODULE); \
+	$(CATAPULT) -shell -file scripts/build_rtl.tcl
 
-c_test: test/Renderer.v1
-	cd test/Renderer.v1 && make -f scverify/Verify_orig_cxx_osci.mk sim
+c_test: test/$(MODULE).v1
+	export MODULE=$(MODULE); \
+	cd test/$(MODULE).v1 && make -f scverify/Verify_orig_cxx_osci.mk sim
 
-rtl_test_no_gui: build/Renderer.v1/rtl.v
+rtl_test_no_gui: build/$(MODULE).v1/rtl.v
+	export MODULE=$(MODULE); \
 	$(CATAPULT) -shell -file scripts/run_rtl_test_no_gui.tcl
 
-rtl_test: build/Renderer.v1/rtl.v
+rtl_test: build/$(MODULE).v1/rtl.v
+	export MODULE=$(MODULE); \
 	$(CATAPULT) -shell -file scripts/run_rtl_test.tcl
 
 .PHONY: clean gui c_test InputDoubleBuffer WeightDoubleBuffer SystolicArrayCore ProcessingElement
