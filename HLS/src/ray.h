@@ -2,7 +2,6 @@
 
 #include "Renderer.h"
 
-// Defines a three-dimensional vector used for points, colors, etc.
 template<typename T>
 class ray {
   public:

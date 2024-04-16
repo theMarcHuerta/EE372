@@ -16,3 +16,9 @@ typedef ac_fixed<33, 11, true> sfp_11_22; // signed fixed point
 
 typedef ac_int<8, false> uint_8;
 typedef ac_int<64, false> uint_64;
+
+#define QUAD 0
+#define SPHERE 1
+
+#define LAMBERTIAN 0
+#define MIRROR 1
