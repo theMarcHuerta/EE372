@@ -8,14 +8,14 @@ CCS_MAIN(int argc, char** argv) {
 
     Renderer inst; // DUT
 
-    vec3<fxp_32> a(0.25, 0.50, 0); // input
-    vec3<fxp_32> b(0.50, 0.50, -0.25); // input
+    vec3<sfp_11_22> a(0.25, 0.50, 0); // input
+    vec3<sfp_11_22> b(0.50, 0.50, -0.25); // input
 
-    vec3<fxp_32> cross; // output
-    fxp_32 dot; // output
-    vec3<fxp_32> reflect; // output
+    vec3<sfp_11_22> cross; // output
+    sfp_11_22 dot; // output
+    vec3<sfp_11_22> reflect; // output
 
-    fxp_32 rand_nums[128];
+    sfp_11_22 rand_nums[128];
 
     inst.run(a, b, cross, dot, reflect, rand_nums);
 

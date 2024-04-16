@@ -14,7 +14,7 @@ class Renderer {
     Renderer() : prng() {}
 
     #pragma hls_design interface
-    void CCS_BLOCK(run)(vec3<fxp_32>& a, vec3<fxp_32>& b, vec3<fxp_32>& cross, fxp_32& dot, vec3<fxp_32>& reflect, fxp_32 rand_nums[128]) {
+    void CCS_BLOCK(run)(vec3<sfp_11_22>& a, vec3<sfp_11_22>& b, vec3<sfp_11_22>& cross, sfp_11_22& dot, vec3<sfp_11_22>& reflect, sfp_11_22 rand_nums[128]) {
         cross = a.cross(b);
         dot = a.dot(b);
         reflect = a.reflect(b);
@@ -24,5 +24,5 @@ class Renderer {
     }
 
   private:
-    Rand<fxp_32, 23, 22> prng;
+    Rand<sfp_11_22, 22, 22, 17, 3, 2> prng;
 };
