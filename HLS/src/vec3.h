@@ -1,8 +1,6 @@
 #pragma once
 
-#include <ac_math.h>
-#include <ac_fixed.h>
-#include <ac_int.h>
+#include "Renderer.h"
 
 // Defines a three-dimensional vector used for points, colors, etc.
 template<typename T>

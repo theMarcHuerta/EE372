@@ -1,10 +1,6 @@
 #pragma once
 
-#include <ac_math.h>
-#include <ac_fixed.h>
-#include <ac_int.h>
-
-#include "vec3.h"
+#include "Renderer.h"
 
 // Defines a three-dimensional vector used for points, colors, etc.
 template<typename T>
@@ -23,5 +19,4 @@ class ray {
         vec3<T> mult_result = dir.mult(t);
         return orig.add(mult_result);
     }
-
-}    
+};    

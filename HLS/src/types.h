@@ -1,7 +1,6 @@
 #pragma once
 
-#include "ac_fixed.h"
-#include "ac_int.h"
+#include "Renderer.h"
 
 typedef ac_int<1, false> pbool;
 typedef ac_int<2, false> uint_2;
