@@ -19,7 +19,7 @@ class Renderer {
         dot = a.dot(b);
         reflect = a.reflect(b);
         for (int i = 0; i < 128; i++) {
-            rand_nums[i] = prng.next();
+            rand_nums[i] = prng.rand();
         }
     }
 

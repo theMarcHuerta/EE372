@@ -136,28 +136,12 @@ class vec3 {
 // //         return (fabs(x) < s) && (fabs(y) < s) && (fabs(z) < s);
 // //     }
 
-// //     // Generates a random vec3. Useful for creating randomized scenes, diffuse materials, etc.
-// //     static vec3 random() {
-// //         return vec3(random_ac_fixed<T>(), random_ac_fixed<T>(), random_ac_fixed<T>());
-// //     }
-
-// //     // Generates a random vec3 within a specified range. Useful for bounded random values.
-// //     static vec3 random(T min, T max) {
-// //         return vec3(random_ac_fixed<T>(min,max), random_ac_fixed<T>(min,max), random_ac_fixed<T>(min,max));
-// //     }
-// // };
-
 // // // Utility function to generate a random point inside a unit sphere. Frequently used in generating diffuse materials.
 // // inline vec3 random_in_unit_sphere() {
 // //     while (true) {
 // //         auto p = vec3::random(-1,1);
 // //         if (p.length_squared() < 1) return p;
 // //     }
-// // }
-
-// // // Generates a random unit vector. Useful in simulating diffuse reflections.
-// // inline vec3 random_unit_vector() {
-// //     return unit_vector(random_in_unit_sphere());
 // // }
 
 // // // Generates a random vector in the same hemisphere as a given normal vector. Important for hemisphere sampling in lighting.
