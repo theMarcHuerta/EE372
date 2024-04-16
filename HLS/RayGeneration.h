@@ -57,7 +57,7 @@ public:
               ac_channel<LoopIndices> &loopIndicesIn,
               ac_channel<ray> &bigRay)
     {
-      pixelSampleSquare.run(pixelDeltas, outputPxlSampSq);
+      pixelSampleSquare.run(pixelDeltas, outputPxlSampSq, pixelDeltasChannel);
       rayGeneration.run(pixelDeltasChannel, pixelParams, outputPxlSampSq, loopIndicesIn, bigRay)
     }
 private:
@@ -70,6 +70,7 @@ private:
     ac_channel<small_vec3> pixelSampleSquare
     PixelSampleSquare pixelSampleSquare;
     ac_channel<small_vec3> outputPxlSampSq;
+    ac_channel<pxl_deltas> pixelDeltasChannel;
 };
 
 
