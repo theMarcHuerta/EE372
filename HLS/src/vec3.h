@@ -2,6 +2,7 @@
 
 #include <ac_math.h>
 #include <ac_fixed.h>
+#include <ac_int.h>
 
 // Defines a three-dimensional vector used for points, colors, etc.
 template<typename T>
@@ -17,30 +18,35 @@ class vec3 {
 
     // Unary minus returns the negation of the vector, useful for reversing directions.
     #pragma hls_design ccore
+    #pragma hls_ccore_type combinational
     vec3<T> negate() {
       return vec3<T>(-x, -y, -z);
     }
 
     // Adds the components of another vec3 to this one. Useful for vector addition.
     #pragma hls_design ccore
+    #pragma hls_ccore_type combinational
     vec3<T> add(vec3<T>& v) {
       return vec3<T>(x + v.x, y + v.y, z + v.z);
     }
 
     // Adds the components of another vec3 to this one. Useful for vector addition.
     #pragma hls_design ccore
+    #pragma hls_ccore_type combinational
     vec3<T> sub(vec3<T>& v) {
       return vec3<T>(x - v.x, y - v.y, z - v.z);
     }
 
     // Multiplies the components by a scalar. Useful for scaling vectors.
     #pragma hls_design ccore
+    #pragma hls_ccore_type combinational
     vec3<T> mult(T& t) {
       return vec3<T>(x * t, y * t, z * t);
     }
 
     // Multiplies the components by a vector.
     #pragma hls_design ccore
+    #pragma hls_ccore_type combinational
     vec3<T> mult(vec3<T>& v) {
       return vec3<T>(x * v.x, y * v.y, z * v.z);
     }
@@ -59,6 +65,7 @@ class vec3 {
 
     // Computes the square of the length. Faster than length() as it avoids a square root. Useful for comparisons.
     #pragma hls_design ccore
+    #pragma hls_ccore_type combinational
     T length_squared() {
       return x*x + y*y + z*z;
     }
@@ -80,12 +87,14 @@ class vec3 {
 
     // Computes the dot product of two vec3 vectors. Fundamental in calculating angles between vectors and for many shading calculations.
     #pragma hls_design ccore
+    #pragma hls_ccore_type combinational
     T dot(vec3<T>& v) {
       return x * v.x + y * v.y + z * v.z;
     }
 
     // Computes the cross product of two vec3 vectors. Useful for finding a vector perpendicular to the plane defined by two vectors.
     #pragma hls_design ccore
+    #pragma hls_ccore_type combinational
     vec3<T> cross(vec3<T>& v) {
       return vec3(y * v.z - z * v.y,
                   z * v.x - x * v.z,
@@ -94,23 +103,24 @@ class vec3 {
 
     // Normalizes a vec3 vector, scaling it to a length of 1. This is often required when dealing with directions.
     #pragma hls_design ccore
+    #pragma hls_ccore_type combinational
     vec3<T> unit() {
       vec3<T> v(x, y, z);
       T length = v.length();
       return v.div(length);
     }
 
-//     // Reflects this vector about a normal n. Essential in simulating specular reflections.
-//     #pragma hls_design ccore
-//     vec3 reflect(vec3<T>& n) {
-//       vec3<T> v(x, y, z);
-//       return v.sub((n.mult(v.dot(n))).mult(2));
-//     }
-
-//     // // Reflects a vector v about a normal n. Essential in simulating specular reflections.
-//     // vec3 reflect(vec3& v, const vec3& n) {
-//     //     return v - 2*dot(v,n)*n;
-//     // }
+    // Reflects this vector about a normal n. Essential in simulating specular reflections.
+    #pragma hls_design ccore
+    #pragma hls_ccore_type combinational
+    vec3 reflect(vec3<T>& n) {
+      vec3<T> v(x, y, z);
+      T dot_result = v.dot(n);
+      vec3<T> first_mult = n.mult(dot_result);
+      T c = 2;
+      vec3<T> second_mult = first_mult.mult(c);
+      return v.sub(second_mult);
+    }
 
 //   // // Refracts a vector uv through a surface with normal n, according to Snell's law. Key in simulating transparent materials.
 //   // inline vec3 refract(const vec3& uv, const vec3& n, T etai_over_etat) {

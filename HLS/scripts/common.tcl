@@ -11,6 +11,10 @@ options set Input/TargetPlatform x86_64
 options set Input/SearchPath ./src
 options set Output/OutputVHDL false
 options set Architectural/DefaultRegisterThreshold 4096
+# options set Clustering/multadd true
+# options set Clustering/addtree true
+# options set Clustering/square true
+# options set Clustering/mult true
 
 flow package require /SCVerify
 flow package option set /SCVerify/USE_CCS_BLOCK true
