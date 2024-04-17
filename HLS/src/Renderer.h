@@ -61,20 +61,20 @@ public:
     RendererWrapper(){}
     
 #pragma hls_design interface
-    void run(ac_channel<sphere_hittable[MAX_SPHERES]> &spheres_in,
-             ac_channel<quad_hittable[MAX_QUADS]> &quads_in, 
+    void run(ac_channel<sphere_hittable> &spheres_in,
+             ac_channel<quad_hittable> &quads_in, 
              ac_channel<img_params> &render_params,
             ac_channel<rgb_t> &output_pxl,)
     {
         renderLooper.run(render_params, pxlparams, deltas, paramsChannel, loopIndicesChannel);
-        rayGeneration.run(loopIndicesChannel, pxlparams, deltas, bigRay);
+        rayGeneration.run(loopIndicesChannel, pxlparams, deltas, bigRay); // TO DO ADD LOOP INDICIES OUT CHANNEL
         shaderCores.run(bigRay, spheres_in, quads_in, paramsChannel, loopIndicesChannel);
     }
 private:
     RenderLooper renderLooper;
-    RayGeneration rayGeneration;
+    RayGenerationWrapper rayGeneration;
     ShaderCores shaderCores;
-    ray bigRay;
+    ac_channel<ray> bigRay;
     ac_channel<img_params> paramsChannel;
     ac_channel<LoopIndices> loopIndicesChannel;
     ac_channel<pxl_params> &pxlparams;

@@ -22,6 +22,7 @@ struct HitRecord {
     sfp_11_22 u;
     sfp_11_22 v;
     uint_2 mat;
+    vec3<int_11> color;
 
 };
 

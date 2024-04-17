@@ -23,6 +23,7 @@ typedef ac_int<12, true> int_12; /// 11bits
 typedef ac_int<22, false> uint_22; /// 11bits
 typedef ac_fixed<23, 1, false> fp_1_22; // TO DO CHANGE THIS TO ufp for unsigned fixed point
 typedef ac_fixed<25, 3, true> sfp_3_22;
+typedef ac_fixed<19, 9, true> sfp_9_10; // leave an overflow bit + precision of 1/1000
 typedef ac_fixed<33, 11, true> sfp_11_22; // signed fixed point
 
 typedef ac_int<8, false> uint_8;
@@ -50,10 +51,11 @@ struct pxl_deltas {
   vec3<T> pixel_delta_v;
 };
 
+template <typename T>
 struct rgb_t { // standard sdr
-  uint_8 r;
-  uint_8 g;
-  uint_8 b;
+  T r;
+  T g;
+  T b;
 };
 
 struct img_params {
@@ -91,12 +93,14 @@ struct pxl_params {
 };
 
 struct sphere_hittable {
+    vec3<int_11> sph_color;
     vec3<int_11> center; // for quads its corner, sphere it's center
     uint_8 radius; // radius cant clip edge of range of ws view
     uint_2 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
 };
 
 struct quad_hittable {
+    vec3<int_11> quad_color;
     vec3<int_11> corner_pt; // for quads its corner
     vec3<int_11> u; // defining u component 
     vec3<int_11> v; // defining v componenet

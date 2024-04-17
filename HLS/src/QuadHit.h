@@ -50,6 +50,7 @@ public:
         rec.v = b;
         rec.t = t;
         rec.p = intersection;
+        rec.color = quad.quad_color;
         HitRecordPhysics setfacenorm; 
         setfacenorm.setFaceNormal(rec,r, outward_normal);
         rec.mat_type = quad.mat_type;

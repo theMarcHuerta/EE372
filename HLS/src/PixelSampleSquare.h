@@ -22,19 +22,22 @@ class PixelSampleSquare
     
     #pragma hls_design interface
     void CCS_BLOCK(run)(ac_channel<pxl_deltas> &pixelDeltas, // do i need to make it so i can fetch on command
-                        ac_channel<small_vec3> &output_vec,
+                        ac_channel<small_vec3> &output_num,
                         ac_channel<pxl_deltas> &output_delts)
     {
-      rand1.run(, rnum1);
-      rand2.run(, rnum2);
-      pxl_deltas tmp_delts;
-      tmp_delts = pixelDeltas.read();
-      sfp_3_22 px = point_five + rnum1;  // Random offset in the x direction. IS SUPPOSED TO CHOP OFF
-      sfp_3_22 py = point_five + rnum2;  // Random offset in the y direction.
-      small_vec3 tmp_out = (px * tmp_delts.pixel_delta_u) + (py * tmp_delts.pixel_delta_v);  // Adjust by pixel size. NEED OPERATOR OVERLOADER HERE OR JUST HAND DO IT
-      // also for the above statement i hope it can convert to full on 11-22 format
-      output_num.write(tmp_out)
-      output_delts.write(tmp_delts);
+      // should i just make it loop through all the pixels too or what?
+      for (int i = 0; i < 8; i++){
+        rand1.run(, rnum1);
+        rand2.run(, rnum2);
+        pxl_deltas tmp_delts;
+        tmp_delts = pixelDeltas.read();
+        sfp_3_22 px = point_five + rnum1;  // Random offset in the x direction. IS SUPPOSED TO CHOP OFF
+        sfp_3_22 py = point_five + rnum2;  // Random offset in the y direction.
+        small_vec3 tmp_out = (px * tmp_delts.pixel_delta_u) + (py * tmp_delts.pixel_delta_v);  // Adjust by pixel size. NEED OPERATOR OVERLOADER HERE OR JUST HAND DO IT
+        // also for the above statement i hope it can convert to full on 11-22 format
+        output_num.write(tmp_out)
+        output_delts.write(tmp_delts);
+      }
     }
 
   private:

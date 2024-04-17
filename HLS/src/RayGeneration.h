@@ -64,7 +64,7 @@ private:
     RenderLooper renderLooper;
     RayGeneration rayGeneration;
     ShaderCores shaderCores;
-    ray bigRay;
+    ac_channel<ray> bigRay;
     ac_channel<img_params> paramsChannel;
     ac_channel<LoopIndices> loopIndicesChannel;
     ac_channel<small_vec3> pixelSampleSquare

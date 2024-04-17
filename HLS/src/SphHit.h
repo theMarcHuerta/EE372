@@ -39,6 +39,7 @@ public:
         rec.p.x = r.origin.x + r.direction.x * root;
         rec.p.y = r.origin.y + r.direction.y * root;
         rec.p.z = r.origin.z + r.direction.z * root;
+        rec.color = sphere.sph_color;
 
         full_vec3 outward_normal = {(rec.p.x - sphere.center.x) / sphere.radius,
                             (rec.p.y - sphere.center.y) / sphere.radius,

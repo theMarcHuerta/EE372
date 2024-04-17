@@ -21,11 +21,12 @@ public:
     #pragma hls_design ccore
     // #pragma hls_interface ap_ctrl_none port=return
     bool hit(ac_channel<ray>& ray_in,
-             ac_channel<int_11>& num_spheres, // SHOULD I EVEN USE AC CHANNEL OR JUST PASS IN AS INT STILL A BIT UNSURE 
-             ac_channel<int_11>& num_quads,
+             int_11& num_spheres, // SHOULD I EVEN USE AC CHANNEL OR JUST PASS IN AS INT STILL A BIT UNSURE 
+             int_11& num_quads,
              ac_channel<sphere_hittable>& spheres, /// WHAT IS CORRECT WAY TO PASS IN RAM WANT TO READ 1 BY 1 AND PIPELINE READS; ONLY STORE CLOSEST
              ac_channel<quad_hittable>& quads,
-             ac_channel<HitRecord>& hit_out) {
+             ac_channel<HitRecord>& hit_out,
+             ac_channel<bool> &isHit) {
 
         ray ray_temp = ray_in.read(); 
         int_11 sphere_count = num_spheres.read(); 
@@ -73,9 +74,10 @@ public:
 
         if (hit_anything) {
             hit_out.write(rec);  // Write the closest hit record to the output channel
-            return true;
+            isHit.write(true);
         }
-
-        return false; // Not partiuclary sure how returns work or if this should be an output bool or what
+        else {
+            isHit.write(false);
+        }
     }
 };
