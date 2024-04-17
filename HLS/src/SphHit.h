@@ -8,7 +8,7 @@ struct sphere_hittable {
     uint_2 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
 };
 
-// create an additional templatated version fo the struct to allow for arithmetic in function, without screwing
+// create an additional templatated version for the struct to allow for arithmetic in function, without screwing
 // up I/O
 template<typename T>
 struct _sphere_hittable {
