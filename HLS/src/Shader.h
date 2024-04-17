@@ -55,7 +55,9 @@ public:
             lambertianScatter.scatter();
             ray_out.write(scattered_ray);
             if (doesScatter){
-
+                tmp_color_out += obj.color * tmp_atten_out ; // EDIT WORLD HIT TO JUST SEND OUT OBJ COLOR
+                accumalated_color_out.write(tmp_color_out);
+                attenuation_chan_out.write(tmp_atten_out);
             }
             else {
                 sfp_9_10 max_atten(1,1,1); // MAKE CONSTRUCTOR
