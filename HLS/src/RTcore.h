@@ -31,6 +31,8 @@ typedef ac_int<64, false> uint_64;
 #include "vec3.h"
 #include "ray.h"
 #include "Rand.h"
+#include "HitRecord.h"
+#include "SphHit.h"
 
 struct vec3_fp_11_22 { // vector point-- can be as big as the world space
   int_11 x_i;
@@ -90,12 +92,6 @@ struct pxl_params {
   vec3_fp_11_22   pixel00_loc;    // Location in space of the top-left pixel.
 };
 
-struct sphere_hittable {
-    vec3<int_11> center; // for quads its corner, sphere it's center
-    uint_8 radius; // radius cant clip edge of range of ws view
-    uint_2 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
-};
-
 struct quad_hittable {
     vec3<int_11> corner_pt; // for quads its corner
     vec3<int_11> u; // defining u component 
@@ -114,3 +110,6 @@ struct quad_hittable {
 #define WS_MIN_X -1024
 #define WS_MIN_Y -1024
 #define WS_MIN_Z -1024
+
+#define METAL 0
+#define MIRROR 1

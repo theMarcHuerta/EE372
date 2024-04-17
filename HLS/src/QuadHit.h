@@ -1,5 +1,4 @@
-#ifndef WORLD_HIT_H
-#define WORLD_HIT_H
+#pragma once
 
 #include <ac_int.h>
 #include <ac_fixed.h>
