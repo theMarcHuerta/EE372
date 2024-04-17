@@ -29,6 +29,7 @@ typedef ac_int<8, false> uint_8;
 typedef ac_int<64, false> uint_64;
 
 #include "vec3.h"
+#include "ray.h"
 
 struct vec3_fp_11_22 { // vector point-- can be as big as the world space
   int_11 x_i;
@@ -52,11 +53,6 @@ struct rgb_t { // standard sdr
   uint_8 r;
   uint_8 g;
   uint_8 b;
-};
-
-struct ray {
-  vec3<sfp_11_22> origin; 
-  vec3<sfp_11_22> ray_direction;
 };
 
 struct img_params {
