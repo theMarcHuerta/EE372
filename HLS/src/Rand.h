@@ -1,39 +1,45 @@
 #pragma once
 
-#include <ac_int.h>
-#include <ac_fixed.h>
-
 #include "RTcore.h"
 
-template<typename T, int frac_bits, int tap0, int tap1, int tap2, int tap3>
-class Rand
-{
+template<typename T>
+class Rand_val {
   public:
-    Rand(int seed = 375821) : state(seed) {}
+    Rand_val(int seed = 375821) : state(seed) {}
 
-    // Generates a random value between 0 and 1
-    T rand() {
-      ac_int<frac_bits, false> feedback = ((state >> tap0) ^ (state >> tap1) ^ (state >> tap2) ^ (state >> tap3)) & 1;
+    // Generates a random fixed point value between 0 and 1
+    void run(T& out) {
+      ac_int<22, false> feedback = ((state >> 22) ^ (state >> 17) ^ (state >> 3) ^ (state >> 2)) & 1;
       state = ((state << 1) | feedback);
-      T return_val = 0;
-      return_val.set_slc(0, state);
-      return return_val;
-    }
-
-    // Generates a random vec3
-    vec3<T> rand_vec() {
-        T x = rand();
-        T y = rand();
-        T z = rand();
-        return vec3<T>(x, y, z);
-    }
-
-    // Generates a random unit vector. Useful in simulating diffuse reflections.
-    vec3<T> rand_unit_vec() {
-        vec3<T> v = rand_vec();
-        return v.unit();
+      out = 0;
+      out.set_slc(0, state);
     }
 
   private:
-    ac_int<frac_bits, false> state;
+    ac_int<22, false> state;
+};
+
+template<typename T>
+class Rand_vec {
+  Rand_val<T> rand;
+  public:
+    // Generates a random vec3
+    void run(vec3<T>& out) {
+        rand.run(out.x);
+        rand.run(out.y);
+        rand.run(out.z);
+    }
+};
+
+template<typename T>
+class Rand_unit_vec {
+  Rand_vec<T> rand_vec;
+  Vec3_unit<T> unit;
+  public:
+    // Generates a random unit vector. Useful in simulating diffuse reflections.
+    void run(vec3<T>& out) {
+        vec3<T> v;
+        rand_vec.run(v);
+        unit.run(v, out);
+    }
 };

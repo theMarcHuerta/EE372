@@ -30,6 +30,7 @@ typedef ac_int<64, false> uint_64;
 
 #include "vec3.h"
 #include "ray.h"
+#include "Rand.h"
 
 struct vec3_fp_11_22 { // vector point-- can be as big as the world space
   int_11 x_i;
