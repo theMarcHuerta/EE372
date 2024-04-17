@@ -32,6 +32,8 @@ typedef ac_int<64, false> uint_64;
 #include "vec3.h"
 #include "ray.h"
 #include "Rand.h"
+#include "HitRecord.h"
+#include "SphHit.h"
 
 struct vec3_fp_11_22 { // vector point-- can be as big as the world space
   int_11 x_i;
@@ -118,3 +120,6 @@ struct quad_hittable {
 #define WS_MIN_X -1024
 #define WS_MIN_Y -1024
 #define WS_MIN_Z -1024
+
+#define METAL 0
+#define MIRROR 1

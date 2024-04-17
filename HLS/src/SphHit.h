@@ -1,33 +1,62 @@
-
-#include <ac_int.h>
-#include <ac_fixed.h>
-#include <ac_channel.h>
-#include <sstream>
-
+#pragma once
 
 #include "RTcore.h"
-#include "ShaderCores.h"
-#include "RayGeneration.h"
-#include "HitRecord.h"
-// Include mc_scverify.h for CCS_* macros
-#include <mc_scverify.h>
 
+struct sphere_hittable {
+    vec3<int_11> center; // for quads its corner, sphere it's center
+    uint_8 radius; // radius cant clip edge of range of ws view
+    uint_2 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
+};
 
+// create an additional templatated version for the struct to allow for arithmetic in function, without screwing
+// up I/O
+template<typename T>
+struct _sphere_hittable {
+    vec3<T> center;
+    T radius;
+    uint_2 mat_type;
+};
+
+template<typename T>
 class SphereHit {
-public:
+  private:
+    Vec3_sub<T> sub;
+    Vec3_div_s<T> div;
+    Vec3_len_sq<T> len_squared;
+    Vec3_dot<T> dot;
+    Ray_at<T> ray_at;
+  public:
     // Method to determine if a ray intersects with a sphere
     #pragma hls_design ccore
-    bool hit(const ray& r, sfp_11_22& closest_so_far, const sphere_hittable& sphere, HitRecord& rec) { // NOT SURE WHETHER TO AC CHANNEL THE SPHERE HITABLE OR IF THE LOOP TAKES CARE OF THIS HMMM
-        full_vec3 oc = {r.origin.x - sphere.center.x, r.origin.y - sphere.center.y, r.origin.z - sphere.center.z};  // Vector from ray origin to sphere center.
-        sfp_11_22 a = length_squared(r.direction); // INSERT SQUARING FUNCTION HERE
-        sfp_11_22 half_b = dot(oc, r.direction);
-        sfp_11_22 c = length_squared(oc) - (sphere.radius * sphere.radius);
+    bool run(ray<T>& r, T& closest_so_far, sphere_hittable& sphere, HitRecord<T>& rec) { // NOT SURE WHETHER TO AC CHANNEL THE SPHERE HITABLE OR IF THE LOOP TAKES CARE OF THIS HMMM
 
-        sfp_11_22 discriminant = half_b * half_b - a * c;
+        // create sphere hittable with compatible bit widths for arithmetic
+        _sphere_hittable<T> _sphere = {{sphere.center.x, sphere.center.y, sphere.center.z},
+                                        sphere.radius, sphere.mat_type};
+
+        vec3<T> oc;  // Vector from ray orig to sphere center
+        sub.run(r.orig, _sphere.center, oc);
+
+        T a;
+        len_squared.run(r.dir, a); 
+        
+        T half_b;
+        dot.run(oc, r.dir, half_b);
+
+        T len_sq_oc;
+        len_squared.run(oc, len_sq_oc);
+
+        T c = len_sq_oc - (_sphere.radius * _sphere.radius);
+
+        T discriminant = half_b * half_b - a * c;
         if (discriminant < 0) return false;  // No intersection// ALSO SHOULD I MAKE THE COMPARIOSN FIXED POINT OR WHAT?
 
-        sfp_11_22 sqrtd = ac_math::ac_sqrt<sfp_11_22>(discriminant);
-        sfp_11_22 root = (-half_b - sqrtd) / a;
+        ac_fixed<a.width-1, a.i_width-1, false> u_discriminant = discriminant; // unsigned fixed point relative to type T for ac_sqrt
+        ac_fixed<a.width-1, a.i_width-1, false> u_sqrtd;
+        ac_math::ac_sqrt(u_discriminant, u_sqrtd);
+        T sqrtd = u_sqrtd;  // convert back to type T
+
+        T root = (-half_b - sqrtd) / a;
 
         if (root < 0 || root > closest_so_far) {
             root = (-half_b + sqrtd) / a;
@@ -36,22 +65,24 @@ public:
         }
 
         rec.t = root;
-        rec.p.x = r.origin.x + r.direction.x * root;
-        rec.p.y = r.origin.y + r.direction.y * root;
-        rec.p.z = r.origin.z + r.direction.z * root;
+
+        ray_at.run(r, root, rec.hit_loc);
         rec.color = sphere.sph_color;
 
-        full_vec3 outward_normal = {(rec.p.x - sphere.center.x) / sphere.radius,
-                            (rec.p.y - sphere.center.y) / sphere.radius,
-                            (rec.p.z - sphere.center.z) / sphere.radius};
+        vec3<T> outward_normal;
+        vec3<T> sub_result;
+        sub.run(rec.hit_loc, _sphere.center, sub_result);
+        div.run(sub_result, _sphere.radius, outward_normal);
 
         // bool front_face = dot(r.direction, outward_normal) < 0; // ALSO HAVE A FUNCTION FO RTHIS IN HITRECORD BUT ITS A CLASS MIGHT JUST MAKE IT A FUNCTION
-        HitRecordPhysics setfacenorm; 
+        HitRecord_setNorm<T> setfacenorm; 
         // rec.normal = front_face ? outward_normal : full_vec3{-outward_normal.x, -outward_normal.y, -outward_normal.z};
-        setfacenorm.setFaceNormal(rec,r, outward_normal);
-        rec.mat = sphere.mat_type;
+        setfacenorm.run(r, outward_normal, rec);
+
+        rec.mat = _sphere.mat_type;
 
         closest_so_far = root;  // Update the closest_so_far
+
         return true;
     }
 };
