@@ -6,6 +6,7 @@ struct sphere_hittable {
     vec3<int_11> center; // for quads its corner, sphere it's center
     uint_8 radius; // radius cant clip edge of range of ws view
     uint_2 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
+    rgb_t sph_color;
 };
 
 // create an additional templatated version for the struct to allow for arithmetic in function, without screwing
@@ -15,6 +16,7 @@ struct _sphere_hittable {
     vec3<T> center;
     T radius;
     uint_2 mat_type;
+    rgb_t sph_color;
 };
 
 template<typename T>
@@ -26,13 +28,16 @@ class SphereHit {
     Vec3_dot<T> dot;
     Ray_at<T> ray_at;
   public:
+    SphereHit() {}
+
     // Method to determine if a ray intersects with a sphere
-    #pragma hls_design ccore
+    #pragma hls_design
     bool run(ray<T>& r, T& closest_so_far, sphere_hittable& sphere, HitRecord<T>& rec) { // NOT SURE WHETHER TO AC CHANNEL THE SPHERE HITABLE OR IF THE LOOP TAKES CARE OF THIS HMMM
 
         // create sphere hittable with compatible bit widths for arithmetic
         _sphere_hittable<T> _sphere = {{sphere.center.x, sphere.center.y, sphere.center.z},
-                                        sphere.radius, sphere.mat_type};
+                                        sphere.radius, sphere.mat_type,
+                                        {sphere.sph_color.r, sphere.sph_color.g, sphere.sph_color.b}};
 
         vec3<T> oc;  // Vector from ray orig to sphere center
         sub.run(r.orig, _sphere.center, oc);
@@ -67,7 +72,7 @@ class SphereHit {
         rec.t = root;
 
         ray_at.run(r, root, rec.hit_loc);
-        rec.color = sphere.sph_color;
+        rec.color = _sphere.sph_color;
 
         vec3<T> outward_normal;
         vec3<T> sub_result;

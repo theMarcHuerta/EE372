@@ -33,8 +33,6 @@ typedef ac_int<64, false> uint_64;
 #include "vec3.h"
 #include "ray.h"
 #include "Rand.h"
-#include "HitRecord.h"
-#include "SphHit.h"
 
 struct vec3_fp_11_22 { // vector point-- can be as big as the world space
   int_11 x_i;
@@ -54,11 +52,10 @@ struct pxl_deltas {
   vec3<T> pixel_delta_v;
 };
 
-template <typename T>
 struct rgb_t { // standard sdr
-  T r;
-  T g;
-  T b;
+  int_11 r;
+  int_11 g;
+  int_11 b;
 };
 
 struct img_params {
@@ -96,25 +93,9 @@ struct pxl_params {
   vec3_fp_11_22   pixel00_loc;    // Location in space of the top-left pixel.
 };
 
-struct sphere_hittable {
-    vec3<int_11> sph_color;
-    vec3<int_11> center; // for quads its corner, sphere it's center
-    uint_8 radius; // radius cant clip edge of range of ws view
-    uint_2 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
-};
-
-struct quad_hittable {
-    vec3<int_11> quad_color;
-    vec3<int_11> corner_pt; // for quads its corner
-    vec3<int_11> u; // defining u component 
-    vec3<int_11> v; // defining v componenet
-    uint_2 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
-    pbool is_invis;
-    vec3<int_11> normal; // cross of u and v
-    vec3<int_11> w; // dot of u and v
-    int_12 d_plane;
-};
-
+#include "HitRecord.h"
+#include "SphHit.h"
+#include "QuadHit.h"
 
 #define WS_MAX_X 1023
 #define WS_MAX_Y 1023
@@ -127,3 +108,7 @@ struct quad_hittable {
 #define METAL 0
 #define MIRROR 1
 #define EMISSIVE 2
+
+// smallest value that can be represented with 22 fractional bits
+#define SMALLEST 2.384185791015625e-07
+
