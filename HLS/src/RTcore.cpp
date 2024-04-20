@@ -1,5 +1,5 @@
-#ifndef RENDER_TOP_CPP
-#define RENDER_TOP_CPP
+#ifndef RTCORE_CPP
+#define RTCORE_CPP
 
 
 #ifdef __SYNTHESIS__
@@ -34,37 +34,34 @@ public:
     {
         // will initialize the variables and all
         // find a way to find max buffer size
-        paramsDeserializer.run(img_params_in, num_spheres, num_quads, renderer_params, outputSerializerParams);
+        paramsDeserializer.run(img_params_in, num_spheres, num_quads, renderer_params, accumulator_params);
 
         sphereBuffer.run(sphere_serial, spheres_out, num_spheres);
         quadsBuffer.run(quad_serial, quads_out, num_quads);
 
-        renderer.run(renderer_params, spheres_out, quads_out, output_pxl);
+        renderer.run(renderer_params, spheres_out, quads_out, pxl_sample);
 
-        outputSerializer.run(output_pxl, output_pxl_serial, outputSerializerParams);   
+        pixelAccumulator.run(accumulator_params, pxl_sample, output_pxl_serial);
+        // HAVE AN ACCUMULATOR 
     }
 
 private:
     ParamsDeserializer paramsDeserializer;
-    
-    Serializer<PackedInt<OUTPUT_PRECISION, ARRAY_DIMENSION>, ODTYPE, ARRAY_DIMENSION, ACCUMULATION_BUFFER_SIZE> outputSerializer;
-    ac_channel<Params> outputSerializerParams;
+    SphereBuffer sphereBuffer;
+    QuadsBuffer quadsBuffer;
+    RendererWrapper renderer;
+    PixelAccumulator pixelAccumulator;
 
-    InputDoubleBuffer<INPUT_BUFFER_SIZE, ARRAY_DIMENSION, ARRAY_DIMENSION> inputDoubleBuffer;
+    ac_channel<rgb_t<sfp_9_10>> pxl_color_out;
     ac_channel<Params> sphere_md_buffer;
-
-    WeightDoubleBuffer<WEIGHT_BUFFER_SIZE, ARRAY_DIMENSION, ARRAY_DIMENSION> weightDoubleBuffer;
     ac_channel<Params> quad_md_buffer;
-    
-    ac_channel<sphere_hittable[MAX_SPHERES]> spheres_out;
-    ac_channel<quad_hittable[MAX_QUADS]> quads_out;
-    ac_channel<rgb_t> output_pxl;    
-
-    rendererWrapper renderer;
+    ac_channel<sphere_hittable> spheres_out;
+    ac_channel<quad_hittable> quads_out;
     ac_channel<img_params> renderer_params;
-
+    ac_channel<img_params> accumulator_params;
     ac_channel<int_11> num_spheres;
     ac_channel<int_11> num_quads;
+    ac_channel<rgb_t<sfp_9_10>> pxl_sample;
 };
 
 #endif

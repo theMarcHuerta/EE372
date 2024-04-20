@@ -9,7 +9,9 @@
 
 #include "RTcore.h"
 #include "ShaderCores.h"
+#include "Shader.h"
 #include "RayGeneration.h"
+#include "PixelAccumulator.h"
 
 // Include mc_scverify.h for CCS_* macros
 #include <mc_scverify.h>
@@ -22,36 +24,24 @@ public:
 
 #pragma hls_design interface
 void run(ac_channel<img_params> &render_params,
-         ac_channel<pxl_params> &pxlparamsOut,
-         ac_channel<pxl_deltas> &deltasOut,
+         ac_channel<img_params> &render_params_out,
          ac_channel<LoopIndices> &loopIndicesOut)
     {
-        // -------------------------------
-        // Generate the loop indices here for the systolic array.
-        // Write the loop indices as well as the params out to channels.
-        // Your code starts here
         LoopIndices temp_idxs;
         img_params tmp_params;
-        pxl_params tmp_pxl_params;
-        pxl_deltas tmp_deltas;
-        //outer loop
-        tmp_param = render_params.read();
-        for (int fy = 0; fy < tmp_param.image_height; fy++){
+
+        tmp_params = render_params.read();
+        for (int fy = 0; fy < tmp_params.image_height; fy++){
             temp_idxs.y_pxl = fy;
-            for (int fx = 0; fx < tmp_param.image_width; fx++){
+            for (int fx = 0; fx < tmp_params.image_width; fx++){
                 temp_idxs.x_pxl = fx;
-                tmp_pxl_params.center = tmp_params.center;
-                tmp_pxl_params.pixel00_loc = tmp_params.pixel00_loc;
-                tmp_deltas.pixel_delta_u = tmp_params.pixel_delta_u;
-                tmp_deltas.pixel_delta_v = tmp_params.pixel_delta_v;
-                deltasOut.write(tmp_deltas);
-                tmp_pxl_params.write(tmp_tmp_pxl_paramseltas);
-                loopIndicesOut.write(temp_idxs); // write idxs adn params
-                paramsOut.write(tmp_param);
+                for (int samps = 0; samps < tmp_params.samp_per_pxl; samps++){
+                    temp_idxs.cur_samp = samps;
+                    render_params_out.write(temp_idxs)
+                    loopIndicesOut.write(temp_idxs); 
+                }
             }
         }
-        // Your code ends here
-        // -------------------------------
     }
 };
 
@@ -64,21 +54,24 @@ public:
     void run(ac_channel<sphere_hittable> &spheres_in,
              ac_channel<quad_hittable> &quads_in, 
              ac_channel<img_params> &render_params,
-            ac_channel<rgb_t> &output_pxl,)
+             ac_channel<rgb_t<sfp_9_10>> &output_pxl_sample)
     {
-        renderLooper.run(render_params, pxlparams, deltas, paramsChannel, loopIndicesChannel);
-        rayGeneration.run(loopIndicesChannel, pxlparams, deltas, bigRay); // TO DO ADD LOOP INDICIES OUT CHANNEL
-        shaderCores.run(bigRay, spheres_in, quads_in, paramsChannel, loopIndicesChannel);
+        renderLooper.run(render_params, paramsChanneltoRayGen, loopIndicesChanneltoRayGen);
+        rayGeneration.run(loopIndicesChanneltoRayGen, paramsChanneltoRayGen, loopIndicesChanneltoShader, paramsChanneltoShader, bigRay); // TO DO ADD LOOP INDICIES OUT CHANNEL
+        shaderCores.run(paramsChanneltoShader, loopIndicesChanneltoShader, bigRay, spheres_in, quads_in, output_pxl_sample);
     }
 private:
     RenderLooper renderLooper;
     RayGenerationWrapper rayGeneration;
     ShaderCores shaderCores;
+
     ac_channel<ray> bigRay;
-    ac_channel<img_params> paramsChannel;
-    ac_channel<LoopIndices> loopIndicesChannel;
-    ac_channel<pxl_params> &pxlparams;
-    ac_channel<pxl_deltas> &deltas;
+    ac_channel<img_params> paramsChanneltoRayGen;
+    ac_channel<img_params> paramsChanneltoShader;
+    ac_channel<LoopIndices> loopIndicesChanneltoRayGen;
+    ac_channel<LoopIndices> loopIndicesChanneltoShader;
+    ac_channel<pxl_params> pxlparams;
+    ac_channel<pxl_deltas> deltas;
 };
 
 #endif

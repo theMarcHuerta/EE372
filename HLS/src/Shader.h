@@ -19,10 +19,10 @@ public:
                         ac_channel<quad_hittable> &quad_in,
                         ac_channel<quad_hittable> &sphere_in,
                         ac_channel<ray> &ray_in,
-                        ac_channel<rgb_t<sfp_9_10>> attenuation_chan_in,
-                        ac_channel<rgb_t<sfp_9_10>> accumalated_color_chan_in,
-                        ac_channel<rgb_t<sfp_9_10>> attenuation_chan_out,
-                        ac_channel<rgb_t<sfp_9_10>> accumalated_color_out,
+                        ac_channel<rgb_t<sfp_9_10>> &attenuation_chan_in,
+                        ac_channel<rgb_t<sfp_11_10>> &accumalated_color_chan_in,
+                        ac_channel<rgb_t<sfp_9_10>> &attenuation_chan_out,
+                        ac_channel<rgb_t<sfp_11_10>> &accumalated_color_out,
                         ac_channel<ray> &ray_out,
             )
     {   
@@ -40,6 +40,7 @@ public:
         if (!isHit) {
             accumulated_color += atten_in * params.background; // HAVE TO MAKE SURE I CHOP THIS INTO THE RIGHT FORMAT HERE, TURN BACKGROUND HERE INTO LONGER FORMAT FP
         }
+        // JUST DO ALL OF THE ABOVE IN WORLD HIT
 
         //add secondary ray logic in later
         // // After the first iteration, any ray is considered a secondary ray

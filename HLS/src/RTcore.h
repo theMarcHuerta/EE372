@@ -23,7 +23,8 @@ typedef ac_int<12, true> int_12; /// 11bits
 typedef ac_int<22, false> uint_22; /// 11bits
 typedef ac_fixed<23, 1, false> fp_1_22; // TO DO CHANGE THIS TO ufp for unsigned fixed point
 typedef ac_fixed<25, 3, true> sfp_3_22;
-typedef ac_fixed<19, 9, true> sfp_9_10; // leave an overflow bit + precision of 1/1000
+typedef ac_fixed<19, 9, false> sfp_9_10; // leave an overflow bit + precision of 1/1000
+typedef ac_fixed<19, 9, false> sfp_18_10; //8 shader cores means max sum is 2048 = 8 * 256
 typedef ac_fixed<33, 11, true> sfp_11_22; // signed fixed point
 
 typedef ac_int<8, false> uint_8;
@@ -65,7 +66,7 @@ struct img_params {
 //   uint_2 aspect_ratio; // 
   int_11          num_spheres;
   int_11          num_quads;
-  uint_2          samp_per_pxl; // 64-128-256-512
+  uint_2          samp_per_pxl; // 64-256-512-1024
 //   uint_2 vfov; // 20,40,60,80
   rgb_t           background;
 //   vec3<int_11> lookfrom;
@@ -86,6 +87,7 @@ struct img_params {
 struct LoopIndices{
     uint_11 x_pxl;
     uint_11 y_pxl;
+    uint_11 cur_samp;
 };
 
 
@@ -120,6 +122,8 @@ struct quad_hittable {
 #define WS_MIN_X -1024
 #define WS_MIN_Y -1024
 #define WS_MIN_Z -1024
+#define NUM_SHADER_CORES 8
 
 #define METAL 0
 #define MIRROR 1
+#define EMISSIVE 2
