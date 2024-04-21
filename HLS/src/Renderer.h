@@ -57,21 +57,19 @@ public:
              ac_channel<rgb_t<sfp_9_10>> &output_pxl_sample)
     {
         renderLooper.run(render_params, paramsChanneltoRayGen, loopIndicesChanneltoRayGen);
-        rayGeneration.run(loopIndicesChanneltoRayGen, paramsChanneltoRayGen, loopIndicesChanneltoShader, paramsChanneltoShader, bigRay); // TO DO ADD LOOP INDICIES OUT CHANNEL
-        shaderCores.run(paramsChanneltoShader, loopIndicesChanneltoShader, bigRay, spheres_in, quads_in, output_pxl_sample);
+        rayGeneration.run(loopIndicesChanneltoRayGen, paramsChanneltoRayGen, loopIndicesChanneltoShader, paramsChanneltoShader, rayOut); // TO DO ADD LOOP INDICIES OUT CHANNEL
+        shaderCores.run(paramsChanneltoShader, loopIndicesChanneltoShader, rayOut, spheres_in, quads_in, output_pxl_sample);
     }
 private:
     RenderLooper renderLooper;
-    RayGenerationWrapper rayGeneration;
+    RayGeneration rayGeneration;
     ShaderCores shaderCores;
 
-    ac_channel<ray> bigRay;
+    ac_channel<ray> rayOut;
     ac_channel<img_params> paramsChanneltoRayGen;
     ac_channel<img_params> paramsChanneltoShader;
     ac_channel<LoopIndices> loopIndicesChanneltoRayGen;
     ac_channel<LoopIndices> loopIndicesChanneltoShader;
-    ac_channel<pxl_params> pxlparams;
-    ac_channel<pxl_deltas> deltas;
 };
 
 #endif

@@ -16,61 +16,54 @@ class RayGeneration
     RayGeneration(){ } // on reset these will be the values
     
     #pragma hls_design interface
-    void CCS_BLOCK(run)(ac_channel<pxl_deltas> &pixelDeltas, // do i need to make it so i can fetch on command
-                        ac_channel<pxl_params> &pixelParams,
-                        ac_channel<small_vec3> &pixelSampleSquare,
-                        ac_channel<LoopIndices> &loopIndicesIn,
-                        ac_channel<ray> &bigRay)
+    void CCS_BLOCK(run)(ac_channel<LoopIndices> &loopIndicesIn,
+                        ac_channel<img_params> &paramsIn, // do i need to make it so i can fetch on command
+                        ac_channel<LoopIndices> &loopIndicesOut,
+                        ac_channel<img_params> &paramsOut,
+                        ac_channel<ray> &rayOut)
     {
-      pxl_deltas tmpDelts;
-      tmpDelts.read(pixelDeltas);
-      pxl_params tmp_params;
-      tmp_params.read(pixelParams);
-      pixel_center = tmp_params.pixel00_loc + (loopIndicesIn.x_pxl * tmpDelts.pixel_delta_u) + (loopIndicesIn.y_pxl * tmpDelts.pixel_delta_v);  // Center of the pixel.
-      pixel_sample = tmp_params.center + pixelSampleSquare;  // Apply random sampling within the pixel for anti-aliasing.
-      ray tmp_ray;
-      tmp_ray.origin = center;  // Ray starts at the camera's position.
-      tmp_ray.ray_direction = pixel_sample - ray_origin;  // Direction from camera to sampled point.
-      bigRay.write(tmp_ray)
+      img_params tmp_params;
+      tmp_params = render_params.read();
+      for (int fy = 0; fy < tmp_params.image_height; fy++){
+        for (int fx = 0; fx < tmp_params.image_width; fx++){
+          for (int samps = 0; samps < tmp_params.samp_per_pxl; samps++){
+            deltUMul.run(loopIndicesIn.x_pxl, tmp_params.pixel_delta_u, deltaUIndexMultOut);
+            deltVMul.run(loopIndicesIn.y_pxl, tmp_params.pixel_delta_v, deltaVIndexMultOut);
+            deltAdd.run(deltaUIndexMultOut, deltaVIndexMultOut, deltsOut);
+            vec3<sfp_11_22> deltsOutBitExt;
+            deltsOutBitExt.x = deltsOut.x;
+            deltsOutBitExt.y = deltsOut.y;
+            deltsOutBitExt.z = deltsOut.z;
+            locDeltsAdd.run(deltsOutBitExt, tmp_params.pixel00_loc, pixelCenter);
+            pixelSampleSquare.run(tmp_params, pixelSampleSquareOut);
+            sampleAdd.run(pixelCenter, pixelSampleSquareOut, pixelSample);
+            ray tmp_ray;
+            tmp_ray.origin = paramsIn.center;  // Ray starts at the camera's position.
+            rayDiff.run(pixelSample, paramsIn.center, tmp_ray.ray_direction);  // Direction from camera to sampled point.
+            rayOut.write(tmp_ray);
+          }
+        }
+      }
     }
 
   private:
+    Vec3_mult_s<sfp_11_22> deltUMul;
+    Vec3_mult_s<sfp_11_22> deltVMul;
+    Vec3_mult_s<sfp_11_22> vecMul2;
+    Vec3_add<sfp_4_22> deltAdd;
+    Vec3_add<sfp_11_22> locDeltsAdd;
+    Vec3_add<sfp_11_22> sampleAdd;
+    Vec3_sub<sfp_11_22> rayDiff;
 
-    ws_point_full_fp pixel_center
-    ws_point_full_fp pixel_sample
     sfp_3_22 rnum1;
     sfp_3_22 rnum2;
+    vec3<sfp_3_22> pixelSampleSquareOut;
+    vec3<sfp_11_22> deltaUIndexMultOut;
+    vec3<sfp_11_22> deltaVIndexMultOut;
+    vec3<sfp_11_22> deltsOut;
+    vec3<sfp_11_22> pixelCenter;
+    vec3<sfp_11_22> pixelSample;
     static const fp_1_22 point_five = 1<<21; // supposed to be .5
 
 };
-
-
-
-class RayGenerationWrapper
-{
-public:
-    RayGenerationWrapper(){}
-    
-#pragma hls_design interface
-    void run(ac_channel<pxl_deltas> &pixelDeltas, // do i need to make it so i can fetch on command
-              ac_channel<pxl_params> &pixelParams,
-              ac_channel<LoopIndices> &loopIndicesIn,
-              ac_channel<ray> &bigRay)
-    {
-      pixelSampleSquare.run(pixelDeltas, outputPxlSampSq, pixelDeltasChannel);
-      rayGeneration.run(pixelDeltasChannel, pixelParams, outputPxlSampSq, loopIndicesIn, bigRay)
-    }
-private:
-    RenderLooper renderLooper;
-    RayGeneration rayGeneration;
-    ShaderCores shaderCores;
-    ac_channel<ray> bigRay;
-    ac_channel<img_params> paramsChannel;
-    ac_channel<LoopIndices> loopIndicesChannel;
-    ac_channel<small_vec3> pixelSampleSquare
-    PixelSampleSquare pixelSampleSquare;
-    ac_channel<small_vec3> outputPxlSampSq;
-    ac_channel<pxl_deltas> pixelDeltasChannel;
-};
-
 

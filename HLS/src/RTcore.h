@@ -23,6 +23,7 @@ typedef ac_int<12, true> int_12; /// 11bits
 typedef ac_int<22, false> uint_22; /// 11bits
 typedef ac_fixed<23, 1, false> fp_1_22; // TO DO CHANGE THIS TO ufp for unsigned fixed point
 typedef ac_fixed<25, 3, true> sfp_3_22;
+typedef ac_fixed<26, 4, true> sfp_4_22;
 typedef ac_fixed<19, 9, false> sfp_9_10; // leave an overflow bit + precision of 1/1000
 typedef ac_fixed<19, 9, false> sfp_18_10; //8 shader cores means max sum is 2048 = 8 * 256
 typedef ac_fixed<33, 11, true> sfp_11_22; // signed fixed point
@@ -76,8 +77,8 @@ struct img_params {
   uint_10         image_width;   // Height of the image, computed from width and aspect ratio.
   vec3<int_11>        center;         // The position of the camera (same as lookfrom).
   vec3_fp_11_22   pixel00_loc;    // Location in space of the top-left pixel.
-  vec3_fp_11_22   pixel_delta_u;  // Vector to move one pixel to the right on the image plane.
-  vec3_fp_11_22   pixel_delta_v;  // Vector to move one pixel down on the image plane.
+  sfp_3_22   pixel_delta_u;  // Vector to move one pixel to the right on the image plane.
+  sfp_3_22   pixel_delta_v;  // Vector to move one pixel down on the image plane.
 //   cam_params(uint_2 a, uint_2 b, uint_2 c) {
 //     aspect_ratio=a;
 //     samp_per_pxl=b;

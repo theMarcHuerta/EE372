@@ -20,33 +20,34 @@ class PixelSampleSquare
   public:
     PixelSampleSquare(){ } // on reset these will be the values
     
-    #pragma hls_design interface
-    void CCS_BLOCK(run)(ac_channel<pxl_deltas> &pixelDeltas, // do i need to make it so i can fetch on command
-                        ac_channel<small_vec3> &output_num,
-                        ac_channel<pxl_deltas> &output_delts)
+    void CCS_BLOCK(run)(ac_channel<img_params> &paramsIn, // do i need to make it so i can fetch on command
+                        vec3<sfp_3_22> &output_num)
     {
-      // should i just make it loop through all the pixels too or what?
-      for (int i = 0; i < 8; i++){
-        rand1.run(, rnum1);
-        rand2.run(, rnum2);
-        pxl_deltas tmp_delts;
-        tmp_delts = pixelDeltas.read();
-        sfp_3_22 px = point_five + rnum1;  // Random offset in the x direction. IS SUPPOSED TO CHOP OFF
-        sfp_3_22 py = point_five + rnum2;  // Random offset in the y direction.
-        small_vec3 tmp_out = (px * tmp_delts.pixel_delta_u) + (py * tmp_delts.pixel_delta_v);  // Adjust by pixel size. NEED OPERATOR OVERLOADER HERE OR JUST HAND DO IT
-        // also for the above statement i hope it can convert to full on 11-22 format
-        output_num.write(tmp_out)
-        output_delts.write(tmp_delts);
-      }
+      rand1.run(rnum1);
+      rand2.run(rnum2);
+      px = rnum1 - point_five;  // Random offset in the x direction. IS SUPPOSED TO CHOP OFF
+      py = rnum2 - point_five;  // Random offset in the y direction.
+      vecMul1.run(paramsIn.pixel_delta_u, px, multOut1);
+      vecMul2.run(paramsIn.pixel_delta_v, py, multOut2);
+      output_num.x = multOut1.x multOut2.x;
+      output_num.y = multOut1.y multOut2.y;
+      output_num.z = multOut1.z multOut2.z;
     }
 
   private:
 
-    Rand(13301) rand1;
-    Rand(230682) rand2;
+    Rand_val<sfp_3_22>(13301) rand1;
+    Rand_val<sfp_3_22>(230682) rand2;
+    Vec3_mult_s<sfp_3_22> vecMul1;
+    Vec3_mult_s<sfp_3_22> vecMul2;
     sfp_3_22 rnum1;
     sfp_3_22 rnum2;
-    static const fp_1_22 point_five = 1<<21; // supposed to be .5
+    sfp_3_22 px;
+    sfp_3_22 py;
+    vec3<sfp_3_22> multOut1;
+    vec3<sfp_3_22> multOut2;
+
+    static const sfp_3_22 point_five = 1<<21; // supposed to be .5
 
 };
 
