@@ -11,10 +11,10 @@ CCS_MAIN(int argc, char** argv) {
     // initialize arguments
     ray<sfp_11_22> r = {{0, 0, 0}, {1, 0, 0}};  // ray pointing along +x axis
     sfp_11_22 closest_so_far = WS_MAX_X;
-    sphere_hittable sphere0 = {{11, 0, 0}, 1, METAL};   // first sphere
-    sphere_hittable sphere1 = {{6, 0, 0}, 1, MIRROR};   // second sphere
-    sphere_hittable sphere2 = {{18, 0, 0}, 2, METAL};   // third sphere
-    HitRecord<sfp_11_22> rec = {{0, 0, 0}, {0, 0, 0}, false, WS_MIN_X, 0, 0, MIRROR};
+    sphere_hittable sphere0 = {{11, 0, 0}, 1, METAL, {255, 255, 255}};   // first sphere
+    sphere_hittable sphere1 = {{6, 0, 0}, 1, MIRROR, {255, 255, 255}};   // second sphere
+    sphere_hittable sphere2 = {{18, 0, 0}, 2, METAL, {255, 255, 255}};   // third sphere
+    HitRecord<sfp_11_22> rec = {{0, 0, 0}, {0, 0, 0}, false, WS_MIN_X, 0, 0, MIRROR, {0, 0, 0}};
 
     inst.run(r, closest_so_far, sphere0, rec);
 

@@ -11,7 +11,7 @@ struct HitRecord {
     T u;
     T v;
     uint_2 mat;
-    vec3<int_11> color;
+    rgb_t color;
 
 };
 
