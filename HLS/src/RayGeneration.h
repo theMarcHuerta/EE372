@@ -20,7 +20,7 @@ class RayGeneration
                         ac_channel<img_params> &paramsIn, // do i need to make it so i can fetch on command
                         ac_channel<LoopIndices> &loopIndicesOut,
                         ac_channel<img_params> &paramsOut,
-                        ac_channel<ray> &rayOut)
+                        ac_channel<ray<sfp_11_22>> &rayOut)
     {
       img_params tmp_params;
       tmp_params = render_params.read();
@@ -37,7 +37,7 @@ class RayGeneration
             locDeltsAdd.run(deltsOutBitExt, tmp_params.pixel00_loc, pixelCenter);
             pixelSampleSquare.run(tmp_params, pixelSampleSquareOut);
             sampleAdd.run(pixelCenter, pixelSampleSquareOut, pixelSample);
-            ray tmp_ray;
+            ray<sfp_11_22> tmp_ray;
             tmp_ray.origin = paramsIn.center;  // Ray starts at the camera's position.
             rayDiff.run(pixelSample, paramsIn.center, tmp_ray.ray_direction);  // Direction from camera to sampled point.
             rayOut.write(tmp_ray);

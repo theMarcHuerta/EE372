@@ -17,7 +17,7 @@ public:
 #pragma hls_design interface
     void run(ac_channel<sphere_hittable> &spheres_in,
              ac_channel<quad_hittable> &quads_in, 
-             ac_channel<ray> &ray_in,
+             ac_channel<ray<sfp_11_22>> &ray_in,
              ac_channel<LoopIndices> &loop_in,
              ac_channel<img_params> &params_in,
              ac_channel<rgb_t<sfp_9_10>> &output_pxl_serial
@@ -73,7 +73,7 @@ private:
   Shader shader8;
   MemController memController;
 
-  ac_channel<ray> ray_out[8];
+  ac_channel<ray<sfp_11_22>> ray_out[8];
   ac_channel<rgb_t<sfp_9_10>> accumalated_color_chan[8];
   ac_channel<rgb_t<sfp_9_10>> attenuation_chan[9];
   ac_channel<sphere_hittable> sphere_in[8];

@@ -65,7 +65,7 @@ private:
     RayGeneration rayGeneration;
     ShaderCores shaderCores;
 
-    ac_channel<ray> rayOut;
+    ac_channel<ray<sfp_11_22>> rayOut;
     ac_channel<img_params> paramsChanneltoRayGen;
     ac_channel<img_params> paramsChanneltoShader;
     ac_channel<LoopIndices> loopIndicesChanneltoRayGen;

@@ -27,17 +27,15 @@ class SphereHit {
     Vec3_len_sq<T> len_squared;
     Vec3_dot<T> dot;
     Ray_at<T> ray_at;
+    static const T min_val = SMALLEST_INTERVAL;
   public:
-    SphereHit() {}
-
     // Method to determine if a ray intersects with a sphere
-    #pragma hls_design
+    #pragma hls_design ccore
     bool run(ray<T>& r, T& closest_so_far, sphere_hittable& sphere, HitRecord<T>& rec) { // NOT SURE WHETHER TO AC CHANNEL THE SPHERE HITABLE OR IF THE LOOP TAKES CARE OF THIS HMMM
 
         // create sphere hittable with compatible bit widths for arithmetic
         _sphere_hittable<T> _sphere = {{sphere.center.x, sphere.center.y, sphere.center.z},
-                                        sphere.radius, sphere.mat_type,
-                                        {sphere.sph_color.r, sphere.sph_color.g, sphere.sph_color.b}};
+                                        sphere.radius, sphere.mat_type};
 
         vec3<T> oc;  // Vector from ray orig to sphere center
         sub.run(r.orig, _sphere.center, oc);
@@ -63,16 +61,16 @@ class SphereHit {
 
         T root = (-half_b - sqrtd) / a;
 
-        if (root < 0 || root > closest_so_far) {
+        if (!((root < min_val) && (root > closest_so_far))) {
             root = (-half_b + sqrtd) / a;
-            if (root < 0 || root > closest_so_far)
+            if (!((root < min_val) && (root > closest_so_far)))
                 return false;
         }
 
         rec.t = root;
 
         ray_at.run(r, root, rec.hit_loc);
-        rec.color = _sphere.sph_color;
+        rec.color = sphere.sph_color;
 
         vec3<T> outward_normal;
         vec3<T> sub_result;

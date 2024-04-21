@@ -24,9 +24,11 @@ typedef ac_int<22, false> uint_22; /// 11bits
 typedef ac_fixed<23, 1, false> fp_1_22; // TO DO CHANGE THIS TO ufp for unsigned fixed point
 typedef ac_fixed<25, 3, true> sfp_3_22;
 typedef ac_fixed<26, 4, true> sfp_4_22;
-typedef ac_fixed<19, 9, false> sfp_9_10; // leave an overflow bit + precision of 1/1000
-typedef ac_fixed<19, 9, false> sfp_18_10; //8 shader cores means max sum is 2048 = 8 * 256
+typedef ac_fixed<19, 9, true> sfp_9_10; // leave an overflow bit + precision of 1/1000
+typedef ac_fixed<21, 11, true> sfp_11_10;
+typedef ac_fixed<28, 18, false> sfp_18_10; //8 shader cores means max sum is 2048 = 8 * 256
 typedef ac_fixed<33, 11, true> sfp_11_22; // signed fixed point
+typedef ac_fixed<34, 12, false> fp_12_22; // signed fixed point
 
 typedef ac_int<8, false> uint_8;
 typedef ac_int<64, false> uint_64;
@@ -88,7 +90,6 @@ struct LoopIndices{
     uint_11 cur_samp;
 };
 
-
 struct pxl_params {
   vec3<int_11>        center;
   vec3_fp_11_22   pixel00_loc;    // Location in space of the top-left pixel.
@@ -105,11 +106,14 @@ struct pxl_params {
 #define WS_MIN_Y -1024
 #define WS_MIN_Z -1024
 #define NUM_SHADER_CORES 8
+#define LONGEST_DISTANCE 2896
+// from point to point in the 2048x2048 box
 
-#define METAL 0
-#define MIRROR 1
+#define LAMBERTIAN 0
+#define METAL 1
 #define EMISSIVE 2
 
 // smallest value that can be represented with 22 fractional bits
 #define SMALLEST 2.384185791015625e-07
+#define SMALLEST_INTERVAL 0.0009765625
 
