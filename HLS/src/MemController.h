@@ -33,9 +33,9 @@ public:
         LoopIndices temp_idxs;
         img_params tmp_params;
         
-        tmp_param = render_params.read();
-        for (int fy = 0; fy < tmp_param.image_height; fy++){
-            for (int fx = 0; fx < tmp_param.image_width; fx++){
+        tmp_params = render_params.read();
+        for (int fy = 0; fy < tmp_params.image_height; fy++){
+            for (int fx = 0; fx < tmp_params.image_width; fx++){
                 for (int samps = 0; samps < tmp_params.samp_per_pxl; samps++){
                     temp_idxs = loop_in.read();
                     tmp_sphere = spheres_in.read();

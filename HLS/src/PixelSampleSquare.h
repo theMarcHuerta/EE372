@@ -20,7 +20,7 @@ class PixelSampleSquare
   public:
     PixelSampleSquare(){ } // on reset these will be the values
     
-    void CCS_BLOCK(run)(ac_channel<img_params> &paramsIn, // do i need to make it so i can fetch on command
+    void CCS_BLOCK(run)(img_params &paramsIn, // do i need to make it so i can fetch on command
                         vec3<sfp_3_22> &output_num)
     {
       rand1.run(rnum1);
