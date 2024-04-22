@@ -39,7 +39,7 @@ class QuadHit {
   public:
     QuadHit() {}
 
-    #pragma hls_design
+    #pragma hls_design ccore
     bool run(ray<T>& r, T& closest_so_far, quad_hittable& quad, HitRecord<T>& rec) {
         // // read in data from channels
         // Ray r = rays.read();

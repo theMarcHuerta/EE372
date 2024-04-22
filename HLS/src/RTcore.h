@@ -13,6 +13,24 @@
 #include <ac_channel.h>
 #include <mc_scverify.h>
 
+#define WS_MAX_X 1023
+#define WS_MAX_Y 1023
+#define WS_MAX_Z 1023
+#define WS_MIN_X -1024
+#define WS_MIN_Y -1024
+#define WS_MIN_Z -1024
+#define NUM_SHADER_CORES 8
+#define LONGEST_DISTANCE 2896
+// from point to point in the 2048x2048 box
+
+#define LAMBERTIAN 0
+#define METAL 1
+#define EMISSIVE 2
+
+// smallest value that can be represented with 22 fractional bits
+#define SMALLEST 2.384185791015625e-07
+#define SMALLEST_INTERVAL 0.0009765625
+
 typedef ac_int<1, false> pbool;
 typedef ac_int<2, false> uint_2;
 typedef ac_int<8, false> uint_8; //mostly for rgb
@@ -98,22 +116,4 @@ struct pxl_params {
 #include "HitRecord.h"
 #include "SphHit.h"
 #include "QuadHit.h"
-
-#define WS_MAX_X 1023
-#define WS_MAX_Y 1023
-#define WS_MAX_Z 1023
-#define WS_MIN_X -1024
-#define WS_MIN_Y -1024
-#define WS_MIN_Z -1024
-#define NUM_SHADER_CORES 8
-#define LONGEST_DISTANCE 2896
-// from point to point in the 2048x2048 box
-
-#define LAMBERTIAN 0
-#define METAL 1
-#define EMISSIVE 2
-
-// smallest value that can be represented with 22 fractional bits
-#define SMALLEST 2.384185791015625e-07
-#define SMALLEST_INTERVAL 0.0009765625
 

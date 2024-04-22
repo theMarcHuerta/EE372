@@ -27,8 +27,9 @@ class SphereHit {
     Vec3_len_sq<T> len_squared;
     Vec3_dot<T> dot;
     Ray_at<T> ray_at;
-    static const T min_val = SMALLEST_INTERVAL;
   public:
+    SphereHit() {}
+
     // Method to determine if a ray intersects with a sphere
     #pragma hls_design ccore
     bool run(ray<T>& r, T& closest_so_far, sphere_hittable& sphere, HitRecord<T>& rec) { // NOT SURE WHETHER TO AC CHANNEL THE SPHERE HITABLE OR IF THE LOOP TAKES CARE OF THIS HMMM
@@ -61,9 +62,9 @@ class SphereHit {
 
         T root = (-half_b - sqrtd) / a;
 
-        if (!((root < min_val) && (root > closest_so_far))) {
+        if (!((root > SMALLEST_INTERVAL) && (root < closest_so_far))) {
             root = (-half_b + sqrtd) / a;
-            if (!((root < min_val) && (root > closest_so_far)))
+            if (!((root > SMALLEST_INTERVAL) && (root < closest_so_far)))
                 return false;
         }
 
