@@ -96,10 +96,12 @@ public:
             colorAdd.run(colorMulOut, tmp_color_in, colorAddOut);
             accumalated_color_out.write(colorAddOut);
             isHit.write(false);
+            hit_out.write(rec_quad);  // doesnt really matter which one we write out as long as we write somethign out
         }
 
-        accumalated_color_out.write(tmp_accum_in);
         ray_out.write(ray_temp);
+        params_out.write(tmp_params);
+        attenuation_chan_out.write(tmp_accum_in);
 
     }
 
