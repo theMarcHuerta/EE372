@@ -56,10 +56,7 @@ public:
         bool readHit;
         readHit = read.write(isHit);
 
-        rgb_in max_atten;
-        max_atten.r = 1;
-        max_atten.g = 1;
-        max_atten.b = 1;
+        rgb_in max_atten = {1, 1, 1};
 
         if (!readHit){
             attenuation_chan_out.write(max_atten);
@@ -92,8 +89,8 @@ public:
 x            }
             else if (tmp_rec.mat == EMISSIVE){ //emission
                 rgb_in colorMulOut;
-                colorMul.run(tmp_atten_in, tmp_rec.color, colorMulOut);
-                colorAdd.run(colorMulOut, tmp_color_in, color_out);
+                colorMul3.run(tmp_atten_in, tmp_rec.color, colorMulOut);
+                colorAdd3.run(colorMulOut, tmp_color_in, color_out);
                 attenuation_from_scatter = max_atten; // MAKE OUT ATTENTUATION OR FIND A WAY TO STOP REST OF PIPELINE FROM ACCUMULING
                 scattered_ray = tmp_ray;
             }
@@ -106,7 +103,6 @@ x            }
 
 private:
     HitRecord<T> rec;
-    bool hitWorld;
     LambertianScatter<T> lambertianScatter;
     MetalScatter<T, D> metalScatter;
     
@@ -115,6 +111,4 @@ private:
     Vec3_mult_s<D> colorMul3;
     Vec3_add<D> colorAdd3;
 
-    rgb_in backgroundColor;
-    HitRecord rec;
 };
