@@ -15,7 +15,7 @@ class MetalScatter {
         vec3<D> fuzzy_rand; // made type D bc it we just add this with reflected and it'all auto extend bit width
         vec3<T> new_ray_dir;
 
-        unit.run(r.dir, normalized_ray_dir);
+        unit.run(r.dir, unit_ray_dir);
         reflect.run(unit_ray_dir, rec.normal, reflected);
 
         rand_unit.run(rand_dir);
