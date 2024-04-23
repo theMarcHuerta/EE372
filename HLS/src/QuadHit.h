@@ -11,7 +11,7 @@ struct quad_hittable {
     vec3<int_11> normal; // cross of u and v
     vec3<int_11> w; // dot of u and v
     int_12 d_plane;
-    rgb_t quad_color;
+    rgb_in quad_color;
 };
 
 // create an additional templatated version for the struct to allow for arithmetic in function, without screwing
@@ -26,7 +26,7 @@ struct _quad_hittable {
     vec3<T> normal; // cross of u and v
     vec3<T> w; // dot of u and v
     T d_plane;
-    rgb_t quad_color;
+    rgb_in quad_color;
 };
 
 template<typename T>

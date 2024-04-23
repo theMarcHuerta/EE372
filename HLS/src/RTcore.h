@@ -73,10 +73,16 @@ struct pxl_deltas {
   vec3<T> pixel_delta_v;
 };
 
-struct rgb_t { // standard sdr
-  int_11 r;
-  int_11 g;
-  int_11 b;
+struct rgb_in {
+  fp_1_22 r;
+  fp_1_22 g;
+  fp_1_22 b;
+};
+
+struct rgb_out {
+  uint_8 r;
+  uint_8 g;
+  uint_8 b;
 };
 
 struct img_params {
@@ -86,7 +92,7 @@ struct img_params {
   int_11          num_quads;
   uint_2          samp_per_pxl; // 64-256-512-1024
 //   uint_2 vfov; // 20,40,60,80
-  rgb_t           background;
+  rgb_in           background;
 //   vec3<int_11> lookfrom;
 //   vec3<int_11> lookat;
   // derrivied values (might just pass these in)
@@ -116,4 +122,9 @@ struct pxl_params {
 #include "HitRecord.h"
 #include "SphHit.h"
 #include "QuadHit.h"
+#include "LambertianScatter.h"
+#include "MetalScatter.h"
+#include "MaterialScatter.h"
+// #include "ShaderCores.h"
+// #include "RayGeneration.h"
 

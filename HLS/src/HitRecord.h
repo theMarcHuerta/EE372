@@ -11,7 +11,7 @@ struct HitRecord {
     T u;
     T v;
     uint_2 mat;
-    rgb_t color;
+    rgb_in color;
 
 };
 

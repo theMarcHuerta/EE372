@@ -6,7 +6,7 @@ struct sphere_hittable {
     vec3<int_11> center; // for quads its corner, sphere it's center
     uint_8 radius; // radius cant clip edge of range of ws view
     uint_2 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
-    rgb_t sph_color;
+    rgb_in sph_color;
 };
 
 // create an additional templatated version for the struct to allow for arithmetic in function, without screwing
@@ -16,7 +16,7 @@ struct _sphere_hittable {
     vec3<T> center;
     T radius;
     uint_2 mat_type;
-    rgb_t sph_color;
+    rgb_in sph_color;
 };
 
 template<typename T>
