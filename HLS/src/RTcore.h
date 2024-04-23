@@ -34,6 +34,7 @@
 
 typedef ac_int<1, false> pbool;
 typedef ac_int<2, false> uint_2;
+typedef ac_int<3, false> uint_3;
 typedef ac_int<8, false> uint_8; //mostly for rgb
 typedef ac_int<10, false> uint_10; /// 11bits
 typedef ac_int<11, false> uint_11; /// 11bits
@@ -91,7 +92,7 @@ struct img_params {
 //   uint_2 aspect_ratio; // 
   int_11          num_spheres;
   int_11          num_quads;
-  uint_2          samp_per_pxl; // 64-256-512-1024
+  uint_2          samp_per_pxl; // 32-64-256-1024
 //   uint_2 vfov; // 20,40,60,80
   rgb_in           background;
 //   vec3<int_11> lookfrom;

@@ -5,7 +5,7 @@
 struct sphere_hittable {
     vec3<int_11> center; // for quads its corner, sphere it's center
     uint_8 radius; // radius cant clip edge of range of ws view
-    uint_2 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
+    uint_3 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
     rgb_in sph_color;
 };
 

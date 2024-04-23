@@ -12,23 +12,23 @@
 // Include mc_scverify.h for CCS_* macros
 #include <mc_scverify.h>
 
-
+template<typename T, typename D>
 class WorldHit {
 public:
     WorldHit(){}
     // Function to find the closest hit from channels of spheres and quads
     #pragma hls_design ccore
     // #pragma hls_interface ap_ctrl_none port=return
-    void CCS_BLOCK(hit)(ac_channel<ray<sfp_11_22>>& ray_in,
+    void CCS_BLOCK(hit)(ac_channel<ray<T>>& ray_in,
              ac_channel<img_params> &params_in,
              ac_channel<sphere_hittable>& spheres, /// WHAT IS CORRECT WAY TO PASS IN RAM WANT TO READ 1 BY 1 AND PIPELINE READS; ONLY STORE CLOSEST
              ac_channel<quad_hittable>& quads,
-             ac_channel<rgb_t<sfp_9_10>> &attenuation_chan_in,
-             ac_channel<rgb_t<sfp_11_10>> &accumalated_color_chan_in,
-             ac_channel<rgb_t<sfp_9_10>> &attenuation_chan_out,
-             ac_channel<rgb_t<sfp_11_10>> &accumalated_color_out,
-             ac_channel<HitRecord<sfp_11_22>>& hit_out,
-             ac_channel<ray<sfp_11_22>> &ray_out,
+             ac_channel<rgb_in> &attenuation_chan_in,
+             ac_channel<rgb_in> &accumalated_color_chan_in,
+             ac_channel<rgb_in> &attenuation_chan_out,
+             ac_channel<rgb_in> &accumalated_color_out,
+             ac_channel<HitRecord<T>>& hit_out,
+             ac_channel<ray<T>> &ray_out,
              ac_channel<bool> &isHit,
              ac_channel<img_params> &params_out
              ) 
@@ -37,13 +37,13 @@ public:
         img_params tmp_params;
         tmp_params = params_in.read();
 
-        ray<sfp_11_22> ray_temp;
+        ray<T> ray_temp;
         ray_temp = ray_in.read(); 
 
-        rgb_t<sfp_9_10> tmp_color_in;
+        rgb_in tmp_color_in;
         tmp_color_in = accumalated_color_chan_in.read();
 
-        rgb_t<sfp_11_10> tmp_accum_in;
+        rgb_in tmp_accum_in;
         tmp_accum_in = attenuation_chan_in.read();
 
         bool sph_hit_anything = false;
@@ -57,7 +57,7 @@ public:
         // Process all spheres
         for (int i = 0; i < tmp_params.num_spheres; i++) { // FIGURE OUT TO LOOP THROUGH WITH STTI VERIBLES IN 272 THEY DID IT WITH VARIABLE ITERATION AMUNT
             sphere_hittable sph = spheres.read();
-            HitRecord temp_rec;
+            HitRecord<T> temp_rec;
             if (sphInters.hit(ray_temp, closest_so_far_sph , sph, temp_rec)) { // again see what the best return type and exact syntax is for this function call
                 sph_hit_anything = true;
                 closest_so_far_sph = temp_rec.t;// Update the closest hit distance.
@@ -90,9 +90,9 @@ public:
             accumalated_color_out.write(tmp_color_in);
         }
         else {
-            sfp_11_10 colorMulOut;
+            rgb_in colorMulOut;
             colorMul.run(tmp_accum_in, tmp_params.background, colorMulOut);
-            sfp_11_10 colorAddOut;
+            rgb_in colorAddOut;
             colorAdd.run(colorMulOut, tmp_color_in, colorAddOut);
             accumalated_color_out.write(colorAddOut);
             isHit.write(false);
@@ -104,11 +104,11 @@ public:
     }
 
 private:
-    SphereHit<sfp_11_22> sphInters;
-    QuadHit<sfp_11_22> quadInters;
-    Vec3_mult_s<sfp_11_10> colorMul;
-    Vec3_add<sfp_11_10> colorAdd;
+    SphereHit<T> sphInters;
+    QuadHit<T> quadInters;
+    Vec3_mult_s<D> colorMul;
+    Vec3_add<D> colorAdd;
 
-    HitRecord<sfp_11_22> rec_sphere;
-    HitRecord<sfp_11_22> rec_quad;
+    HitRecord<T> rec_sphere;
+    HitRecord<T> rec_quad;
 };

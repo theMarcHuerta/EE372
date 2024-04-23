@@ -6,7 +6,7 @@ struct quad_hittable {
     vec3<int_11> corner_pt; // for quads its corner
     vec3<int_11> u; // defining u component 
     vec3<int_11> v; // defining v componenet
-    uint_2 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
+    uint_3 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
     pbool is_invis;
     vec3<int_11> normal; // cross of u and v
     vec3<int_11> w; // dot of u and v
