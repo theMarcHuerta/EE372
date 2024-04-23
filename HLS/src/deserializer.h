@@ -84,7 +84,7 @@ void CCS_BLOCK(run)(ac_channel<int_11> &inputChannel1,
         outputChannel2.write(params);
         outputChannel3.write(image_params);
 
-        for (int i = 0; i < ; i++) {
+        for (int i = 0; i < image_params.image_height * image_params.image_width; i++) {
             outputChannel4.write(params);
         }
     }

@@ -22,27 +22,27 @@ class RayGeneration
                         ac_channel<img_params> &paramsOut,
                         ac_channel<ray<sfp_11_22>> &rayOut)
     {
-      img_params tmp_params;
-      tmp_params = render_params.read();
-      for (int fy = 0; fy < tmp_params.image_height; fy++){
-        for (int fx = 0; fx < tmp_params.image_width; fx++){
-          for (int samps = 0; samps < tmp_params.samp_per_pxl; samps++){
-            deltUMul.run(loopIndicesIn.x_pxl, tmp_params.pixel_delta_u, deltaUIndexMultOut);
-            deltVMul.run(loopIndicesIn.y_pxl, tmp_params.pixel_delta_v, deltaVIndexMultOut);
-            deltAdd.run(deltaUIndexMultOut, deltaVIndexMultOut, deltsOut);
-            vec3<sfp_11_22> deltsOutBitExt;
-            deltsOutBitExt.x = deltsOut.x;
-            deltsOutBitExt.y = deltsOut.y;
-            deltsOutBitExt.z = deltsOut.z;
-            locDeltsAdd.run(deltsOutBitExt, tmp_params.pixel00_loc, pixelCenter);
-            pixelSampleSquare.run(tmp_params, pixelSampleSquareOut);
-            sampleAdd.run(pixelCenter, pixelSampleSquareOut, pixelSample);
-            ray<sfp_11_22> tmp_ray;
-            tmp_ray.origin = paramsIn.center;  // Ray starts at the camera's position.
-            rayDiff.run(pixelSample, paramsIn.center, tmp_ray.ray_direction);  // Direction from camera to sampled point.
-            rayOut.write(tmp_ray);
-          }
-        }
+      #ifndef __SYNTHESIS__
+      while(paramsIn.available(1))
+      #endif
+      {
+        img_params tmp_params;
+        tmp_params = render_params.read();
+        
+        deltUMul.run(loopIndicesIn.x_pxl, tmp_params.pixel_delta_u, deltaUIndexMultOut);
+        deltVMul.run(loopIndicesIn.y_pxl, tmp_params.pixel_delta_v, deltaVIndexMultOut);
+        deltAdd.run(deltaUIndexMultOut, deltaVIndexMultOut, deltsOut);
+        vec3<sfp_11_22> deltsOutBitExt;
+        deltsOutBitExt.x = deltsOut.x;
+        deltsOutBitExt.y = deltsOut.y;
+        deltsOutBitExt.z = deltsOut.z;
+        locDeltsAdd.run(deltsOutBitExt, tmp_params.pixel00_loc, pixelCenter);
+        pixelSampleSquare.run(tmp_params, pixelSampleSquareOut);
+        sampleAdd.run(pixelCenter, pixelSampleSquareOut, pixelSample);
+        ray<sfp_11_22> tmp_ray;
+        tmp_ray.origin = paramsIn.center;  // Ray starts at the camera's position.
+        rayDiff.run(pixelSample, paramsIn.center, tmp_ray.ray_direction);  // Direction from camera to sampled point.
+        rayOut.write(tmp_ray);
       }
     }
 
