@@ -71,7 +71,7 @@ public:
         // p much exact same as sph intersection with same questions
         for (int i = 0; i < tmp_params.num_quads; i++) {
             quad_hittable quad = quads.read();
-            HitRecord temp_rec;
+            HitRecord<T> temp_rec;
             if (quadInters.hit(ray_temp, closest_so_far_quad, quad, temp_rec)) {
                 quad_hit_anything = true;
                 closest_so_far_quad = temp_rec.t;

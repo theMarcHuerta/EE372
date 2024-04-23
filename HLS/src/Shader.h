@@ -43,7 +43,7 @@ private:
     ac_channel<rgb_in> attenuation_chan_through;
     ac_channel<rgb_in> accumalated_color_through;
     ac_channel<bool> isWorldHit;
-    ac_channel<HitRecord> worldRec;
+    ac_channel<HitRecord<T>> worldRec;
     ac_channel<img_params> paramsThrough;
 };
 
