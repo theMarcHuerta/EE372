@@ -24,8 +24,9 @@
 // from point to point in the 2048x2048 box
 
 #define LAMBERTIAN 0
-#define METAL 1
-#define EMISSIVE 2
+#define METAL_MIN 1
+#define METAL_MAX 6
+#define EMISSIVE 7
 
 // smallest value that can be represented with 22 fractional bits
 #define SMALLEST 2.384185791015625e-07
