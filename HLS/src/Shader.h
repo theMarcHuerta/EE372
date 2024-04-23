@@ -10,6 +10,7 @@
 // Include mc_scverify.h for CCS_* macros
 #include <mc_scverify.h>
 
+template<typename T, typename D>
 class Shader
 {
 public:
@@ -19,12 +20,12 @@ public:
     void CCS_BLOCK(run)(ac_channel<img_params> &params_in,
                         ac_channel<quad_hittable> &quad_in,
                         ac_channel<sphere_hittable> &sphere_in,
-                        ac_channel<ray<sfp_11_22>> &ray_in,
-                        ac_channel<rgb_t<sfp_9_10>> &attenuation_chan_in,
-                        ac_channel<rgb_t<sfp_11_10>> &accumalated_color_chan_in,
-                        ac_channel<rgb_t<sfp_9_10>> &attenuation_chan_out,
-                        ac_channel<rgb_t<sfp_11_10>> &accumalated_color_out,
-                        ac_channel<ray<sfp_11_22>> &ray_out
+                        ac_channel<ray<T>> &ray_in,
+                        ac_channel<rgb_in> &attenuation_chan_in,
+                        ac_channel<rgb_in> &accumalated_color_chan_in,
+                        ac_channel<rgb_in> &attenuation_chan_out,
+                        ac_channel<rgb_in> &accumalated_color_out,
+                        ac_channel<rgb_in> &ray_out
                         )
     {   
 
@@ -35,12 +36,12 @@ public:
 
     }
 private:
-    WorldHit worldHit;
-    MaterialScatter materialScatter;
+    WorldHit<T, D> worldHit;
+    MaterialScatter<T, D> materialScatter;
 
-    ac_channel<ray<sfp_11_22>> rayToScatter;
-    ac_channel<rgb_t<sfp_9_10>> attenuation_chan_through;
-    ac_channel<rgb_t<sfp_11_10>> accumalated_color_through;
+    ac_channel<ray<T>> rayToScatter;
+    ac_channel<rgb_in> attenuation_chan_through;
+    ac_channel<rgb_in> accumalated_color_through;
     ac_channel<bool> isWorldHit;
     ac_channel<HitRecord> worldRec;
     ac_channel<img_params> paramsThrough;
