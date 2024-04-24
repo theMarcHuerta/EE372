@@ -1,6 +1,8 @@
-#pragma once
+#ifndef RAY_H
+#define RAY_H
 
 #include "RTcore.h"
+#include "vec3.h"
 
 template<typename T>
 struct ray {
@@ -22,4 +24,6 @@ class Ray_at {
         add.run(r.orig, mult_result, out);
     }
 };
+
+#endif
     

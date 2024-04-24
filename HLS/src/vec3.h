@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VEC3_H
+#define VEC3_H
 
 #ifdef __SYNTHESIS__
     #define LABEL(x) x:
@@ -229,3 +230,5 @@ class Vec3_reflect {
 // //     else
 // //         return -on_unit_sphere;
 // // }
+
+#endif

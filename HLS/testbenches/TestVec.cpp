@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TESTVEC_H
+#define TESTVEC_H
 
 #ifdef __SYNTHESIS__
     #define LABEL(x) x:
@@ -7,6 +8,8 @@
 #endif
 
 #include "../src/RTcore.h"
+#include "../src/vec3.h"
+#include "../src/ray.h"
 
 #pragma hls_design top
 class TestVec {
@@ -26,3 +29,5 @@ class TestVec {
         at_i.run(r, t, ray_pos);
     }
 };
+
+#endif
