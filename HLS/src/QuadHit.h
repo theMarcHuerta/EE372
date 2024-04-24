@@ -1,6 +1,10 @@
-#pragma once
+#ifndef QUADHIT_H
+#define QUADHIT_H
 
 #include "RTcore.h"
+#include "vec3.h"
+#include "ray.h"
+#include "HitRecord.h"
 
 struct quad_hittable {
     vec3<int_11> corner_pt; // for quads its corner
@@ -107,3 +111,5 @@ class QuadHit {
         return true;
     }
 };
+
+#endif

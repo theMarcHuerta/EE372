@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TESTSPHEREHIT_H
+#define TESTSPHEREHIT_H
 
 #ifdef __SYNTHESIS__
     #define LABEL(x) x:
@@ -7,6 +8,10 @@
 #endif
 
 #include "../src/RTcore.h"
+#include "../src/vec3.h"
+#include "../src/ray.h"
+#include "../src/HitRecord.h"
+#include "../src/SphHit.h"
 
 #pragma hls_design top
 class TestSphereHit {
@@ -19,3 +24,5 @@ class TestSphereHit {
         sphere_hit.run(r, closest_so_far, sphere, rec);
     }
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TESTQUADHIT_H
+#define TESTQUADHIT_H
 
 #ifdef __SYNTHESIS__
     #define LABEL(x) x:
@@ -7,6 +8,10 @@
 #endif
 
 #include "../src/RTcore.h"
+#include "../src/vec3.h"
+#include "../src/ray.h"
+#include "../src/HitRecord.h"
+#include "../src/QuadHit.h"
 
 #pragma hls_design top
 class TestQuadHit {
@@ -19,3 +24,5 @@ class TestQuadHit {
         quad_hit.run(r, closest_so_far, quad, rec);
     }
 };
+
+#endif

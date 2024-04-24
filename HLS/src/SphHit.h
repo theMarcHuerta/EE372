@@ -1,6 +1,10 @@
-#pragma once
+#ifndef SPHHIT_H
+#define SPHHIT_H
 
 #include "RTcore.h"
+#include "vec3.h"
+#include "ray.h"
+#include "HitRecord.h"
 
 struct sphere_hittable {
     vec3<int_11> center; // for quads its corner, sphere it's center
@@ -90,3 +94,5 @@ class SphereHit {
         return true;
     }
 };
+
+#endif
