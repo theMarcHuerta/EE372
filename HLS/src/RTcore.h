@@ -56,8 +56,6 @@ typedef ac_int<8, false> uint_8;
 typedef ac_int<64, false> uint_64;
 
 #include "vec3.h"
-#include "ray.h"
-#include "Rand.h"
 
 struct vec3_fp_11_22 { // vector point-- can be as big as the world space
   int_11 x_i;
@@ -135,13 +133,4 @@ struct pxl_params {
   vec3<int_11>        center;
   vec3_fp_11_22   pixel00_loc;    // Location in space of the top-left pixel.
 };
-
-#include "HitRecord.h"
-#include "SphHit.h"
-#include "QuadHit.h"
-#include "LambertianScatter.h"
-#include "MetalScatter.h"
-#include "MaterialScatter.h"
-// #include "ShaderCores.h"
-// #include "RayGeneration.h"
 

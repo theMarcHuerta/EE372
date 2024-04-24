@@ -1,6 +1,8 @@
-#pragma once
+#ifndef RAND_H
+#define RAND_H
 
 #include "RTcore.h"
+#include "vec3.h"
 
 template<typename T>
 class Rand_val {
@@ -43,3 +45,5 @@ class Rand_unit_vec {
         unit.run(v, out);
     }
 };
+
+#endif
