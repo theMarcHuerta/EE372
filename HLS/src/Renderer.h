@@ -58,7 +58,7 @@ public:
     {
         renderLooper.run(render_params, paramsChanneltoRayGen, loopIndicesChanneltoRayGen);
         rayGeneration.run(loopIndicesChanneltoRayGen, paramsChanneltoRayGen, loopIndicesChanneltoShader, paramsChanneltoShader, rayOut); // TO DO ADD LOOP INDICIES OUT CHANNEL
-        shaderCores.run(paramsChanneltoShader, loopIndicesChanneltoShader, rayOut, spheres_in, quads_in, output_pxl_sample);
+        shaderCores.run(paramsChanneltoShader, rayOut, spheres_in, quads_in, output_pxl_sample);
     }
 private:
     RenderLooper renderLooper;
@@ -67,7 +67,7 @@ private:
 
     ac_channel<ray<sfp_11_22>> rayOut;
     ac_channel<img_params> paramsChanneltoRayGen;
-    ac_channel<img_params> paramsChanneltoShader;
+    ac_channel<buffer_obj_count> paramsChanneltoShader;
     ac_channel<LoopIndices> loopIndicesChanneltoRayGen;
     ac_channel<LoopIndices> loopIndicesChanneltoShader;
 };

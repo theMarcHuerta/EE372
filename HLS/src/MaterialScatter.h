@@ -24,7 +24,6 @@ public:
     #pragma hls_design ccore
     // #pragma hls_interface ap_ctrl_none port=return
     void scatter(ac_channel<ray<T>>& ray_in,
-                 ac_channel<img_params> &params_in,
                  ac_channel<HitRecord<T>>& hit_in,
                  ac_channel<rgb_in> &attenuation_chan_in,
                  ac_channel<rgb_in> &accumalated_color_chan_in,

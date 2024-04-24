@@ -18,7 +18,6 @@ public:
     void run(ac_channel<sphere_hittable> &spheres_in,
              ac_channel<quad_hittable> &quads_in, 
              ac_channel<ray<sfp_11_22>> &ray_in,
-             ac_channel<LoopIndices> &loop_in,
              ac_channel<img_params> &params_in,
              ac_channel<sphere_hittable> &sphere_out1,
              ac_channel<sphere_hittable> &sphere_out2,
@@ -36,14 +35,9 @@ public:
              ac_channel<quad_hittable> &quad_out6, 
              ac_channel<quad_hittable> &quad_out7, 
              ac_channel<quad_hittable> &quad_out8, 
-             ac_channel<LoopIndices> &loop_out,
-             ac_channel<img_params> &params_out,
+             ac_channel<buffer_obj_count> &params_out,
              ac_channel<ray<sfp_11_22>> &ray_out
             )
-    {
-    #ifndef __SYNTHESIS__
-    while(params_in.available(1))
-    #endif
     {
         sphere_hittable tmp_sphere;
         quad_hittable tmp_quad;
@@ -84,7 +78,6 @@ public:
 
         sphere_out8.write(tmp_sphere);
         quad_out8.write(tmp_quad);
-    }
     }
 
 };

@@ -20,7 +20,7 @@ public:
     #pragma hls_design ccore
     // #pragma hls_interface ap_ctrl_none port=return
     void CCS_BLOCK(hit)(ac_channel<ray<T>>& ray_in,
-             ac_channel<img_params> &params_in,
+             ac_channel<buffer_obj_count> &params_in,
              ac_channel<sphere_hittable>& spheres, /// WHAT IS CORRECT WAY TO PASS IN RAM WANT TO READ 1 BY 1 AND PIPELINE READS; ONLY STORE CLOSEST
              ac_channel<quad_hittable>& quads,
              ac_channel<rgb_in> &attenuation_chan_in,
@@ -30,11 +30,10 @@ public:
              ac_channel<HitRecord<T>>& hit_out,
              ac_channel<ray<T>> &ray_out,
              ac_channel<bool> &isHit,
-             ac_channel<img_params> &params_out
              ) 
     {
 
-        img_params tmp_params;
+        buffer_obj_count tmp_params;
         tmp_params = params_in.read();
 
         ray<T> ray_temp;
@@ -100,7 +99,6 @@ public:
         }
 
         ray_out.write(ray_temp);
-        params_out.write(tmp_params);
         attenuation_chan_out.write(tmp_accum_in);
 
     }
