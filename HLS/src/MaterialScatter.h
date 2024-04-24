@@ -1,20 +1,13 @@
 #ifndef MATERIAL_SCATTER_H
 #define MATERIAL_SCATTER_H
 
-#include <ac_int.h>
-#include <ac_fixed.h>
-#include <ac_channel.h>
-#include <sstream>
-
-
 #include "RTcore.h"
+#include "ray.h"
 #include "ShaderCores.h"
 #include "RayGeneration.h"
 #include "HitRecord.h"
 #include "LambertianScatter.h"
 #include "MetalScatter.h"
-// Include mc_scverify.h for CCS_* macros
-#include <mc_scverify.h>
 
 template<typename T, typename D>
 class MaterialScatter {
@@ -53,7 +46,7 @@ public:
         tmp_rec = hit_in.read();
 
         bool readHit;
-        readHit = read.write(isHit);
+        readHit = isHit.read();
 
         rgb_in max_atten = {0, 0, 0};
 
@@ -64,9 +57,14 @@ public:
         }
         else {
             if (tmp_rec.mat == LAMBERTIAN){ // lambertian
-                lambertianScatter.scatter(tmp_rec, scattered_ray); //sets scattery ray 
-                colorMul1.run(tmp_atten_in, rec.color, attenuation_from_scatter); // sets attenuation
-                color_out = tmp_color_in;
+                lambertianScatter.run(tmp_rec, scattered_ray); //sets scattery ray
+
+                // set attenuation
+                attenuation_from_scatter.r = tmp_atten_in.r * rec.color.r;
+                attenuation_from_scatter.g = tmp_atten_in.g * rec.color.g;
+                attenuation_from_scatter.b = tmp_atten_in.b * rec.color.b;
+
+                color_out = {tmp_color_in.r, tmp_color_in.g, tmp_color_in.b};
             }
             else if ((tmp_rec.mat >= METAL_MIN) && (tmp_rec.mat <= METAL_MAX)){ // metal
                 D fuzz;
@@ -77,7 +75,7 @@ public:
                 if (tmp_rec.mat == 5) fuzz = 0.8125;
                 if (tmp_rec.mat == 6) fuzz = 1;
                 bool doesScatter;
-                metalScatter.scatter(tmp_ray, tmp_rec, fuzz, scattered_ray, doesScatter);
+                metalScatter.run(tmp_ray, tmp_rec, fuzz, scattered_ray, doesScatter);
                 if (doesScatter){
                     attenuation_from_scatter = rec.color;
                 }
@@ -85,11 +83,18 @@ public:
                     attenuation_from_scatter = max_atten;
                 }
                 color_out = tmp_color_in;
-x            }
+            }
             else if (tmp_rec.mat == EMISSIVE){ //emission
                 rgb_in colorMulOut;
-                colorMul3.run(tmp_atten_in, tmp_rec.color, colorMulOut);
-                colorAdd3.run(colorMulOut, tmp_color_in, color_out);
+
+                colorMulOut.r = tmp_atten_in.r * tmp_rec.color.r;
+                colorMulOut.g = tmp_atten_in.g * tmp_rec.color.g;
+                colorMulOut.b = tmp_atten_in.b * tmp_rec.color.b;
+
+                color_out.r = colorMulOut.r + tmp_color_in.r;
+                color_out.g = colorMulOut.g + tmp_color_in.g;
+                color_out.b = colorMulOut.b + tmp_color_in.b;
+
                 attenuation_from_scatter = max_atten; // MAKE OUT ATTENTUATION OR FIND A WAY TO STOP REST OF PIPELINE FROM ACCUMULING
                 scattered_ray = tmp_ray;
             }
@@ -105,9 +110,6 @@ private:
     LambertianScatter<T> lambertianScatter;
     MetalScatter<T, D> metalScatter;
     
-    Vec3_mult_s<D> colorMul1;
-
-    Vec3_mult_s<D> colorMul3;
     Vec3_add<D> colorAdd3;
 
 };

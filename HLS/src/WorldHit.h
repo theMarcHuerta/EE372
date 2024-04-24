@@ -43,8 +43,8 @@ public:
 
         bool sph_hit_anything = false;
         bool quad_hit_anything = false;
-        fp_12_22 closest_so_far_sph = LONGEST_DISTANCE;  // Use t_max from the ray as the initial closest distance
-        fp_12_22 closest_so_far_quad = LONGEST_DISTANCE;  // Use t_max from the ray as the initial closest distance
+        T closest_so_far_sph = LONGEST_DISTANCE;  // Use t_max from the ray as the initial closest distance
+        T closest_so_far_quad = LONGEST_DISTANCE;  // Use t_max from the ray as the initial closest distance
 
         // WE CAN HAVE THE READS HAPPEN IN PARALLEL THEN DECIDE WHICH ONE WAS THE CLOSEST OUT OF ALL SPHERES AND QUADS
         // MIGHT BE TOO MUCH AREA AND RELIES ON EVEN SPLIT SO PROBABLY NOT
@@ -53,7 +53,7 @@ public:
         for (int i = 0; i < tmp_params.num_spheres; i++) { // FIGURE OUT TO LOOP THROUGH WITH STTI VERIBLES IN 272 THEY DID IT WITH VARIABLE ITERATION AMUNT
             sphere_hittable sph = spheres.read();
             HitRecord<T> temp_rec;
-            if (sphInters.hit(ray_temp, closest_so_far_sph , sph, temp_rec)) { // again see what the best return type and exact syntax is for this function call
+            if (sphInters.run(ray_temp, closest_so_far_sph , sph, temp_rec)) { // again see what the best return type and exact syntax is for this function call
                 sph_hit_anything = true;
                 closest_so_far_sph = temp_rec.t;// Update the closest hit distance.
                 rec_sphere = temp_rec; // Update the closest hit distance.
@@ -67,7 +67,7 @@ public:
         for (int i = 0; i < tmp_params.num_quads; i++) {
             quad_hittable quad = quads.read();
             HitRecord<T> temp_rec;
-            if (quadInters.hit(ray_temp, closest_so_far_quad, quad, temp_rec)) {
+            if (quadInters.run(ray_temp, closest_so_far_quad, quad, temp_rec)) {
                 quad_hit_anything = true;
                 closest_so_far_quad = temp_rec.t;
                 rec_quad = temp_rec;
@@ -86,9 +86,17 @@ public:
         }
         else {
             rgb_in colorMulOut;
-            colorMul.run(tmp_accum_in, tmp_params.background, colorMulOut);
+
+            colorMulOut.r = tmp_accum_in.r * tmp_params.background.r;
+            colorMulOut.g = tmp_accum_in.g * tmp_params.background.g;
+            colorMulOut.b = tmp_accum_in.b * tmp_params.background.b;
+
             rgb_in colorAddOut;
-            colorAdd.run(colorMulOut, tmp_color_in, colorAddOut);
+
+            colorAddOut.r = colorMulOut.r + tmp_color_in.r;
+            colorAddOut.g = colorMulOut.g + tmp_color_in.g;
+            colorAddOut.b = colorMulOut.b + tmp_color_in.b;
+
             accumalated_color_out.write(colorAddOut);
             isHit.write(false);
             hit_out.write(rec_quad);  // doesnt really matter which one we write out as long as we write somethign out
@@ -102,8 +110,6 @@ public:
 private:
     SphereHit<T> sphInters;
     QuadHit<T> quadInters;
-    Vec3_mult_s<D> colorMul;
-    Vec3_add<D> colorAdd;
 
     HitRecord<T> rec_sphere;
     HitRecord<T> rec_quad;

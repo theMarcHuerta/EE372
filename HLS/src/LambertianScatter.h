@@ -19,7 +19,7 @@ class LambertianScatter {
             scatter_direction = rec.normal;
         }
 
-        ray<T> scattered = {{rec.hit_loc.x, rec.hit_loc.y, rec.hit_loc.z},
+        scattered = {{rec.hit_loc.x, rec.hit_loc.y, rec.hit_loc.z},
                          {scatter_direction.x, scatter_direction.y, scatter_direction.z}};
 
     }

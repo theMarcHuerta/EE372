@@ -26,4 +26,3 @@ class Ray_at {
 };
 
 #endif
-    

@@ -26,7 +26,7 @@ class MetalScatter {
         fuzzy_rand_bit_ext.z = fuzzy_rand.z;
         add.run(reflected, fuzzy_rand_bit_ext, new_ray_dir);
 
-        ray<T> scattered = {{rec.hit_loc.x, rec.hit_loc.y, rec.hit_loc.z},
+        scattered = {{rec.hit_loc.x, rec.hit_loc.y, rec.hit_loc.z},
                          {new_ray_dir.x, new_ray_dir.y, new_ray_dir.z}};
 
         T dot_result;

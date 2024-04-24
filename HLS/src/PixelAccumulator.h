@@ -1,11 +1,8 @@
-#include <ac_int.h>
-#include <ac_fixed.h>
-#include <ac_channel.h>
-#include <sstream>
+#ifndef PIXEL_ACCUM_H
+#define PIXEL_ACCUM_H
 
 #include "RTcore.h"
-// Include mc_scverify.h for CCS_* macros
-#include <mc_scverify.h>
+
 
 class PixelAccumulator
 {
@@ -24,7 +21,7 @@ void run(ac_channel<img_params> &accumulator_parms,
         img_params tmp_params;
         tmp_params = accumulator_parms.read();
         // MAKE SURE WE HAVE A readble pxl_sample_in to read
-        vec3<ac_int<32, 10, false>> accumulation_reg; // SUBJECT TO CHANGE
+        vec3<ac_fixed<32, 10, false>> accumulation_reg; // SUBJECT TO CHANGE
         accumulation_reg.x = 0; //r
         accumulation_reg.y = 0; //g
         accumulation_reg.z = 0; //b
@@ -43,7 +40,7 @@ void run(ac_channel<img_params> &accumulator_parms,
         
         
         // STORE TRUNCATED PIXEL COLOR HERE 
-        rgb_t<uint_8> pre_output_reg;
+        rgb_out pre_output_reg;
         // ac_int<4, false> bit_offset; // USE THIS BIT OFFSET FOR BIT SLICING/BIT SHIFTING INSTEAD OF THE 4 CASES 
         if (tmp_params.samp_per_pxl == 3){
             accumulation_reg.x = accumulation_reg.x >> 2;
@@ -68,3 +65,5 @@ void run(ac_channel<img_params> &accumulator_parms,
     }
     }
 };
+
+#endif
