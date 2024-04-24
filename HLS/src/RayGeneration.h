@@ -29,15 +29,18 @@ class RayGeneration
 
         LoopIndices tmp_indices;
         tmp_indices = loopIndicesIn.read();
+
+        vec3<sfp_11_22> delta_u = {tmp_params.pixel_delta_u.x, tmp_params.pixel_delta_u.y, tmp_params.pixel_delta_u.z};
+        vec3<sfp_11_22> delta_v = {tmp_params.pixel_delta_v.x, tmp_params.pixel_delta_v.y, tmp_params.pixel_delta_v.z};
+
+        sfp_11_22 x_pix = tmp_indices.x_pxl;
+        sfp_11_22 y_pix = tmp_indices.y_pxl;
         
-        deltUMul.run(tmp_indices.x_pxl, tmp_params.pixel_delta_u, deltaUIndexMultOut);
-        deltVMul.run(tmp_indices.y_pxl, tmp_params.pixel_delta_v, deltaVIndexMultOut);
+        deltUMul.run(delta_u, x_pix, deltaUIndexMultOut);
+        deltVMul.run(delta_v y_pix, deltaVIndexMultOut);
         deltAdd.run(deltaUIndexMultOut, deltaVIndexMultOut, deltsOut);
-        vec3<sfp_11_22> deltsOutBitExt;
-        deltsOutBitExt.x = deltsOut.x;
-        deltsOutBitExt.y = deltsOut.y;
-        deltsOutBitExt.z = deltsOut.z;
-        locDeltsAdd.run(deltsOutBitExt, tmp_params.pixel00_loc, pixelCenter);
+        
+        locDeltsAdd.run(deltsOut, tmp_params.pixel00_loc, pixelCenter);
         pixelSampleSquare.run(tmp_params, pixelSampleSquareOut);
         sampleAdd.run(pixelCenter, pixelSampleSquareOut, pixelSample);
         ray<sfp_11_22> tmp_ray;
