@@ -13,7 +13,7 @@ class WorldHit {
 public:
     WorldHit(){}
     // Function to find the closest hit from channels of spheres and quads
-    #pragma hls_design ccore
+    #pragma hls_design interface
     // #pragma hls_interface ap_ctrl_none port=return
     void CCS_BLOCK(hit)(ac_channel<ray<T>>& ray_in,
              ac_channel<buffer_obj_count> &params_in,

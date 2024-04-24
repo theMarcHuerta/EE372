@@ -18,6 +18,16 @@ build/WorldHit.v1/rtl.v: src/WorldHit.h
 
 WorldHit: build/WorldHit.v1/rtl.v
 
+build/MaterialScatter.v1/rtl.v: src/MaterialScatter.h
+	$(CATAPULT) -shell -file scripts/MaterialScatter.tcl
+
+MaterialScatter: build/MaterialScatter.v1/rtl.v
+
+build/Shader.v1/rtl.v: build/WorldHit.v1/rtl.v build/MaterialScatter.v1/rtl.v src/Shader.h
+	$(CATAPULT) -shell -file scripts/Shader.tcl
+
+Shader: build/Shader.v1/rtl.v
+
 c_test: test/$(MODULE).v1
 	export MODULE=$(MODULE); \
 	cd test/$(MODULE).v1 && make -f scverify/Verify_orig_cxx_osci.mk sim
