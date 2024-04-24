@@ -118,6 +118,13 @@ struct buffer_params {
   uint_10         image_width;   // Height of the image, computed from width and aspect ratio.
 };
 
+
+struct buffer_obj_count {
+  int_11          num_spheres;
+  int_11          num_quads;
+  rgb_in          background;
+ };
+
 struct LoopIndices{
   uint_11 x_pxl;
   uint_11 y_pxl;

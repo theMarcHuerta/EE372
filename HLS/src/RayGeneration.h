@@ -61,7 +61,7 @@ class RayGeneration
     vec3<sfp_11_22> deltsOut;
     vec3<sfp_11_22> pixelCenter;
     vec3<sfp_11_22> pixelSample;
-    static const fp_1_22 point_five = 1<<21; // supposed to be .5
+    const fp_1_22 point_five = .5; // supposed to be .5
 
 };
 

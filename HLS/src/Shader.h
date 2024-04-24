@@ -13,7 +13,7 @@ public:
     Shader(){}
     
 #pragma hls_design interface
-    void CCS_BLOCK(run)(ac_channel<img_params> &params_in,
+    void CCS_BLOCK(run)(ac_channel<buffer_obj_count> &params_in,
                         ac_channel<quad_hittable> &quad_in,
                         ac_channel<sphere_hittable> &sphere_in,
                         ac_channel<ray<T>> &ray_in,
