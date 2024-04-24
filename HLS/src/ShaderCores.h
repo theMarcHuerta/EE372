@@ -49,14 +49,14 @@ public:
 
       attenuation_chan1.write(shader1_atten);
       accumalated_color_chan1.write(shader1_color);
-      shader1.run(sphere_in1, quad_in1, ray_in_from_cntrlr, attenuation_chan1, accumalated_color_chan1, attenuation_chan2, accumalated_color_chan2, ray_out1);
-      shader2.run(sphere_in2, quad_in2, ray_out1, attenuation_chan2, accumalated_color_chan2, attenuation_chan3, accumalated_color_chan3, ray_out2);
-      shader3.run(sphere_in3, quad_in3, ray_out2, attenuation_chan3, accumalated_color_chan3, attenuation_chan4, accumalated_color_chan5, ray_out3);
-      shader4.run(sphere_in4, quad_in4, ray_out3, attenuation_chan4, accumalated_color_chan4, attenuation_chan5, accumalated_color_chan6, ray_out4);
-      shader5.run(sphere_in5, quad_in5, ray_out4, attenuation_chan5, accumalated_color_chan5, attenuation_chan6, accumalated_color_chan7, ray_out5);
-      shader6.run(sphere_in6, quad_in6, ray_out5, attenuation_chan6, accumalated_color_chan6, attenuation_chan7, accumalated_color_chan8, ray_out6);
-      shader7.run(sphere_in7, quad_in7, ray_out6, attenuation_chan7, accumalated_color_chan7, attenuation_chan8, accumalated_color_chan8, ray_out7);
-      shader8.run(sphere_in8, quad_in8, ray_out7, attenuation_chan7, accumalated_color_chan8, attenuation_chan9, output_pxl_serial, ray_out8);
+      shader1.run(params_c1, sphere_in1, quad_in1, ray_in_from_cntrlr, attenuation_chan1, accumalated_color_chan1, attenuation_chan2, accumalated_color_chan2, ray_out1);
+      shader2.run(params_c2, sphere_in2, quad_in2, ray_out1, attenuation_chan2, accumalated_color_chan2, attenuation_chan3, accumalated_color_chan3, ray_out2);
+      shader3.run(params_c3, sphere_in3, quad_in3, ray_out2, attenuation_chan3, accumalated_color_chan3, attenuation_chan4, accumalated_color_chan5, ray_out3);
+      shader4.run(params_c4, sphere_in4, quad_in4, ray_out3, attenuation_chan4, accumalated_color_chan4, attenuation_chan5, accumalated_color_chan6, ray_out4);
+      shader5.run(params_c5, sphere_in5, quad_in5, ray_out4, attenuation_chan5, accumalated_color_chan5, attenuation_chan6, accumalated_color_chan7, ray_out5);
+      shader6.run(params_c6, sphere_in6, quad_in6, ray_out5, attenuation_chan6, accumalated_color_chan6, attenuation_chan7, accumalated_color_chan8, ray_out6);
+      shader7.run(params_c7, sphere_in7, quad_in7, ray_out6, attenuation_chan7, accumalated_color_chan7, attenuation_chan8, accumalated_color_chan8, ray_out7);
+      shader8.run(params_c8, sphere_in8, quad_in8, ray_out7, attenuation_chan7, accumalated_color_chan8, attenuation_chan9, output_pxl_serial, ray_out8);
     }
   }
 private:

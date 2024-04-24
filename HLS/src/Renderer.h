@@ -54,10 +54,10 @@ public:
     void run(ac_channel<sphere_hittable> &spheres_in,
              ac_channel<quad_hittable> &quads_in, 
              ac_channel<img_params> &render_params,
-             ac_channel<rgb_t<sfp_9_10>> &output_pxl_sample)
+             ac_channel<rgb_in> &output_pxl_sample)
     {
         renderLooper.run(render_params, paramsChanneltoRayGen, loopIndicesChanneltoRayGen);
-        rayGeneration.run(loopIndicesChanneltoRayGen, paramsChanneltoRayGen, loopIndicesChanneltoShader, paramsChanneltoShader, rayOut); // TO DO ADD LOOP INDICIES OUT CHANNEL
+        rayGeneration.run(loopIndicesChanneltoRayGen, paramsChanneltoRayGen, paramsChanneltoShader, rayOut); // TO DO ADD LOOP INDICIES OUT CHANNEL
         shaderCores.run(paramsChanneltoShader, rayOut, spheres_in, quads_in, output_pxl_sample);
     }
 private:
@@ -69,7 +69,6 @@ private:
     ac_channel<img_params> paramsChanneltoRayGen;
     ac_channel<buffer_obj_count> paramsChanneltoShader;
     ac_channel<LoopIndices> loopIndicesChanneltoRayGen;
-    ac_channel<LoopIndices> loopIndicesChanneltoShader;
 };
 
 #endif
