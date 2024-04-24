@@ -42,21 +42,48 @@ public:
       // for the first shader-- this will just be the default starting point
       // can also just make the shader cores templated or unique for the first and last ones so they dont waste i/o
       // not sure if the unused i/o gets optimized out so we can do that later in the optimization phase
-      attenuation_chan[0].write(shader1_atten);
-      accumalated_color_chan[0].write(shader1_color);
-
-      memController.run();
-      shader1.run(sphere_in[0], quad_in[0], ray_in, attenuation_chan[0], accumalated_color_chan[0], attenuation_chan[1], accumalated_color_chan[1], ray_out[0]);
-      shader2.run(sphere_in[1], quad_in[1], ray_out[0], attenuation_chan[1], accumalated_color_chan[1], attenuation_chan[2], accumalated_color_chan[2], ray_out[1]);
-      shader3.run(sphere_in[2], quad_in[2], ray_out[1], attenuation_chan[2], accumalated_color_chan[2], attenuation_chan[3], accumalated_color_chan[3], ray_out[2]);
-      shader4.run(sphere_in[3], quad_in[3], ray_out[2], attenuation_chan[3], accumalated_color_chan[3], attenuation_chan[4], accumalated_color_chan[4], ray_out[3]);
-      shader5.run(sphere_in[4], quad_in[4], ray_out[3], attenuation_chan[4], accumalated_color_chan[4], attenuation_chan[5], accumalated_color_chan[5], ray_out[4]);
-      shader6.run(sphere_in[5], quad_in[5], ray_out[4], attenuation_chan[5], accumalated_color_chan[5], attenuation_chan[6], accumalated_color_chan[6], ray_out[5]);
-      shader7.run(sphere_in[6], quad_in[6], ray_out[5], attenuation_chan[6], accumalated_color_chan[6], attenuation_chan[7], accumalated_color_chan[7], ray_out[6]);
-      shader8.run(sphere_in[7], quad_in[7], ray_out[6], attenuation_chan[7], accumalated_color_chan[7], attenuation_chan[8], output_pxl_serial, ray_out[7]);
+      memController.run(spheres_in, quads_in, ray_in, params_in, sphere_in1, sphere_in2, sphere_in3, sphere_in4, sphere_in5, sphere_in6, sphere_in7, sphere_in8,
+                        quad_in1, quad_in2, quad_in3, quad_in4, quad_in5, quad_in6, quad_in7, quad_in8, );
+      attenuation_chan1.write(shader1_atten);
+      accumalated_color_chan1.write(shader1_color);
+      shader1.run(sphere_in1, quad_in1, ray_in, attenuation_chan1, accumalated_color_chan1, attenuation_chan2, accumalated_color_chan2, ray_out1);
+      shader2.run(sphere_in2, quad_in2, ray_out1, attenuation_chan2, accumalated_color_chan2, attenuation_chan3, accumalated_color_chan3, ray_out2);
+      shader3.run(sphere_in3, quad_in3, ray_out2, attenuation_chan3, accumalated_color_chan3, attenuation_chan4, accumalated_color_chan5, ray_out3);
+      shader4.run(sphere_in4, quad_in4, ray_out3, attenuation_chan4, accumalated_color_chan4, attenuation_chan5, accumalated_color_chan6, ray_out4);
+      shader5.run(sphere_in5, quad_in5, ray_out4, attenuation_chan5, accumalated_color_chan5, attenuation_chan6, accumalated_color_chan7, ray_out5);
+      shader6.run(sphere_in6, quad_in6, ray_out5, attenuation_chan6, accumalated_color_chan6, attenuation_chan7, accumalated_color_chan8, ray_out6);
+      shader7.run(sphere_in7, quad_in7, ray_out6, attenuation_chan7, accumalated_color_chan7, attenuation_chan8, accumalated_color_chan8, ray_out7);
+      shader8.run(sphere_in8, quad_in8, ray_out7, attenuation_chan7, accumalated_color_chan8, attenuation_chan9, output_pxl_serial, ray_out8);
     }
   }
 private:
+
+  ac_channel<sphere_hittable> &spheres_in,
+  ac_channel<quad_hittable> &quads_in, 
+  ac_channel<ray<sfp_11_22>> &ray_in,
+  ac_channel<LoopIndices> &loop_in,
+  ac_channel<img_params> &params_in,
+  ac_channel<sphere_hittable> &sphere_out1,
+  ac_channel<sphere_hittable> &sphere_out2,
+  ac_channel<sphere_hittable> &sphere_out3,
+  ac_channel<sphere_hittable> &sphere_out4,
+  ac_channel<sphere_hittable> &sphere_out5,
+  ac_channel<sphere_hittable> &sphere_out6,
+  ac_channel<sphere_hittable> &sphere_out7,
+  ac_channel<sphere_hittable> &sphere_out8,
+  ac_channel<quad_hittable> &quad_out1, 
+  ac_channel<quad_hittable> &quad_out2, 
+  ac_channel<quad_hittable> &quad_out3, 
+  ac_channel<quad_hittable> &quad_out4, 
+  ac_channel<quad_hittable> &quad_out5, 
+  ac_channel<quad_hittable> &quad_out6, 
+  ac_channel<quad_hittable> &quad_out7, 
+  ac_channel<quad_hittable> &quad_out8, 
+  ac_channel<LoopIndices> &loop_out,
+  ac_channel<img_params> &params_out,
+  ac_channel<ray<sfp_11_22>> &ray_out
+
+
   Shader<sfp_11_22, fp_1_22> shader1;
   Shader<sfp_11_22, fp_1_22> shader2;
   Shader<sfp_11_22, fp_1_22> shader3;
@@ -67,10 +94,50 @@ private:
   Shader<sfp_11_22, fp_1_22> shader8;
   MemController memController;
 
-  ac_channel<ray<sfp_11_22>> ray_out[8];
-  ac_channel<rgb_in> accumalated_color_chan[8];
-  ac_channel<rgb_in> attenuation_chan[9];
-  ac_channel<sphere_hittable> sphere_in[8];
-  ac_channel<quad_hittable> quad_in[8];
+  ac_channel<ray<sfp_11_22>> ray_out1;
+  ac_channel<ray<sfp_11_22>> ray_out2;
+  ac_channel<ray<sfp_11_22>> ray_out3;
+  ac_channel<ray<sfp_11_22>> ray_out4;
+  ac_channel<ray<sfp_11_22>> ray_out5;
+  ac_channel<ray<sfp_11_22>> ray_out6;
+  ac_channel<ray<sfp_11_22>> ray_out7;
+  ac_channel<ray<sfp_11_22>> ray_out8;
+
+  ac_channel<rgb_in> accumalated_color_chan1;
+  ac_channel<rgb_in> accumalated_color_chan2;
+  ac_channel<rgb_in> accumalated_color_chan3;
+  ac_channel<rgb_in> accumalated_color_chan4;
+  ac_channel<rgb_in> accumalated_color_chan5;
+  ac_channel<rgb_in> accumalated_color_chan6;
+  ac_channel<rgb_in> accumalated_color_chan7;
+  ac_channel<rgb_in> accumalated_color_chan8;
+
+  ac_channel<rgb_in> attenuation_chan1;
+  ac_channel<rgb_in> attenuation_chan2;
+  ac_channel<rgb_in> attenuation_chan3;
+  ac_channel<rgb_in> attenuation_chan4;
+  ac_channel<rgb_in> attenuation_chan5;
+  ac_channel<rgb_in> attenuation_chan6;
+  ac_channel<rgb_in> attenuation_chan7;
+  ac_channel<rgb_in> attenuation_chan8;
+  ac_channel<rgb_in> attenuation_chan9;
+
+  ac_channel<sphere_hittable> sphere_in1;
+  ac_channel<sphere_hittable> sphere_in2;
+  ac_channel<sphere_hittable> sphere_in3;
+  ac_channel<sphere_hittable> sphere_in4;
+  ac_channel<sphere_hittable> sphere_in5;
+  ac_channel<sphere_hittable> sphere_in6;
+  ac_channel<sphere_hittable> sphere_in7;
+  ac_channel<sphere_hittable> sphere_in8;
+
+  ac_channel<quad_hittable> quad_in1;
+  ac_channel<quad_hittable> quad_in2;
+  ac_channel<quad_hittable> quad_in3;
+  ac_channel<quad_hittable> quad_in4;
+  ac_channel<quad_hittable> quad_in5;
+  ac_channel<quad_hittable> quad_in6;
+  ac_channel<quad_hittable> quad_in7;
+  ac_channel<quad_hittable> quad_in8;
 };
 

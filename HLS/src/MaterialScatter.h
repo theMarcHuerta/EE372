@@ -56,7 +56,7 @@ public:
         bool readHit;
         readHit = read.write(isHit);
 
-        rgb_in max_atten = {1, 1, 1};
+        rgb_in max_atten = {0, 0, 0};
 
         if (!readHit){
             attenuation_chan_out.write(max_atten);
