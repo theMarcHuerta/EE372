@@ -4,8 +4,6 @@
 #include "RTcore.h"
 #include "MemController.h"
 #include "Shader.h"
-// Include mc_scverify.h for CCS_* macros
-#include <mc_scverify.h>
 
 
 class ShaderCores
@@ -33,7 +31,7 @@ public:
       memController.run(spheres_in, quads_in, ray_in, params_in, sphere_in1, sphere_in2, sphere_in3, sphere_in4, sphere_in5, sphere_in6, sphere_in7, sphere_in8,
                         quad_in1, quad_in2, quad_in3, quad_in4, quad_in5, quad_in6, quad_in7, quad_in8, params_out_mem_cntrlr, ray_in_from_cntrlr);
 
-      buffer_params params_to_cores;
+      buffer_obj_count params_to_cores;
       params_to_cores = params_out_mem_cntrlr.read();
 
       params_c1.write(params_to_cores);

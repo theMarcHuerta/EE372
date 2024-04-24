@@ -38,10 +38,13 @@ class RayGeneration
         
         locDeltsAdd.run(deltsOut, tmp_params.pixel00_loc, pixelCenter);
         psq.run(tmp_params, pixelSampleSquareOut);
-        sampleAdd.run(pixelCenter, pixelSampleSquareOut, pixelSample);
+
+        vec3<sfp_11_22> full_pix_sample = {pixelSampleSquareOut.x, pixelSampleSquareOut.y, pixelSampleSquareOut.z};
+
+        sampleAdd.run(pixelCenter, full_pix_sample, pixelSample);
         ray<sfp_11_22> tmp_ray;
-        tmp_ray.origin = paramsIn.center;  // Ray starts at the camera's position.
-        rayDiff.run(pixelSample, paramsIn.center, tmp_ray.ray_direction);  // Direction from camera to sampled point.
+        tmp_ray.orig = {tmp_params.center.x, tmp_params.center.y, tmp_params.center.z};  // Ray starts at the camera's position.
+        rayDiff.run(pixelSample, tmp_ray.orig, tmp_ray.dir);  // Direction from camera to sampled point.
         rayOut.write(tmp_ray);
       }
     }

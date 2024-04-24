@@ -14,14 +14,14 @@ public:
     
     #pragma hls_design interface
     void CCS_BLOCK(run)(ac_channel<buffer_obj_count> &params_in,
-                        ac_channel<quad_hittable> &quad_in,
                         ac_channel<sphere_hittable> &sphere_in,
+                        ac_channel<quad_hittable> &quad_in,
                         ac_channel<ray<T>> &ray_in,
                         ac_channel<rgb_in> &attenuation_chan_in,
                         ac_channel<rgb_in> &accumalated_color_chan_in,
                         ac_channel<rgb_in> &attenuation_chan_out,
                         ac_channel<rgb_in> &accumalated_color_out,
-                        ac_channel<rgb_in> &ray_out
+                        ac_channel<ray<T>> &ray_out
                         )
     {   
 
