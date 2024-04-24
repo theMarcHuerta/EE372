@@ -27,7 +27,7 @@ public:
 
         worldHit.hit(ray_in, params_in, sphere_in, quad_in, attenuation_chan_in, accumalated_color_chan_in, 
                      attenuation_chan_through, accumalated_color_through, worldRec, rayToScatter, isWorldHit, paramsThrough);
-        materialScatter.scatter(rayToScatter, paramsThrough, attenuation_chan_through, accumalated_color_through, isWorldHit,
+        materialScatter.scatter(rayToScatter, worldRec, paramsThrough, attenuation_chan_through, accumalated_color_through, isWorldHit,
                                  attenuation_chan_out, accumalated_color_out, ray_out);
 
     }

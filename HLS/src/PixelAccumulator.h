@@ -58,9 +58,9 @@ void run(ac_channel<img_params> &accumulator_parms,
             accumulation_reg.y = accumulation_reg.y << 3;
             accumulation_reg.z = accumulation_reg.z << 3;                
         }
-        pre_output_reg.r.set_slc(21, accumulation_reg.x);
-        pre_output_reg.g.set_slc(21, accumulation_reg.y);
-        pre_output_reg.b.set_slc(21, accumulation_reg.z);
+        pre_output_reg.r.set_slc(0, accumulation_reg.x.slc<8>(22));
+        pre_output_reg.g.set_slc(0, accumulation_reg.y.slc<8>(22));
+        pre_output_reg.b.set_slc(0, accumulation_reg.z.slc<8>(22));
         output_pxl_serial.write(pre_output_reg);
     }
     }
