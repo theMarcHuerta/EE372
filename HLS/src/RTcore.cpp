@@ -34,10 +34,10 @@ public:
     {
         // will initialize the variables and all
         // find a way to find max buffer size
-        paramsDeserializer.run(img_params_in, num_spheres, num_quads, renderer_params, accumulator_params);
+        paramsDeserializer.run(img_params_in, sph_buffer_params, quad_buffer_params, renderer_params, accumulator_params);
 
-        sphereBuffer.run(sphere_serial, spheres_out, num_spheres);
-        quadsBuffer.run(quad_serial, quads_out, num_quads);
+        sphereBuffer.run(sphere_serial, sph_buffer_params, spheres_out);
+        quadsBuffer.run(quad_serial, quad_buffer_params, quads_out);
 
         renderer.run(renderer_params, spheres_out, quads_out, pxl_sample);
 
@@ -47,8 +47,8 @@ public:
 
 private:
     ParamsDeserializer paramsDeserializer;
-    SphereBuffer sphereBuffer;
-    QuadsBuffer quadsBuffer;
+    SphereBuffer<MAX_SPHERES_IN_BUFFER> sphereBuffer;
+    QuadsBuffer<MAX_QUADS_IN_BUFFER> quadsBuffer;
     RendererWrapper renderer;
     PixelAccumulator pixelAccumulator;
 
@@ -59,8 +59,8 @@ private:
     ac_channel<quad_hittable> quads_out;
     ac_channel<img_params> renderer_params;
     ac_channel<img_params> accumulator_params;
-    ac_channel<int_11> num_spheres;
-    ac_channel<int_11> num_quads;
+    ac_channel<buffer_params> sph_buffer_params;
+    ac_channel<buffer_params> quad_buffer_params;
     ac_channel<rgb_t<sfp_9_10>> pxl_sample;
 };
 

@@ -15,7 +15,7 @@ template<typename T>
 struct _sphere_hittable {
     vec3<T> center;
     T radius;
-    uint_2 mat_type;
+    uint_3 mat_type;
     rgb_in sph_color;
 };
 

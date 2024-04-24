@@ -27,6 +27,8 @@
 #define METAL_MIN 1
 #define METAL_MAX 6
 #define EMISSIVE 7
+#define MAX_SPHERES_IN_BUFFER 80
+#define MAX_QUADS_IN_BUFFER 80
 
 // smallest value that can be represented with 22 fractional bits
 #define SMALLEST 2.384185791015625e-07
@@ -110,10 +112,23 @@ struct img_params {
 //   }
 };
 
+struct buffer_params {
+  int_11          num_spheres;
+  int_11          num_quads;
+  uint_2          samp_per_pxl; // 32-64-256-1024
+  uint_10         image_height;   // Height of the image, computed from width and aspect ratio.
+  uint_10         image_width;   // Height of the image, computed from width and aspect ratio.
+};
+
 struct LoopIndices{
-    uint_11 x_pxl;
-    uint_11 y_pxl;
-    uint_11 cur_samp;
+  uint_11 x_pxl;
+  uint_11 y_pxl;
+  uint_11 cur_samp;
+};
+
+template<typename T, int N>
+struct chanStruct{
+  T data[N];
 };
 
 struct pxl_params {

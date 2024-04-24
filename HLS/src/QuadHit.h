@@ -21,7 +21,7 @@ struct _quad_hittable {
     vec3<T> corner_pt;
     vec3<T> u; // defining u component 
     vec3<T> v; // defining v componenet
-    uint_2 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
+    uint_3 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
     pbool is_invis;
     vec3<T> normal; // cross of u and v
     vec3<T> w; // dot of u and v
