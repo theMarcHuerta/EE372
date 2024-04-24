@@ -21,4 +21,5 @@ class Ray_at {
         mult.run(r.dir, t, mult_result);
         add.run(r.orig, mult_result, out);
     }
-};    
+};
+    
