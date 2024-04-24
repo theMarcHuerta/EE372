@@ -11,11 +11,11 @@ class MemController
 public:
     MemController(){}
     
-#pragma hls_design interface
+    #pragma hls_design interface
     void run(ac_channel<sphere_hittable> &spheres_in,
              ac_channel<quad_hittable> &quads_in, 
              ac_channel<ray<sfp_11_22>> &ray_in,
-             ac_channel<img_params> &params_in,
+             ac_channel<buffer_obj_count> &obj_count_in,
              ac_channel<sphere_hittable> &sphere_out1,
              ac_channel<sphere_hittable> &sphere_out2,
              ac_channel<sphere_hittable> &sphere_out3,
@@ -32,25 +32,23 @@ public:
              ac_channel<quad_hittable> &quad_out6, 
              ac_channel<quad_hittable> &quad_out7, 
              ac_channel<quad_hittable> &quad_out8, 
-             ac_channel<buffer_obj_count> &params_out,
+             ac_channel<buffer_obj_count> &obj_count_out,
              ac_channel<ray<sfp_11_22>> &ray_out
             )
     {
         sphere_hittable tmp_sphere;
         quad_hittable tmp_quad;
         ray<sfp_11_22> tmp_ray;
-        LoopIndices temp_idxs;
-        img_params tmp_params;
-        tmp_params = params_in.read();
-        temp_idxs = loop_in.read();
+        buffer_obj_count tmp_obj_count;
+
         tmp_sphere = spheres_in.read();
         tmp_quad = quads_in.read();
         tmp_ray = ray_in.read();
+        tmp_obj_count = obj_count_in.read();
 
         ray_out.write(tmp_ray);
 
-        loop_out.write(temp_idxs);
-        params_out.write(tmp_params); // write idxs adn params\
+        obj_count_out.write(tmp_obj_count); // write idxs adn params\
 
         sphere_out1.write(tmp_sphere);
         quad_out1.write(tmp_quad);

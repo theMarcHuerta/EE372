@@ -1,7 +1,5 @@
-#include <ac_int.h>
-#include <ac_fixed.h>
-#include <ac_channel.h>
-#include <sstream>
+#ifndef SHADER_CORES_H
+#define SHADER_CORES_H
 
 #include "RTcore.h"
 #include "MemController.h"
@@ -152,3 +150,5 @@ private:
   ac_channel<quad_hittable> quad_in7;
   ac_channel<quad_hittable> quad_in8;
 };
+
+#endif

@@ -12,7 +12,7 @@ class Shader
 public:
     Shader(){}
     
-#pragma hls_design interface
+    #pragma hls_design interface
     void CCS_BLOCK(run)(ac_channel<buffer_obj_count> &params_in,
                         ac_channel<quad_hittable> &quad_in,
                         ac_channel<sphere_hittable> &sphere_in,

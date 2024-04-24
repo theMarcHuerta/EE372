@@ -25,7 +25,7 @@ public:
              ac_channel<rgb_in> &accumalated_color_out,
              ac_channel<HitRecord<T>>& hit_out,
              ac_channel<ray<T>> &ray_out,
-             ac_channel<bool> &isHit,
+             ac_channel<bool> &isHit
              ) 
     {
 
