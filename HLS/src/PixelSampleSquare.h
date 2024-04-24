@@ -1,15 +1,8 @@
-#ifndef _GLOBAL_SIMPLE_H
-#define _GLOBAL_SIMPLE_H
-
-#include <ac_int.h>
-#include <ac_fixed.h>
-#include <ac_channel.h>
-#include <sstream>
-
+#ifndef PIXEL_SAMPLE_H
+#define PIXEL_SAMPLE_H
 
 #include "RTcore.h"
-#include "rt_core.h"
-#include "shader.h"
+#include "Shader.h"
 
 // Include mc_scverify.h for CCS_* macros
 #include <mc_scverify.h>

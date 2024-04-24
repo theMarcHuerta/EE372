@@ -101,9 +101,9 @@ struct img_params {
   uint_10         image_height;   // Height of the image, computed from width and aspect ratio.
   uint_10         image_width;   // Height of the image, computed from width and aspect ratio.
   vec3<int_11>        center;         // The position of the camera (same as lookfrom).
-  vec3_fp_11_22   pixel00_loc;    // Location in space of the top-left pixel.
-  sfp_3_22   pixel_delta_u;  // Vector to move one pixel to the right on the image plane.
-  sfp_3_22   pixel_delta_v;  // Vector to move one pixel down on the image plane.
+  vec3<sfp_11_22>   pixel00_loc;    // Location in space of the top-left pixel.
+  vec3<sfp_3_22>   pixel_delta_u;  // Vector to move one pixel to the right on the image plane.
+  vec3<sfp_3_22>   pixel_delta_v;  // Vector to move one pixel down on the image plane.
 //   cam_params(uint_2 a, uint_2 b, uint_2 c) {
 //     aspect_ratio=a;
 //     samp_per_pxl=b;
@@ -138,6 +138,6 @@ struct chanStruct{
 
 struct pxl_params {
   vec3<int_11>        center;
-  vec3_fp_11_22   pixel00_loc;    // Location in space of the top-left pixel.
+  vec3<sfp_11_22>   pixel00_loc;    // Location in space of the top-left pixel.
 };
 

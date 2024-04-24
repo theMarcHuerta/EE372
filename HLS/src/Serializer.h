@@ -1,6 +1,8 @@
 #ifndef SERIALIZER_H
 #define SERIALIZER_H
 
+#include "RTcore.h"
+
 template<typename DTYPE, typename DTYPE_SERIAL, int OC0, int accumbuffersize>
 class Serializer{
 public:

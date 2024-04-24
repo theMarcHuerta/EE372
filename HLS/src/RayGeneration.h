@@ -25,10 +25,13 @@ class RayGeneration
       #endif
       {
         img_params tmp_params;
-        tmp_params = render_params.read();
+        tmp_params = paramsIn.read();
+
+        LoopIndices tmp_indices;
+        tmp_indices = loopIndicesIn.read();
         
-        deltUMul.run(loopIndicesIn.x_pxl, tmp_params.pixel_delta_u, deltaUIndexMultOut);
-        deltVMul.run(loopIndicesIn.y_pxl, tmp_params.pixel_delta_v, deltaVIndexMultOut);
+        deltUMul.run(tmp_indices.x_pxl, tmp_params.pixel_delta_u, deltaUIndexMultOut);
+        deltVMul.run(tmp_indices.y_pxl, tmp_params.pixel_delta_v, deltaVIndexMultOut);
         deltAdd.run(deltaUIndexMultOut, deltaVIndexMultOut, deltsOut);
         vec3<sfp_11_22> deltsOutBitExt;
         deltsOutBitExt.x = deltsOut.x;
@@ -58,10 +61,10 @@ class RayGeneration
     vec3<sfp_3_22> pixelSampleSquareOut;
     vec3<sfp_11_22> deltaUIndexMultOut;
     vec3<sfp_11_22> deltaVIndexMultOut;
-    vec3<sfp_11_22> deltsOut;
+    vec3<sfp_3_22> deltsOut;
     vec3<sfp_11_22> pixelCenter;
     vec3<sfp_11_22> pixelSample;
-    const fp_1_22 point_five = .5; // supposed to be .5
+    const fp_1_22 point_five = 0.5; // supposed to be .5
 
 };
 
