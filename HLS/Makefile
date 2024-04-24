@@ -13,6 +13,11 @@ build/$(MODULE).v1/rtl.v:
 	export MODULE=$(MODULE); \
 	$(CATAPULT) -shell -file scripts/build_rtl.tcl
 
+build/WorldHit.v1/rtl.v: src/WorldHit.h
+	$(CATAPULT) -shell -file scripts/WorldHit.tcl
+
+WorldHit: build/WorldHit.v1/rtl.v
+
 c_test: test/$(MODULE).v1
 	export MODULE=$(MODULE); \
 	cd test/$(MODULE).v1 && make -f scverify/Verify_orig_cxx_osci.mk sim

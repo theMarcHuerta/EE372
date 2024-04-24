@@ -1,13 +1,10 @@
-#include <ac_int.h>
-#include <ac_fixed.h>
-#include <ac_channel.h>
-#include <sstream>
+#ifndef MEMCONTROLLER_H
+#define MEMCONTROLLER_H
 
 #include "RTcore.h"
-
-// Include mc_scverify.h for CCS_* macros
-#include <mc_scverify.h>
-
+#include "ray.h"
+#include "SphHit.h"
+#include "QuadHit.h"
 
 class MemController
 {
@@ -58,7 +55,7 @@ public:
 
         ray_out.write(tmp_ray);
 
-        loop_out.write(temp_idxs)
+        loop_out.write(temp_idxs);
         params_out.write(tmp_params); // write idxs adn params\
 
         sphere_out1.write(tmp_sphere);
@@ -89,3 +86,4 @@ public:
 
 };
 
+#endif

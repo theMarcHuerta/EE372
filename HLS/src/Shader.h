@@ -1,14 +1,10 @@
-#include <ac_int.h>
-#include <ac_fixed.h>
-#include <ac_channel.h>
-#include <sstream>
+#ifndef SHADER_H
+#define SHADER_H
 
 #include "RTcore.h"
 #include "HitRecord.h"
 #include "WorldHit.h"
 #include "MaterialScatter.h"
-// Include mc_scverify.h for CCS_* macros
-#include <mc_scverify.h>
 
 template<typename T, typename D>
 class Shader
@@ -48,6 +44,3 @@ private:
 };
 
 #endif
-
-
-

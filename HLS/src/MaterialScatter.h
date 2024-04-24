@@ -1,5 +1,5 @@
-#ifndef WORLD_HIT_H
-#define WORLD_HIT_H
+#ifndef MATERIAL_SCATTER_H
+#define MATERIAL_SCATTER_H
 
 #include <ac_int.h>
 #include <ac_fixed.h>
@@ -112,3 +112,5 @@ private:
     Vec3_add<D> colorAdd3;
 
 };
+
+#endif

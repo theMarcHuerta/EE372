@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HITRECORD_H
+#define HITRECORD_H
 
 #include "RTcore.h"
 
@@ -32,3 +33,5 @@ class HitRecord_setNorm {
         record.normal = record.front_face ? outwardNormal : negated_normal;
     }
 };
+
+#endif

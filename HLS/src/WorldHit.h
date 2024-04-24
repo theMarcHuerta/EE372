@@ -1,16 +1,12 @@
 #ifndef WORLD_HIT_H
 #define WORLD_HIT_H
 
-#include <ac_int.h>
-#include <ac_fixed.h>
-#include <ac_channel.h>
-#include <sstream>
-
-
 #include "RTcore.h"
+#include "ray.h"
 #include "HitRecord.h"
-// Include mc_scverify.h for CCS_* macros
-#include <mc_scverify.h>
+#include "QuadHit.h"
+#include "SphHit.h"
+
 
 template<typename T, typename D>
 class WorldHit {
@@ -114,3 +110,5 @@ private:
     HitRecord<T> rec_sphere;
     HitRecord<T> rec_quad;
 };
+
+#endif

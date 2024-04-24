@@ -1,10 +1,8 @@
-#include <ac_int.h>
-#include <ac_fixed.h>
-#include <ac_channel.h>
-#include <sstream>
+#ifndef RAYGENERATION_H
+#define RAYGENERATION_H
 
 #include "RTcore.h"
-#include "PizxelSampleSquare.h"
+#include "PixelSampleSquare.h"
 
 
 // Include mc_scverify.h for CCS_* macros
@@ -67,3 +65,4 @@ class RayGeneration
 
 };
 
+#endif
