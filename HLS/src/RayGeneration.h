@@ -12,8 +12,7 @@ class RayGeneration
     #pragma hls_design interface
     void CCS_BLOCK(run)(ac_channel<LoopIndices> &loopIndicesIn,
                         ac_channel<img_params> &paramsIn, // do i need to make it so i can fetch on command
-                        ac_channel<LoopIndices> &loopIndicesOut,
-                        ac_channel<img_params> &paramsOut,
+                        ac_channel<buffer_obj_count> &paramsOut,
                         ac_channel<ray<sfp_11_22>> &rayOut)
     {
       #ifndef __SYNTHESIS__
@@ -22,6 +21,11 @@ class RayGeneration
       {
         img_params tmp_params;
         tmp_params = paramsIn.read();
+
+        boc.num_spheres = tmp_params.num_spheres;
+        boc.num_quads = tmp_params.num_quads;
+        boc.background = tmp_params.background;
+        paramsOut.write(boc);
 
         LoopIndices tmp_indices;
         tmp_indices = loopIndicesIn.read();
@@ -68,6 +72,8 @@ class RayGeneration
     vec3<sfp_11_22> pixelCenter;
     vec3<sfp_11_22> pixelSample;
     const fp_1_22 point_five = 0.5; // supposed to be .5
+
+    buffer_obj_count boc;
 
 };
 
