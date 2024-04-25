@@ -14,9 +14,8 @@ class MaterialScatter {
 public:
     MaterialScatter(){}
     // Function to find the closest hit from channels of spheres and quads
-    #pragma hls_design ccore
-    // #pragma hls_interface ap_ctrl_none port=return
-    void scatter(ac_channel<ray<T>>& ray_in,
+    #pragma hls_design interface
+    void CCS_BLOCK(scatter)(ac_channel<ray<T>>& ray_in,
                  ac_channel<HitRecord<T>>& hit_in,
                  ac_channel<rgb_in> &attenuation_chan_in,
                  ac_channel<rgb_in> &accumalated_color_chan_in,
@@ -109,9 +108,6 @@ private:
     HitRecord<T> rec;
     LambertianScatter<T> lambertianScatter;
     MetalScatter<T, D> metalScatter;
-    
-    Vec3_add<D> colorAdd3;
-
 };
 
 #endif

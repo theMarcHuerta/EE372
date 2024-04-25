@@ -6,7 +6,7 @@ set type1 "sfp_11_22"
 set type2 "fp_1_22"
 
 directive set -DESIGN_HIERARCHY " 
-    {WorldHit<${type1}, ${type2}>} 
+    {MaterialScatter<${type1}, ${type2}>} 
 "
 
 go compile
