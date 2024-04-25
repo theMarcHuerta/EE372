@@ -41,9 +41,23 @@ inline double degrees_to_radians(double degrees) {
     return degrees * pi / 180.0;
 }
 
+
+inline uint32_t xorshift32(uint32_t &state) {
+    uint32_t x = state;
+    x ^= x << 13;
+    x ^= x >> 17;
+    x ^= x << 5;
+    state = x;
+    return x;
+}
+
 inline double random_double() {
-    // Returns a random real number in [0,1).
-    return rand() / (RAND_MAX + 1.0);
+    // // Returns a random real number in [0,1).
+
+    static uint32_t state = 375821;  // Seed with a non-zero value
+    uint32_t result = xorshift32(state);
+    return static_cast<double>(result) / static_cast<double>(UINT32_MAX);
+
 }
 
 inline double random_double(double min, double max) {

@@ -26,7 +26,6 @@ according to Snell's law and Fresnel equations.
 #include "rtweekend.h"
 #include "color.h"
 #include "hittable.h"
-#include "texture.h"
 
 class hit_record;  // Forward declaration for usage in material methods.
 
@@ -144,8 +143,7 @@ class dielectric : public material {
 
 class diffuse_light : public material {
   public:
-    diffuse_light(shared_ptr<texture> a) : emit(a) {}
-    diffuse_light(color c) : emit(make_shared<solid_color>(c)) {}
+    diffuse_light(color c) : emit(c) {}
 
     bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered)
     const override {
@@ -153,7 +151,7 @@ class diffuse_light : public material {
     }
 
     color emitted(double u, double v, const point3& p) const override {
-        return emit->value(u, v, p);
+        return emit;
     }
 
     vec3 colorofmat() const override {
@@ -162,7 +160,7 @@ class diffuse_light : public material {
 
 
   private:
-    shared_ptr<texture> emit;
+    color emit;
 };
 
 #endif

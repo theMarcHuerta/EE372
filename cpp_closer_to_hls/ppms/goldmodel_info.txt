@@ -1,0 +1,1 @@
+what each file in our gold model does and contains

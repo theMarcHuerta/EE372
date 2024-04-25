@@ -16,15 +16,7 @@ class quad : public hittable {
         normal = unit_vector(n);
         D = dot(normal, Q);\
         w = n / dot(n,n);
-
-        set_bounding_box();
     }
-
-    virtual void set_bounding_box() {
-        bbox = aabb(Q, Q + u + v).pad();
-    }
-
-    aabb bounding_box() const override { return bbox; }
 
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
         if (r.first_ray && invis){
@@ -75,35 +67,54 @@ class quad : public hittable {
     point3 Q;
     vec3 u, v;
     shared_ptr<material> mat;
-    aabb bbox;
     vec3 normal;
     double D;
     vec3 w;
     bool invis;
 };
 
-inline shared_ptr<hittable_list> box(const point3& a, const point3& b, shared_ptr<material> mat)
+
+// Rotation function around the y-axis for vectors
+vec3 rotate_y(const vec3& v, double sin_theta, double cos_theta) {
+    return vec3(cos_theta * v.x() + sin_theta * v.z(), v.y(), -sin_theta * v.x() + cos_theta * v.z());
+}
+
+inline shared_ptr<hittable_list> box(const point3& a, const point3& b, shared_ptr<material> mat, double angle_degrees)
 {
-    // Returns the 3D box (six sides) that contains the two opposite vertices a & b.
-
     auto sides = make_shared<hittable_list>();
-
-    // Construct the two opposite vertices with the minimum and maximum coordinates.
     auto min = point3(fmin(a.x(), b.x()), fmin(a.y(), b.y()), fmin(a.z(), b.z()));
     auto max = point3(fmax(a.x(), b.x()), fmax(a.y(), b.y()), fmax(a.z(), b.z()));
 
-    auto dx = vec3(max.x() - min.x(), 0, 0);
-    auto dy = vec3(0, max.y() - min.y(), 0);
-    auto dz = vec3(0, 0, max.z() - min.z());
+    // Center of the box (only x and z are used for calculating the rotation)
+    point3 center = 0.5 * (min + max);
+    vec3 center_horizontal(center.x(), 0, center.z());
 
-    sides->add(make_shared<quad>(point3(min.x(), min.y(), max.z()),  dx,  dy, mat, false)); // front
-    sides->add(make_shared<quad>(point3(max.x(), min.y(), max.z()), -dz,  dy, mat, false)); // right
-    sides->add(make_shared<quad>(point3(max.x(), min.y(), min.z()), -dx,  dy, mat, false)); // back
-    sides->add(make_shared<quad>(point3(min.x(), min.y(), min.z()),  dz,  dy, mat, false)); // left
-    sides->add(make_shared<quad>(point3(min.x(), max.y(), max.z()),  dx, -dz, mat, false)); // top
-    sides->add(make_shared<quad>(point3(min.x(), min.y(), min.z()),  dx,  dz, mat, false)); // bottom
+    // Vectors defining the box dimensions
+    vec3 dx = vec3(max.x() - min.x(), 0, 0);
+    vec3 dy = vec3(0, max.y() - min.y(), 0);
+    vec3 dz = vec3(0, 0, max.z() - min.z());
+
+    // Calculate sine and cosine for the rotation
+    double radians = angle_degrees * pi / 180.0;
+    double cos_theta = cos(radians);
+    double sin_theta = sin(radians);
+
+    // Rotate vectors
+    vec3 rotated_dx = rotate_y(dx, sin_theta, cos_theta);
+    vec3 rotated_dz = rotate_y(dz, sin_theta, cos_theta);
+
+    // Apply rotation around the center by adjusting corner positions
+    // Start at the bottom front left corner and rotate around the horizontal center
+    point3 front_bottom_left = center_horizontal + rotate_y(min - center_horizontal, sin_theta, cos_theta);
+    point3 front_bottom_right = front_bottom_left + rotated_dx;
+
+    // Construct quads with rotated vectors and adjusted positions
+    sides->add(make_shared<quad>(front_bottom_left, rotated_dx, dy, mat, false)); // Front
+    sides->add(make_shared<quad>(front_bottom_left, rotated_dx, dy, mat, false)); // Back
+    sides->add(make_shared<quad>(front_bottom_right, rotated_dz, dy, mat, false)); // Right
+    sides->add(make_shared<quad>(front_bottom_left, rotated_dz, dy, mat, false)); // Left
+    sides->add(make_shared<quad>(front_bottom_left + dy, rotated_dx, rotated_dz, mat, false)); // Top
 
     return sides;
 }
-
 #endif

@@ -8,7 +8,6 @@ objects to find the closest hit object.
 
 #include "rtweekend.h"
 #include "hittable.h"
-#include "aabb.h"
 
 #include <memory>
 #include <vector>
@@ -29,7 +28,6 @@ class hittable_list : public hittable {
         // Adds a hittable object to the list.
         void add(shared_ptr<hittable> object) {
             objects.push_back(object);
-            bbox = aabb(bbox, object->bounding_box());
         }
 
         // Overrides hit method to check all objects in the list for the closest hit.
@@ -50,10 +48,7 @@ class hittable_list : public hittable {
             return hit_anything;  // Returns true if any object was hit.
         }
 
-        aabb bounding_box() const override { return bbox; }
-
     private:
-        aabb bbox;
 };
 
 #endif
