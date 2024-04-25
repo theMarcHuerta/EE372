@@ -20,6 +20,7 @@ go libraries
 directive set -CLOCKS $clocks
 
 go assembly
+directive set -EFFORT_LEVEL high
 
 # -------------------------------
 # Set the correct word widths and the stage replication
