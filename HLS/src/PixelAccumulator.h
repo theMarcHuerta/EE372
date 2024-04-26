@@ -21,7 +21,7 @@ void run(ac_channel<img_params> &accumulator_parms,
         img_params tmp_params;
         tmp_params = accumulator_parms.read();
         // MAKE SURE WE HAVE A readble pxl_sample_in to read
-        vec3<ac_fixed<32, 10, false>> accumulation_reg; // SUBJECT TO CHANGE
+        vec3<ac_fixed<33, 11, false>> accumulation_reg; // SUBJECT TO CHANGE
         accumulation_reg.x = 0; //r
         accumulation_reg.y = 0; //g
         accumulation_reg.z = 0; //b
@@ -37,30 +37,43 @@ void run(ac_channel<img_params> &accumulator_parms,
             accumulation_reg.z = accumulation_reg.z + cur_sample.b;
             }
         }
-        
-        
+
+        vec3<ac_fixed<15, 1, false>> rounded_accuracy_col;
         // STORE TRUNCATED PIXEL COLOR HERE 
         rgb_out pre_output_reg;
         // ac_int<4, false> bit_offset; // USE THIS BIT OFFSET FOR BIT SLICING/BIT SHIFTING INSTEAD OF THE 4 CASES 
         if (tmp_params.samp_per_pxl == 3){
-            accumulation_reg.x = accumulation_reg.x >> 2;
-            accumulation_reg.y = accumulation_reg.y >> 2;
-            accumulation_reg.z = accumulation_reg.z >> 2;
+            rounded_accuracy_col.x = accumulation_reg.x.slc<15>(18); // bits [32:18]
+            rounded_accuracy_col.y = accumulation_reg.y.slc<15>(18);
+            rounded_accuracy_col.z = accumulation_reg.z.slc<15>(18);
         }
-        else if (tmp_params.samp_per_pxl == 2){}
+        else if (tmp_params.samp_per_pxl == 2){
+            rounded_accuracy_col.x = accumulation_reg.x.slc<15>(16); // bits [30:16]
+            rounded_accuracy_col.y = accumulation_reg.y.slc<15>(16);
+            rounded_accuracy_col.z = accumulation_reg.z.slc<15>(16);
+        }
         else if (tmp_params.samp_per_pxl == 1){
-            accumulation_reg.x = accumulation_reg.x << 2;
-            accumulation_reg.y = accumulation_reg.y << 2;
-            accumulation_reg.z = accumulation_reg.z << 2;                
+            rounded_accuracy_col.x = accumulation_reg.x.slc<15>(14); // bits [28:14]
+            rounded_accuracy_col.y = accumulation_reg.y.slc<15>(14);
+            rounded_accuracy_col.z = accumulation_reg.z.slc<15>(14);              
         }
         else {
-            accumulation_reg.x = accumulation_reg.x << 3;
-            accumulation_reg.y = accumulation_reg.y << 3;
-            accumulation_reg.z = accumulation_reg.z << 3;                
+            rounded_accuracy_col.x = accumulation_reg.x.slc<15>(13); // bits [28:13]
+            rounded_accuracy_col.y = accumulation_reg.y.slc<15>(13);
+            rounded_accuracy_col.z = accumulation_reg.z.slc<15>(13);             
         }
-        pre_output_reg.r.set_slc(0, accumulation_reg.x.slc<8>(22));
-        pre_output_reg.g.set_slc(0, accumulation_reg.y.slc<8>(22));
-        pre_output_reg.b.set_slc(0, accumulation_reg.z.slc<8>(22));
+
+        vec3<ac_fixed<15, 1, false>> gamme_corrected;
+        // Square too to convert linear compoenent to gamma corrected component
+        ac_math::ac_sqrt(rounded_accuracy_col.x, gamme_corrected.x);
+        ac_math::ac_sqrt(rounded_accuracy_col.y, gamme_corrected.y);
+        ac_math::ac_sqrt(rounded_accuracy_col.z, gamme_corrected.z);
+
+        //accounts for overflow (checks the int bit)
+        pre_output_reg.r = gamme_corrected.x.slc<1>(14) == 1 ? 255 : gamme_corrected.x.slc<8>(6);
+        pre_output_reg.g = gamme_corrected.y.slc<1>(14) == 1 ? 255 : gamme_corrected.y.slc<8>(6);
+        pre_output_reg.b = gamme_corrected.z.slc<1>(14) == 1 ? 255 : gamme_corrected.z.slc<8>(6);
+
         output_pxl_serial.write(pre_output_reg);
     }
     }

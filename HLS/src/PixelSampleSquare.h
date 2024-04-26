@@ -17,7 +17,7 @@ class PixelSampleSquare
                         vec3<sfp_3_22> &output_num)
     {
       rand_val.run(rnum1);
-      rand_val.run(rnum2);
+      rand_val2.run(rnum2);
       // rand1.run(rnum1);
       // rand2.run(rnum2);
       px = rnum1 - point_five;  // Random offset in the x direction. IS SUPPOSED TO CHOP OFF
@@ -32,7 +32,7 @@ class PixelSampleSquare
   private:
 
     Rand_val<sfp_3_22> rand_val;
-    // Rand_val<sfp_3_22> rand2(230682);
+    Rand_val<sfp_3_22> rand_val2;
     Vec3_mult_s<sfp_3_22> vecMul1;
     Vec3_mult_s<sfp_3_22> vecMul2;
     sfp_3_22 rnum1;
