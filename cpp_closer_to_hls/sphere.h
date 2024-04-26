@@ -14,8 +14,6 @@ class sphere : public hittable {
     sphere(point3 _center, double _radius, shared_ptr<material> _material, const bool is_invis)
       : center(_center), radius(_radius), mat(_material), invis(is_invis)
     {
-        auto rvec = vec3(radius, radius, radius);
-        bbox = aabb(center - rvec, center + rvec);
     }
 
     // Override the hit function to provide an implementation specific to spheres.
@@ -53,13 +51,11 @@ class sphere : public hittable {
         return true;  // Intersection found.
     }
 
-    aabb bounding_box() const override { return bbox; }
 
   private:
     point3 center;  // Center of the sphere.
     double radius;  // Radius of the sphere.
     shared_ptr<material> mat;  // Material of the sphere.
-    aabb bbox;
     bool invis;
 };
 

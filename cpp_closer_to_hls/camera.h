@@ -176,7 +176,7 @@ class camera {
 
             current_ray.first_ray = depth == 0 ? true : false;
             // Check if the ray hits the background
-            if (!world.hit(current_ray, interval(0.001, infinity), rec)) {
+            if (!world.hit(current_ray, interval(0.001, 2048), rec)) {
                 accumulated_color += current_attenuation * background; // Apply background color
                 break;
             }
