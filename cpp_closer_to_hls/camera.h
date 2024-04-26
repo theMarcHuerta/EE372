@@ -54,7 +54,7 @@ class camera {
         initialize();
         lines_remaining = image_height; // Initialize the atomic counter with the total number of scanlines
 
-        // std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+        std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
         std::vector<std::thread> threads;
         std::vector<std::string> output(image_height); // Correctly pre-allocated output vector
@@ -80,7 +80,9 @@ class camera {
                             auto r = get_ray(i, j);
                             // std::cout << r.origin() << "\n";
                             // std::cout << r.direction() << "\n\n";
-                            pixel_color += ray_color(r, max_depth, world);
+                            auto tmp_color = ray_color(r, max_depth, world);
+                            std::cout << tmp_color << "\n";
+                            pixel_color += tmp_color;
                         }
                         write_color(local_stream, pixel_color, samples_per_pixel);
                     }
@@ -101,10 +103,10 @@ class camera {
         progress_thread.join();
         std::clog << "\rDone.                                  \n";
 
-        // // Output the combined results
-        // for (const auto& line : output) {
-        //     std::cout << line;
-        // }
+        // Output the combined results
+        for (const auto& line : output) {
+            std::cout << line;
+        }
     }
 
 
@@ -147,6 +149,11 @@ class camera {
         // Calculate the world space position of the top-left pixel (0,0).
         auto viewport_upper_left = center - (focal_length * w) - viewport_u/2 - viewport_v/2;
         pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+
+        // std::cout << center << "\n";
+        // std::cout << pixel00_loc << "\n\n";
+        // std::cout << pixel_delta_u << "\n";
+        // std::cout << pixel_delta_v << "\n\n";
     }
 
     ray get_ray(int i, int j) const {
@@ -179,8 +186,8 @@ class camera {
             current_ray.first_ray = depth == 0 ? true : false;
             // Check if the ray hits the background
             if (!world.hit(current_ray, interval(0.001, 2048), rec)) {
-                std::cout << 0 << "\n";
-                std::cout << 0 << "\n\n";
+                // std::cout << 0 << "\n";
+                // std::cout << 0 << "\n\n";
                 accumulated_color += current_attenuation * background; // Apply background color
                 break;
             }
@@ -199,12 +206,12 @@ class camera {
             if (rec.mat->scatter(current_ray, rec, attenuation, scattered)) {
                 current_attenuation = current_attenuation * attenuation; // Update attenuation
                 current_ray = scattered; // The scattered ray becomes the current ray for the next iteration
-                std::cout << scattered.origin() << "\n";
-                std::cout << scattered.direction() << "\n\n";
+                // std::cout << scattered.origin() << "\n";
+                // std::cout << scattered.direction() << "\n\n";
             } else {
                 // If the material does not scatter the ray, no further color contributions are expected
-                std::cout << 0 << "\n";
-                std::cout << 0 << "\n\n";
+                // std::cout << 0 << "\n";
+                // std::cout << 0 << "\n\n";
                 break;
             }
         }

@@ -24,6 +24,8 @@ void write_color(std::ostream &out, color pixel_color, int samples_per_pixel) {
     auto g = pixel_color.y();
     auto b = pixel_color.z();
 
+
+    // std::cout << pixel_color * 255 << std::endl;
     // Average the color by the number of samples to reduce noise (Anti-aliasing).
     auto scale = 1.0 / samples_per_pixel;
     r *= scale;
@@ -43,3 +45,29 @@ void write_color(std::ostream &out, color pixel_color, int samples_per_pixel) {
 }
 
 #endif
+
+
+// 1 ac_int<W,S> exec(ac_int<W,S> data_in,int addr, bool write){
+// 2 ac_int<W,S> tmp;
+// 3 addr_int = addr;
+// 4 if(write){
+// 5 if(cnt==0)
+// 6 write_data.set_slc(0,data_in);
+// 7 else
+// 8 write_data.set_slc(W,data_in);
+// 9 }
+// 10 if(cnt==0){//read on even
+// 11 read_data = ram[addr_int>>1];
+// 12 }
+// 13 else{//write on odd
+// 14 if(write){
+// 15 ram[addr_int>>1] = write_data;
+// 16 }
+// 17 }
+// 18 if(cnt==0)
+// 19 tmp = read_data.template slc<W>(0);
+// 20 else
+// 21 tmp = read_data.template slc<W>(W);
+// 22 ++cnt;
+// 23 return tmp;
+// 24 }
