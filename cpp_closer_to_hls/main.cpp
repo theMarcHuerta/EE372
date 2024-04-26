@@ -50,12 +50,12 @@ void cornell_w_sphere() {
     world.add(make_shared<quad>(point3(0, 0, 0), vec3(0,555,0), vec3(555,0,0), invisible_mat, true));
 
 
-    auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
-    auto blue_metal = make_shared<metal>(color(.3, .4, .7), 0.6);
-    world.add(make_shared<sphere>(point3(265 + 82.5, 430, 295 + 82.5), 100.0, material3, false));
+    // auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
+    // auto blue_metal = make_shared<metal>(color(.3, .4, .7), 0.6);
+    // world.add(make_shared<sphere>(point3(265 + 82.5, 430, 295 + 82.5), 100.0, material3, false));
 
-    auto material1 = make_shared<dielectric>(1.33);
-    world.add(make_shared<sphere>(point3(182, 240, 148), 75.0, blue_metal, false));
+    // auto material1 = make_shared<dielectric>(1.33);
+    // world.add(make_shared<sphere>(point3(182, 240, 148), 75.0, blue_metal, false));
 
     shared_ptr<hittable> box1 = box(point3(265,0,275), point3(430,330,420), white, 14);
     // shared_ptr<hittable> box1 = box(point3(0,0,0), point3(165,330,165), white);
@@ -74,9 +74,9 @@ void cornell_w_sphere() {
     camera cam;
 
     cam.aspect_ratio      = 1.0;
-    cam.image_width       = 720;
-    cam.samples_per_pixel = 512;
-    cam.max_depth         = 8;
+    cam.image_width       = 240;
+    cam.samples_per_pixel = 8;
+    cam.max_depth         = 1;
     cam.background        = color(0,0,0);
 
     cam.vfov     = 40;

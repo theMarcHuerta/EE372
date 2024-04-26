@@ -44,6 +44,10 @@ class material {
     // Pure virtual function for scattering rays off material. Must be implemented by derived classes.
     virtual bool scatter(
         const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const = 0;
+
+    virtual int matnum () const {
+      return 0;
+    } 
 };
 
 class lambertian : public material {
@@ -70,6 +74,10 @@ class lambertian : public material {
       return albedo;
     }
 
+    int matnum() const override {
+      return 0;
+    }
+
   private:
     // It's a measure of how much light that hits a surface is diffusely reflected, as opposed to being absorbed or transmitted through
     color albedo;  // Represents the color and intensity of the scattered light.
@@ -92,6 +100,28 @@ class metal : public material {
     vec3 colorofmat() const override {
       return albedo;
     }
+
+    int matnum() const override {
+      if (fuzz < 0.1875){
+        return 1;
+      }
+      else if (fuzz < .375) {
+        return 2;
+      } 
+      else if (fuzz < .625) {
+        return 3;
+      }
+      else if (fuzz < .8125) {
+        return 4;
+      }
+      else if (fuzz < 1) {
+        return 5;
+      }
+      else  {
+        return 6;
+      }
+    }
+
 
   private:
     color albedo;
@@ -130,6 +160,10 @@ class dielectric : public material {
       return color(0,0,0);
     }
 
+    int matnum() const override {
+      return 0;
+    }
+
   private:
     double ir; // Index of Refraction for the material.
 
@@ -156,6 +190,10 @@ class diffuse_light : public material {
 
     vec3 colorofmat() const override {
       return color(0,0,0);
+    }
+
+    int matnum() const override {
+      return 7;
     }
 
 

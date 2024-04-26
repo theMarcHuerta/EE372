@@ -44,6 +44,19 @@ class hittable_list : public hittable {
                     rec = temp_rec;  // Update the record to the nearest hit.
                 }
             }
+            // if (hit_anything){
+            // std::cout << rec.p << "\n";
+            // std::cout << rec.normal << "\n";
+            // std::cout << rec.front_face << "\n";
+            // std::cout << rec.t << "\n";
+            // std::cout << rec.u << "\n";
+            // std::cout << rec.v << "\n";
+            // std::cout << rec.mat->matnum() << "\n";
+            // std::cout << rec.mat->colorofmat() << "\n\n";
+            // }
+            // else {
+            // std::cout << 0 << "\n\n";
+            // }
 
             return hit_anything;  // Returns true if any object was hit.
         }
