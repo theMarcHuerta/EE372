@@ -12,7 +12,7 @@ public:
     MemController(){}
     
     #pragma hls_design interface
-    void run(ac_channel<sphere_hittable> &spheres_in,
+    void CCS_BLOCK(run)(ac_channel<sphere_hittable> &spheres_in,
              ac_channel<quad_hittable> &quads_in, 
              ac_channel<ray<sfp_11_22>> &ray_in,
              ac_channel<buffer_obj_count> &obj_count_in,
