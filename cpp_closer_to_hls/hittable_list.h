@@ -55,8 +55,16 @@ class hittable_list : public hittable {
             // std::cout << rec.mat->colorofmat() << "\n\n";
             // }
             // else {
+            // std::cout << 0 << "\n";
+            // std::cout << 0 << "\n";
+            // std::cout << 0 << "\n";
+            // std::cout << 0 << "\n";
+            // std::cout << 0 << "\n";
+            // std::cout << 0 << "\n";
+            // std::cout << 0 << "\n";
             // std::cout << 0 << "\n\n";
             // }
+            // std::cout << 1 << std::endl;
 
             return hit_anything;  // Returns true if any object was hit.
         }
