@@ -54,7 +54,7 @@ class camera {
         initialize();
         lines_remaining = image_height; // Initialize the atomic counter with the total number of scanlines
 
-        std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+        // std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
         std::vector<std::thread> threads;
         std::vector<std::string> output(image_height); // Correctly pre-allocated output vector
@@ -78,11 +78,11 @@ class camera {
                         color pixel_color(0,0,0);
                         for (int sample = 0; sample < samples_per_pixel; ++sample) {
                             auto r = get_ray(i, j);
-                            // std::cout << r.origin() << "\n";
-                            // std::cout << r.direction() << "\n\n";
-                            auto tmp_color = ray_color(r, max_depth, world);
-                            std::cout << tmp_color << "\n";
-                            pixel_color += tmp_color;
+                            std::cout << r.origin() << "\n";
+                            std::cout << r.direction() << "\n\n";
+                            // auto tmp_color = ray_color(r, max_depth, world);
+                            // std::cout << tmp_color << "\n";
+                            pixel_color += ray_color(r, max_depth, world);
                         }
                         write_color(local_stream, pixel_color, samples_per_pixel);
                     }
@@ -104,9 +104,9 @@ class camera {
         std::clog << "\rDone.                                  \n";
 
         // Output the combined results
-        for (const auto& line : output) {
-            std::cout << line;
-        }
+        // for (const auto& line : output) {
+        //     std::cout << line;
+        // }
     }
 
 

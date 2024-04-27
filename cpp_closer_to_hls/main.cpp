@@ -75,8 +75,8 @@ void cornell_w_sphere() {
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = 240;
-    cam.samples_per_pixel = 32;
-    cam.max_depth         = 8;
+    cam.samples_per_pixel = 8;
+    cam.max_depth         = 1;
     cam.background        = color(0,0,0);
 
     cam.vfov     = 40;
