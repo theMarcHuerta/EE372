@@ -46,6 +46,9 @@ class QuadHit {
     #pragma hls_design ccore
     bool run(ray<T>& r, T& closest_so_far, _quad_hittable<T>& _quad, HitRecord<T>& rec) {        
 
+        if (r.camera_ray && _quad.is_invis){
+            return false;
+        }
         T denom;
         dot.run(_quad.normal, r.dir, denom);
 

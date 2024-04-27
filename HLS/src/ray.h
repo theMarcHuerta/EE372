@@ -8,6 +8,7 @@ template<typename T>
 struct ray {
   vec3<T> orig; 
   vec3<T> dir;
+  bool camera_ray;
 };
 
 template<typename T>

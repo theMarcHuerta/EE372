@@ -101,7 +101,8 @@ public:
             isHit.write(false);
             hit_out.write(rec_quad);  // doesnt really matter which one we write out as long as we write somethign out
         }
-
+        //any ray going out is not a camera ray anymore
+        ray_temp.camera_ray = false;
         ray_out.write(ray_temp);
         attenuation_chan_out.write(tmp_accum_in);
 
