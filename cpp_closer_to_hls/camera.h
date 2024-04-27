@@ -189,12 +189,12 @@ class camera {
             if (!world.hit(current_ray, interval(0.001, 2048), rec)) {
                 // std::cout << 1 << "\n";
                 
-                // std::cout << 0 << " " << 0 << " " << 0 << "\n";
-                // std::cout << 0 << " " << 0 << " " << 0 << "\n";
-                // std::cout << 0 << "\n";
-                // std::cout << 0 << "\n";
-                // std::cout << 0 << "\n";
-                // std::cout << 0 << " " << 0 << " " << 0 << "\n\n";
+                std::cout << 0 << " " << 0 << " " << 0 << "\n";
+                std::cout << 0 << " " << 0 << " " << 0 << "\n";
+                std::cout << 0 << "\n";
+                std::cout << 0 << "\n";
+                std::cout << 0 << "\n";
+                std::cout << 0 << " " << 0 << " " << 0 << "\n\n";
                 // std::cout << 0 << "\n";
                 // std::cout << 0 << "\n\n";
                 accumulated_color += current_attenuation * background; // Apply background color
@@ -211,12 +211,12 @@ class camera {
             // if (std::abs(rec_tmp.v) < 0.0009765625) {rec_tmp.v = rec_tmp.v < 0 ? -0.0009765625 : 0.0009765625;}
             // std::cout << 1 << "\n";
 
-            // std::cout << rec_tmp.p << "\n";
-            // std::cout << rec_tmp.normal << "\n";
-            // std::cout << rec_tmp.front_face << "\n";
-            // std::cout << rec_tmp.t << "\n";
-            // std::cout << rec_tmp.mat->matnum() << "\n";
-            // std::cout << rec_tmp.mat->colorofmat() << "\n\n";
+            std::cout << rec_tmp.p << "\n";
+            std::cout << rec_tmp.normal << "\n";
+            std::cout << rec_tmp.front_face << "\n";
+            std::cout << rec_tmp.t << "\n";
+            std::cout << rec_tmp.mat->matnum() << "\n";
+            std::cout << rec_tmp.mat->colorofmat() << "\n\n";
 
 
             // After the first iteration, any ray is considered a secondary ray

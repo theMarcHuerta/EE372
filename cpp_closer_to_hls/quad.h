@@ -18,15 +18,15 @@ class quad : public hittable {
         D = dot(normal, Q);\
         w = n / dot(n,n);
         w = vec3(FixedPoint<24>(w.x()).toDouble(), FixedPoint<24>(w.y()).toDouble(), FixedPoint<24>(w.z()).toDouble());
-        std::cout << Q << "\n";
-        std::cout << u << "\n";
-        std::cout << v << "\n";
-        std::cout << mat->matnum() << "\n";
-        std::cout << invis << "\n";
-        std::cout << normal << "\n";
-        std::cout << w << "\n";
-        std::cout << D << "\n";
-        std::cout << mat->colorofmat() << "\n\n";
+        // std::cout << Q << "\n";
+        // std::cout << u << "\n";
+        // std::cout << v << "\n";
+        // std::cout << mat->matnum() << "\n";
+        // std::cout << invis << "\n";
+        // std::cout << normal << "\n";
+        // std::cout << w << "\n";
+        // std::cout << D << "\n";
+        // std::cout << mat->colorofmat() << "\n\n";
 
     }
 
