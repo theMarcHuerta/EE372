@@ -4,6 +4,7 @@
 #include "rtweekend.h"
 #include "hittable.h"
 #include "hittable_list.h"
+#include "fixedpoint.h"
 
 #include <cmath>
 
@@ -16,6 +17,20 @@ class quad : public hittable {
         normal = unit_vector(n);
         D = dot(normal, Q);\
         w = n / dot(n,n);
+        w = vec3(FixedPoint<24>(w.x()).toDouble(), FixedPoint<24>(w.y()).toDouble(), FixedPoint<24>(w.z()).toDouble());
+        std::cout << Q << "\n";
+        std::cout << u << "\n";
+        std::cout << v << "\n";
+        std::cout << mat->matnum() << "\n";
+        std::cout << invis << "\n";
+        std::cout << normal << "\n";
+        std::cout << w << "\n";
+        std::cout << D << "\n";
+        std::cout << mat->colorofmat() << "\n\n";
+
+    }
+
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
         // std::cout << Q << "\n";
         // std::cout << u << "\n";
         // std::cout << v << "\n";
@@ -24,12 +39,9 @@ class quad : public hittable {
         // std::cout << normal << "\n";
         // std::cout << w << "\n";
         // std::cout << D << "\n";
-        // std::cout << mat->colorofmat() << "\n\n";
-
-    }
-
-    bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
+        // std::cout << mat->colorofmat() << "\n";
         if (r.first_ray && invis){
+            // std::cout <<  << "\n";
             return false;
         }
         auto denom = dot(normal, r.direction());

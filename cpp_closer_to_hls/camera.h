@@ -79,8 +79,8 @@ class camera {
                         for (int sample = 0; sample < samples_per_pixel; ++sample) {
                             auto r = get_ray(i, j);
                             // std::cout << 1 << std::endl;
-                            std::cout << r.origin() << "\n";
-                            std::cout << r.direction() << "\n\n";
+                            // std::cout << r.origin() << "\n";
+                            // std::cout << r.direction() << "\n\n";
                             // auto tmp_color = ray_color(r, max_depth, world);
                             // std::cout << tmp_color << "\n";
                             pixel_color += ray_color(r, max_depth, world);

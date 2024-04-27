@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstdint>
 
+template<int num_f_bits>
 class FixedPoint {
 public:
     // Constructor from a double
@@ -53,5 +54,5 @@ public:
 
 private:
     int64_t fixedValue;  // The raw fixed-point value. Includes one sign bit implicitly.
-    static const int fractionalBits = 15; // Number of fractional bits
+    static const int fractionalBits = num_f_bits; // Number of fractional bits
 };

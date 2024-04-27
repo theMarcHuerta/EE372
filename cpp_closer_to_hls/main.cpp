@@ -27,7 +27,7 @@ each object, and using the material properties to calculate the color contributi
 #include "material.h"
 #include "sphere.h"
 #include "quad.h"
-#include "fixedpoint.h"
+// #include "fixedpoint.h"
 
 
 void cornell_w_sphere() {
