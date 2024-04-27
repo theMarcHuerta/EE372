@@ -9,8 +9,6 @@ struct HitRecord {
     vec3<T> normal;
     bool front_face;
     T t; // how far along the hit occured
-    T u;
-    T v;
     uint_3 mat;
     rgb_in color;
 

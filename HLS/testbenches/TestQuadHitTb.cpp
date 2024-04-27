@@ -18,14 +18,14 @@ CCS_MAIN(int argc, char** argv) {
     std::vector<ray<sfp_11_22>> rays;
     std::vector<_quad_hittable<sfp_11_22>> quads;
 
-    rays = read_rays<sfp_11_22>("../cpp_closer_to_hls/test_stimulus_and_results/matscat_stim_8_8/rays_generated.txt");
-    quads = read_hittables<sfp_11_22>("../cpp_closer_to_hls/test_stimulus_and_results/matscat_stim_8_8/quads_in_scene.txt");
+    rays = read_rays<sfp_11_22>("../cpp_closer_to_hls/test_stimulus_and_results/10bit_rec_ray_1samp/camera_ray_1b_1s_240p.txt");
+    quads = read_hittables<sfp_11_22>("../cpp_closer_to_hls/test_stimulus_and_results/10bit_rec_ray_1samp/quads_in_scene.txt");
 
     // output to compare with
     std::vector<HitRecord<sfp_11_22>> records;
 
     // golden output from Marc's cpp code
-    std::vector<output> gold_output = read_recs("../cpp_closer_to_hls/test_stimulus_and_results/matscat_stim_8_8/first_bounce_hit_rec_8samp.txt");
+    std::vector<output> gold_output = read_recs("../cpp_closer_to_hls/test_stimulus_and_results/10bit_rec_ray_1samp/hit_rec_1b_1s_240p.txt");
 
 
     if (rays.size() != gold_output.size()) {
@@ -40,7 +40,7 @@ CCS_MAIN(int argc, char** argv) {
     for (ray<sfp_11_22> r : rays) {
         // initialize new outputs for every new ray
         sfp_11_22 closest_so_far = WS_MAX_X;
-        HitRecord<sfp_11_22> rec = {{0, 0, 0}, {0, 0, 0}, 0, 0, 0, 0, 0, {0, 0, 0}};
+        HitRecord<sfp_11_22> rec = {{0, 0, 0}, {0, 0, 0}, 0, 0, 0, {0, 0, 0}};
         
         // for every quad
         for (_quad_hittable<sfp_11_22> q : quads) {

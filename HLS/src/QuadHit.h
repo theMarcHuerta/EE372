@@ -91,8 +91,6 @@ class QuadHit {
         if (alpha < 0 || alpha > 1 || beta < 0 || beta > 1)  // Check if inside quad bounds
             return false;
 
-        rec.u = alpha;
-        rec.v = beta;
         rec.t = t;
         rec.hit_loc = intersection;
         rec.color = _quad.quad_color;

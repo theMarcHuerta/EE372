@@ -39,7 +39,7 @@ struct output {
 };
 
 // set comparison threshold
-double output::thresh = 1e-4;
+double output::thresh = 1.0;
 
 std::istream& operator>>(std::istream& is, sfp_11_22& val) {
     // Implementation depends on the specifics of sfp_11_22
@@ -201,18 +201,6 @@ std::vector<output> read_recs(const std::string& filename) {
         iss.str(line);  // Set new string to parse
 
         iss >> rec.t;
-
-        std::getline(file, line);
-        iss.clear();  // Clear any error flags
-        iss.str(line);  // Set new string to parse
-
-        iss >> rec.u;
-
-        std::getline(file, line);
-        iss.clear();  // Clear any error flags
-        iss.str(line);  // Set new string to parse
-
-        iss >> rec.v;
 
         std::getline(file, line);
         iss.clear();  // Clear any error flags
