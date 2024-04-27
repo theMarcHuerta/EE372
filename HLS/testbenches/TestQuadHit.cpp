@@ -20,8 +20,8 @@ class TestQuadHit {
     TestQuadHit() {}
 
     #pragma hls_design interface
-    void CCS_BLOCK(run)(ray<sfp_11_22>& r, sfp_11_22& closest_so_far, quad_hittable& quad, HitRecord<sfp_11_22>& rec) {
-        quad_hit.run(r, closest_so_far, quad, rec);
+    void CCS_BLOCK(run)(ray<sfp_11_22>& r, sfp_11_22& closest_so_far, _quad_hittable<sfp_11_22>& _quad, HitRecord<sfp_11_22>& rec) {
+        quad_hit.run(r, closest_so_far, _quad, rec);
     }
 };
 

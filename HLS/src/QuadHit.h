@@ -44,24 +44,15 @@ class QuadHit {
     QuadHit() {}
 
     #pragma hls_design ccore
-    bool run(ray<T>& r, T& closest_so_far, quad_hittable& quad, HitRecord<T>& rec) {
-        // // read in data from channels
-        // Ray r = rays.read();
-        // T closest = closest_so_far.read();
-        // quad_hittable quad = quads.read();
-        // HitRecord rec = recs.read();
-
-        // create quad hittable with compatible bit widths for arithmetic
-        _quad_hittable<T> _quad = {{quad.corner_pt.x, quad.corner_pt.y, quad.corner_pt.z},
-                                   {quad.u.x, quad.u.y, quad.u.z}, {quad.v.x, quad.v.y, quad.v.z},
-                                    quad.mat_type, quad.is_invis, {quad.normal.x, quad.normal.y, quad.normal.z},
-                                    {quad.w.x, quad.w.y, quad.w.z}, quad.d_plane,
-                                    {quad.quad_color.r, quad.quad_color.g, quad.quad_color.b}};
+    bool run(ray<T>& r, T& closest_so_far, _quad_hittable<T>& _quad, HitRecord<T>& rec) {        
 
         T denom;
         dot.run(_quad.normal, r.dir, denom);
 
-        if (denom == 0)  // Check for parallel ray TO DO MAKE FIXED POINT REP FOR 1e-8
+        T abs_denom;
+        ac_math::ac_abs(denom, abs_denom);
+
+        if (abs_denom < 1e-8)  // Check for parallel ray TO DO MAKE FIXED POINT REP FOR 1e-8
         //  absolute value of a floating-point number is what fabs is so we have to implement that
             return false;
 

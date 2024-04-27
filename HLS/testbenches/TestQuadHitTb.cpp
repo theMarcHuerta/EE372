@@ -1,63 +1,86 @@
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <string>
 #include <iostream>
 
 #include "TestQuadHit.cpp"
+#include "read_stimulus.cpp"
 
 using namespace std;
+
 
 CCS_MAIN(int argc, char** argv) {
 
     TestQuadHit inst; // DUT
 
-    // initialize arguments
-    ray<sfp_11_22> r = {{0, 0, 0}, {1, 0, 0}};  // ray pointing along +x axis
-    sfp_11_22 closest_so_far = WS_MAX_X;
-    quad_hittable quad0 = {{10, -0.5, -0.5}, {0, 1, 0}, {0, 0, 1}, LAMBERTIAN, 0, {1, 0, 0}, {1, 0, 0}, 10, {255, 255, 255}};   // first quad
-    quad_hittable quad1 = {{5, -0.5, -0.5}, {0, 1, 0}, {0, 0, 1}, METAL_MAX, 0, {1, 0, 0}, {1, 0, 0}, 5, {255, 255, 255}};   // second quad
-    quad_hittable quad2 = {{18, -0.5, -0.5}, {0, 1, 0}, {0, 0, 1}, LAMBERTIAN, 0, {1, 0, 0}, {1, 0, 0}, 18, {255, 255, 255}};   // third quad
-    HitRecord<sfp_11_22> rec = {{0, 0, 0}, {0, 0, 0}, false, WS_MIN_X, 0, 0, METAL_MAX, {0, 0, 0}};
+    // read in N input data sets
+    std::vector<ray<sfp_11_22>> rays;
+    std::vector<_quad_hittable<sfp_11_22>> quads;
 
-    inst.run(r, closest_so_far, quad0, rec);
+    rays = read_rays<sfp_11_22>("../cpp_closer_to_hls/test_stimulus_and_results/matscat_stim_8_8/rays_generated.txt");
+    quads = read_hittables<sfp_11_22>("../cpp_closer_to_hls/test_stimulus_and_results/matscat_stim_8_8/quads_in_scene.txt");
 
-    // first hit should be at (10, 0, 0)
-    if (closest_so_far != 10 || rec.hit_loc.x != 10 || rec.hit_loc.y != 0 || rec.hit_loc.z != 0 || rec.mat != LAMBERTIAN) {
-        cout << "Test Failed!   " << endl;
-        cout << closest_so_far << endl;
-        cout << rec.hit_loc.x << endl;
-        cout << rec.hit_loc.y << endl;
-        cout << rec.hit_loc.z << endl;
-        cout << closest_so_far << endl;
-        cout << rec.mat;
+    // output to compare with
+    std::vector<HitRecord<sfp_11_22>> records;
+
+    // golden output from Marc's cpp code
+    std::vector<output> gold_output = read_recs("../cpp_closer_to_hls/test_stimulus_and_results/matscat_stim_8_8/first_bounce_hit_rec_8samp.txt");
+
+
+    if (rays.size() != gold_output.size()) {
+        cout << "Different number of Rays and Hit Records" << endl;
+        cout << "Num Rays: " << rays.size() << "    HitRecords: " << gold_output.size() << endl;
         CCS_RETURN(1);
     }
 
-    // run second hit routine
-    inst.run(r, closest_so_far, quad1, rec);
+    int count = 0;
 
-    // second hit should be at (5, 0, 0) and this should now be the closest
-    if (closest_so_far != 5 || rec.hit_loc.x != 5 || rec.hit_loc.y != 0 || rec.hit_loc.z != 0 || rec.mat != METAL_MAX) {
-        cout << "Test Failed!   " << endl;
-        cout << closest_so_far << endl;
-        cout << rec.hit_loc.x << endl;
-        cout << rec.hit_loc.y << endl;
-        cout << rec.hit_loc.z << endl;
-        cout << closest_so_far << endl;
-        cout << rec.mat;
+    // for every ray
+    for (ray<sfp_11_22> r : rays) {
+        // initialize new outputs for every new ray
+        sfp_11_22 closest_so_far = WS_MAX_X;
+        HitRecord<sfp_11_22> rec = {{0, 0, 0}, {0, 0, 0}, 0, 0, 0, 0, 0, {0, 0, 0}};
+        
+        // for every quad
+        for (_quad_hittable<sfp_11_22> q : quads) {
+            int qcount = 0;
+
+            sfp_11_22 x = closest_so_far;
+            inst.run(r, closest_so_far, q, rec);
+            if (closest_so_far != x && count == 47) cout << "Quad " << qcount << " hit!" << endl;
+            
+            // if (count == 0) {
+            //     cout << "Ray Orig In " << r.orig.x << " " << r.orig.y << " " << r.orig.z << endl;
+            //     cout << "Ray Dir In " << r.dir.x << " " << r.dir.y << " " << r.dir.z << endl;
+            //     count++; 
+            // }
+
+            // if (qcount == 1) {
+            //     cout << "Quad w: " << q.w.x << " " << q.w.y << " " << q.w.z << endl;
+            // }
+            qcount++;
+        }
+        records.push_back(rec);
+        count++;
+    }
+
+    if (records.size() != gold_output.size()) {
+        cout << "Different number of Expected and Actual Records" << endl;
+        cout << "Num Actual: " << records.size() << "    Num Expected: " << gold_output.size() << endl;
         CCS_RETURN(1);
     }
 
-    inst.run(r, closest_so_far, quad2, rec);
-
-    // third hit is not the closest, so nothing should change
-    if (closest_so_far != 5 || rec.hit_loc.x != 5 || rec.hit_loc.y != 0 || rec.hit_loc.z != 0 || rec.mat != METAL_MAX) {
-        cout << "Test Failed!   " << endl;
-        cout << closest_so_far << endl;
-        cout << rec.hit_loc.x << endl;
-        cout << rec.hit_loc.y << endl;
-        cout << rec.hit_loc.z << endl;
-        cout << closest_so_far << endl;
-        cout << rec.mat;
-        CCS_RETURN(1);
+    // compare outputs
+    for (int i = 0; i < records.size(); i++) {
+        if (!(gold_output[i] == records[i])) {
+            cout << "Test Failed on Iteration " << i << "   :(   " << endl;
+            cout << "Expected: " << gold_output[i].hit_loc.x << " " << gold_output[i].hit_loc.y << " " << gold_output[i].hit_loc.z << endl;
+            cout << "Actual: " << records[i].hit_loc.x << " " << records[i].hit_loc.y << " " << records[i].hit_loc.z << endl;
+            CCS_RETURN(1);
+        }
     }
+
     
     cout << "Test Passed!  " << endl;
     CCS_RETURN(0);
