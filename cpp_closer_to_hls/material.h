@@ -64,6 +64,12 @@ class lambertian : public material {
       if (scatter_direction.near_zero())
           scatter_direction = rec.normal;
 
+
+      // vec3 tmp_p = rec.p;
+      // if (std::abs(rec.p.x()) < 1e-16) {tmp_p.e[0] = 1e-7;}
+      // if (std::abs(rec.p.y()) < 1e-16) {tmp_p.e[1] = 1e-7;}
+      // if (std::abs(rec.p.y()) < 1e-16) {tmp_p.e[2] = 1e-7;}
+
       scattered = ray(rec.p, scatter_direction);
       attenuation = albedo;  // The color is affected by the material's albedo.
       return true;

@@ -91,21 +91,22 @@ void cornell_w_sphere() {
 
 int main() {
     cornell_w_sphere();
-    // FixedPoint<10, 22> a22 = FixedPoint<10, 22>(3.5);
-    // FixedPoint<10, 22> b22 = FixedPoint<10, 22>(2.0);
-    // FixedPoint<10, 22> c22 = a22 / b22;
-    // std::cout << "a22 / b22 = " << c22.toDouble() << std::endl;
+    // FixedPoint a22 = FixedPoint(0.01);
+    // std::cout << a22.toDouble() << std::endl;
+    // // FixedPoint b22 = FixedPoint(2.0);
+    // // FixedPoint c22 = a22 / b22;
+    // // std::cout << "a22 / b22 = " << c22.toDouble() << std::endl;
 
-    // FixedPoint<10, 21> a21 = FixedPoint<10, 21>(3.5);
-    // FixedPoint<10, 21> b21 = FixedPoint<10, 21>(2.25);
-    // FixedPoint<10, 21> c21 = a21 + b21;
-    // FixedPoint<10, 21> d21 = a21 * b21;
-    // std::cout << "a21 + b21 = " << c21.toDouble() << std::endl;
-    // std::cout << "a21 * b21 = " << d21.toDouble() << std::endl;
+    // // FixedPoint a21 = FixedPoint(3.5);
+    // // FixedPoint b21 = FixedPoint(2.25);
+    // // FixedPoint c21 = a21 + b21;
+    // // FixedPoint d21 = a21 * b21;
+    // // std::cout << "a21 + b21 = " << c21.toDouble() << std::endl;
+    // // std::cout << "a21 * b21 = " << d21.toDouble() << std::endl;
 
-    // FixedPoint<10, 21> a20 = FixedPoint<10, 21>(.25);
-    // FixedPoint<10, 21> b20 = FixedPoint<10, 21>(.25);
-    // FixedPoint<10, 21> d20 = a20 * b20;
-    // std::cout << "a20 * b20 = " << d20.toDouble() << std::endl;
+    // // FixedPoint a20 = FixedPoint(.25);
+    // // FixedPoint b20 = FixedPoint(.25);
+    // // FixedPoint d20 = a20 * b20;
+    // // std::cout << "a20 * b20 = " << d20.toDouble() << std::endl;
     return 0;
 }
