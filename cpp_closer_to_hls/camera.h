@@ -189,14 +189,14 @@ class camera {
             if (!world.hit(current_ray, interval(0.001, 2048), rec)) {
                 // std::cout << 1 << "\n";
                 
+                std::cout << 0 << " " << 0 << " " << 0 << "\n";
+                std::cout << 0 << " " << 0 << " " << 0 << "\n";
                 std::cout << 0 << "\n";
                 std::cout << 0 << "\n";
                 std::cout << 0 << "\n";
                 std::cout << 0 << "\n";
                 std::cout << 0 << "\n";
-                std::cout << 0 << "\n";
-                std::cout << 0 << "\n";
-                std::cout << 0 << "\n\n";
+                std::cout << 0 << " " << 0 << " " << 0 << "\n\n";
                 // std::cout << 0 << "\n";
                 // std::cout << 0 << "\n\n";
                 accumulated_color += current_attenuation * background; // Apply background color
