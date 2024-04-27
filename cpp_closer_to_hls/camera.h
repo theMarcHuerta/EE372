@@ -79,8 +79,8 @@ class camera {
                         for (int sample = 0; sample < samples_per_pixel; ++sample) {
                             auto r = get_ray(i, j);
                             // std::cout << 1 << std::endl;
-                            // std::cout << r.origin() << "\n";
-                            // std::cout << r.direction() << "\n\n";
+                            std::cout << r.origin() << "\n";
+                            std::cout << r.direction() << "\n\n";
                             // auto tmp_color = ray_color(r, max_depth, world);
                             // std::cout << tmp_color << "\n";
                             pixel_color += ray_color(r, max_depth, world);
@@ -104,7 +104,7 @@ class camera {
         progress_thread.join();
         std::clog << "\rDone.                                  \n";
 
-        // Output the combined results
+        // // Output the combined results
         // for (const auto& line : output) {
         //     std::cout << line;
         // }
@@ -189,49 +189,65 @@ class camera {
             if (!world.hit(current_ray, interval(0.001, 2048), rec)) {
                 // std::cout << 1 << "\n";
                 
-                std::cout << 0 << " " << 0 << " " << 0 << "\n";
-                std::cout << 0 << " " << 0 << " " << 0 << "\n";
-                std::cout << 0 << "\n";
-                std::cout << 0 << "\n";
-                std::cout << 0 << "\n";
-                std::cout << 0 << "\n";
-                std::cout << 0 << "\n";
-                std::cout << 0 << " " << 0 << " " << 0 << "\n\n";
+                // std::cout << 0 << " " << 0 << " " << 0 << "\n";
+                // std::cout << 0 << " " << 0 << " " << 0 << "\n";
+                // std::cout << 0 << "\n";
+                // std::cout << 0 << "\n";
+                // std::cout << 0 << "\n";
+                // std::cout << 0 << " " << 0 << " " << 0 << "\n\n";
                 // std::cout << 0 << "\n";
                 // std::cout << 0 << "\n\n";
                 accumulated_color += current_attenuation * background; // Apply background color
                 break;
             }
+
+            hit_record rec_tmp = rec;
+            if (std::abs(rec_tmp.p.x()) < 0.0009765625) {rec_tmp.p.e[0] = rec_tmp.p.x() < 0 ? -0.0009765625 : 0.0009765625;}
+            if (std::abs(rec_tmp.p.y()) < 0.0009765625) {rec_tmp.p.e[1] = rec_tmp.p.y() < 0 ? -0.0009765625 : 0.0009765625;}
+            if (std::abs(rec_tmp.p.z()) < 0.0009765625) {rec_tmp.p.e[2] = rec_tmp.p.z() < 0 ? -0.0009765625 : 0.0009765625;}
+
+            // if (std::abs(rec_tmp.t) < 0.0009765625) {rec_tmp.t = rec_tmp.t < 0 ? -0.0009765625 : 0.0009765625;}
+            // if (std::abs(rec_tmp.u) < 0.0009765625) {rec_tmp.u = rec_tmp.u < 0 ? -0.0009765625 : 0.0009765625;}
+            // if (std::abs(rec_tmp.v) < 0.0009765625) {rec_tmp.v = rec_tmp.v < 0 ? -0.0009765625 : 0.0009765625;}
             // std::cout << 1 << "\n";
-            std::cout << rec.p << "\n";
-            std::cout << rec.normal << "\n";
-            std::cout << rec.front_face << "\n";
-            std::cout << rec.t << "\n";
-            std::cout << rec.u << "\n";
-            std::cout << rec.v << "\n";
-            std::cout << rec.mat->matnum() << "\n";
-            std::cout << rec.mat->colorofmat() << "\n\n";
+
+            // std::cout << rec_tmp.p << "\n";
+            // std::cout << rec_tmp.normal << "\n";
+            // std::cout << rec_tmp.front_face << "\n";
+            // std::cout << rec_tmp.t << "\n";
+            // std::cout << rec_tmp.mat->matnum() << "\n";
+            // std::cout << rec_tmp.mat->colorofmat() << "\n\n";
+
 
             // After the first iteration, any ray is considered a secondary ray
-            rec.is_secondary_ray = depth > 0;
+            rec_tmp.is_secondary_ray = depth > 0;
 
             // Emitted light from the material (if any)
-            color emitted = rec.mat->emitted(rec.u, rec.v, rec.p);
+            color emitted = rec_tmp.mat->emitted();
             accumulated_color += current_attenuation * emitted; // Add emitted light to accumulated color
 
             ray scattered; // The ray that results from scattering
             color attenuation; // The attenuation of the ray after scattering
 
             // If the material scatters the ray, update the current attenuation and the current ray
-            if (rec.mat->scatter(current_ray, rec, attenuation, scattered)) {
+            if (rec_tmp.mat->scatter(current_ray, rec_tmp, attenuation, scattered)) {
                 current_attenuation = current_attenuation * attenuation; // Update attenuation
-                current_ray = scattered; // The scattered ray becomes the current ray for the next iteration
-                // std::cout << scattered.origin() << "\n";
-                // std::cout << scattered.direction() << "\n\n";
+                current_ray = scattered;
+                // point3 tmp_p = scattered.origin();
+                // if (std::abs(rec_tmp.p.x()) < 0.0009765625) {tmp_p.e[0] = rec_tmp.p.x() < 0 ? -0.0009765625 : 0.0009765625;}
+                // if (std::abs(rec_tmp.p.y()) < 0.0009765625) {tmp_p.e[1] = rec_tmp.p.y() < 0 ? -0.0009765625 : 0.0009765625;}
+                // if (std::abs(rec_tmp.p.z()) < 0.0009765625) {tmp_p.e[2] = rec_tmp.p.z() < 0 ? -0.0009765625 : 0.0009765625;}
+                // current_ray = ray(tmp_p, scattered.direction()); // The scattered ray becomes the current ray for the next iteration
+                // if (depth==0){
+                // std::cout << current_ray.origin() << "\n";
+                // std::cout << current_ray.direction() << "\n\n";
+                // }
             } else {
                 // If the material does not scatter the ray, no further color contributions are expected
+                // if (depth==7){
                 // std::cout << 0 << "\n";
                 // std::cout << 0 << "\n\n";
+                // }
                 break;
             }
         }

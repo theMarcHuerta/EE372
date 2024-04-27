@@ -33,8 +33,8 @@ class hit_record {
     vec3 normal;        // The normal vector at the hit point, pointing outward.
     shared_ptr<material> mat;  // Pointer to the material of the object. Determines how the surface interacts with light.
     double t;           // The parameter `t` for the ray equation P(t) = A + tb. Represents how far along the ray the hit occurs.
-    double u;
-    double v;
+    // double u;
+    // double v;
     bool front_face;    // True if the ray hits the front face of the object, false if the back.
     bool is_secondary_ray = false;
 

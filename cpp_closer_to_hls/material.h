@@ -33,7 +33,7 @@ class material {
   public:
     virtual ~material() = default;  // Virtual destructor ensures derived class destructors are called.
 
-    virtual color emitted(double u, double v, const point3& p) const {
+    virtual color emitted() const {
         return color(0,0,0);
     }
 
@@ -63,6 +63,14 @@ class lambertian : public material {
       // Catch degenerate scatter direction
       if (scatter_direction.near_zero())
           scatter_direction = rec.normal;
+
+      // vec3 tmp_p = rec.p;
+      // if (std::abs(rec.p.x()) < 1e-16) {tmp_p.e[0] = 1e-7;}
+      // if (std::abs(rec.p.y()) < 1e-16) {tmp_p.e[1] = 1e-7;}
+      // if (std::abs(rec.p.y()) < 1e-16) {tmp_p.e[2] = 1e-7;}
+      if (std::abs(scatter_direction.x()) < 0.00012207031) {scatter_direction.e[0] = scatter_direction.x() < 0 ? -0.00012207031 : 0.00012207031;}
+      if (std::abs(scatter_direction.y()) < 0.00012207031) {scatter_direction.e[1] = scatter_direction.y() < 0 ? -0.00012207031 : 0.00012207031;}
+      if (std::abs(scatter_direction.z()) < 0.00012207031) {scatter_direction.e[2] = scatter_direction.z() < 0 ? -0.00012207031 : 0.00012207031;}
 
       scattered = ray(rec.p, scatter_direction);
       attenuation = albedo;  // The color is affected by the material's albedo.
@@ -184,7 +192,7 @@ class diffuse_light : public material {
         return false;
     }
 
-    color emitted(double u, double v, const point3& p) const override {
+    color emitted() const override {
         return emit;
     }
 

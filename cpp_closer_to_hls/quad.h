@@ -68,8 +68,8 @@ class quad : public hittable {
         if ((a < 0) || (1 < a) || (b < 0) || (1 < b))
             return false;
 
-        rec.u = a;
-        rec.v = b;
+        // rec.u = 0;
+        // rec.v = 0;
         return true;
     }
 
