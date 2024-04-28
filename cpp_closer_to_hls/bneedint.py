@@ -26,8 +26,8 @@ def process_file(filename, x):
     return results
 
 # Example usage
-filename = 'test_stimulus_and_results/10bit_rec_ray_1samp/camera_ray_1b_1s_240p.txt'
-x = 3  # Number of lines per group
+filename = 'test_stimulus_and_results/bit_acc_c_result/first_hit_rec.txt'
+x = 7  # Number of lines per group
 results = process_file(filename, x)
 for idx, bits in enumerate(results):
     print(f"Position {idx + 1}: Max integer bits needed: {bits}")

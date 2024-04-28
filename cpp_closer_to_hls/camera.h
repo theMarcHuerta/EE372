@@ -43,7 +43,7 @@ class camera {
     int    max_depth         = 10;   // Max depth for ray bouncing. Limits recursion in ray_color.
     color  background;               // Scene background color
     //mt stuff
-    static constexpr int num_threads = 1;
+    static constexpr int num_threads = 4;
     std::atomic<int> lines_remaining;
 
     double vfov = 90;  // Vertical field of view in degrees.
@@ -55,7 +55,7 @@ class camera {
         initialize();
         lines_remaining = image_height; // Initialize the atomic counter with the total number of scanlines
 
-        // std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+        std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
         std::vector<std::thread> threads;
         std::vector<std::string> output(image_height); // Correctly pre-allocated output vector
@@ -106,10 +106,10 @@ class camera {
         progress_thread.join();
         std::clog << "\rDone.                                  \n";
 
-        // // Output the combined results
-        // for (const auto& line : output) {
-        //     std::cout << line;
-        // }
+        // Output the combined results
+        for (const auto& line : output) {
+            std::cout << line;
+        }
     }
 
 

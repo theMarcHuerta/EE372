@@ -40,32 +40,34 @@ class quad : public hittable {
     }
 
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
-        std::cout << Q << "\n";
-        std::cout << u << "\n";
-        std::cout << v << "\n";
-        std::cout << mat->matnum() << "\n";
-        std::cout << invis << "\n";
-        std::cout << normal << "\n";
-        std::cout << w << "\n";
-        std::cout << D << "\n";
-        std::cout << mat->colorofmat() << "\n";
+        // std::cout << Q << "\n";
+        // std::cout << u << "\n";
+        // std::cout << v << "\n";
+        // std::cout << mat->matnum() << "\n";
+        // std::cout << invis << "\n";
+        // std::cout << normal << "\n";
+        // std::cout << w << "\n";
+        // std::cout << D << "\n";
+        // std::cout << mat->colorofmat() << "\n";
         if (r.first_ray && invis){
-            std::cout << 1 << "\n"; // invis
-            std::cout << 0 << "\n"; // NOT parallel
-            std::cout << 0 << "\n"; // in range
-            std::cout << 0 << "\n"; // in interior
+            // std::cout << 1 << "\n"; // invis
+            // std::cout << 0 << "\n"; // NOT parallel
+            // std::cout << 0 << "\n"; // in range
+            // std::cout << 0 << "\n"; // in interior
 
-            std::cout << 0 << "\n"; // denom
-            std::cout << 0 << "\n"; // t
-            std::cout << 0 << " " << 0 << " " << 0 << "\n"; // intersec
-            std::cout << 0 << " " << 0 << " " << 0 << "\n";// hitpt
-            std::cout << 0 << "\n"; // alpha
-            std::cout << 0 << "\n\n"; // beta
+            // std::cout << 0 << "\n"; // denom
+            // std::cout << 0 << "\n"; // t
+            // std::cout << 0 << " " << 0 << " " << 0 << "\n"; // intersec
+            // std::cout << 0 << " " << 0 << " " << 0 << "\n";// hitpt
+            // std::cout << 0 << "\n"; // alpha
+            // std::cout << 0 << "\n\n"; // beta
             return false;
         }
-        std::cout << 0 << "\n"; // not invis
+        // std::cout << 0 << "\n"; // not invis
         auto denom = FixedPoint<47>(dot(normal, r.direction())).toDouble(); //24 bit * 23bit
-        
+        if (std::abs(denom) < 1.1920929e-7) {denom = denom < 0 ? 1.1920929e-7 : 1.1920929e-7;}
+        denom = FixedPoint<23>(denom).toDouble();
+
         auto tmp_denom = FixedPoint<20>(denom).toDouble(); // so far 24 bits made no difference, 20 no difference, can just truncate here
 
         // // 2 ^ -40
@@ -74,19 +76,19 @@ class quad : public hittable {
         
         // No hit if the ray is parallel to the plane.
         if (fabs(tmp_denom) < 1e-6) {
-            std::cout << 1 << "\n"; // parallel
-            std::cout << 0 << "\n"; // in range
-            std::cout << 0 << "\n"; // in interior
+            // std::cout << 1 << "\n"; // parallel
+            // std::cout << 0 << "\n"; // in range
+            // std::cout << 0 << "\n"; // in interior
 
-            std::cout << denom << "\n"; // denom
-            std::cout << 0 << "\n"; // t
-            std::cout << 0 << " " << 0 << " " << 0 << "\n"; // intersec
-            std::cout << 0 << " " << 0 << " " << 0 << "\n";// hitpt
-            std::cout << 0 << "\n"; // alpha
-            std::cout << 0 << "\n\n"; // beta
+            // std::cout << denom << "\n"; // denom
+            // std::cout << 0 << "\n"; // t
+            // std::cout << 0 << " " << 0 << " " << 0 << "\n"; // intersec
+            // std::cout << 0 << " " << 0 << " " << 0 << "\n";// hitpt
+            // std::cout << 0 << "\n"; // alpha
+            // std::cout << 0 << "\n\n"; // beta
             return false;
         }
-        std::cout << 0 << "\n"; // NOT parallel
+        // std::cout << 0 << "\n"; // NOT parallel
 
         // Return false if the hit point parameter t is outside the ray interval.
         auto dot_normal_ray_origin = FixedPoint<34>(dot(normal, r.origin())).toDouble(); //(24fbit * 10fbit = max 34fbit)
@@ -104,18 +106,18 @@ class quad : public hittable {
         // frac_part = FixedPoint<60>(frac_part).toDouble();
         t = tmp_int + frac_part;
         if (!ray_t.contains(t)){
-            std::cout << 1 << "\n"; // not in range
-            std::cout << 0 << "\n"; // in interior
+            // std::cout << 1 << "\n"; // not in range
+            // std::cout << 0 << "\n"; // in interior
 
-            std::cout << denom << "\n"; // denom
-            std::cout << t << "\n"; // denom
-            std::cout << 0 << " " << 0 << " " << 0 << "\n"; // intersec
-            std::cout << 0 << " " << 0 << " " << 0 << "\n";// hitpt
-            std::cout << 0 << "\n"; // alpha
-            std::cout << 0 << "\n\n"; // beta
+            // std::cout << denom << "\n"; // denom
+            // std::cout << t << "\n"; // denom
+            // std::cout << 0 << " " << 0 << " " << 0 << "\n"; // intersec
+            // std::cout << 0 << " " << 0 << " " << 0 << "\n";// hitpt
+            // std::cout << 0 << "\n"; // alpha
+            // std::cout << 0 << "\n\n"; // beta
             return false;
         }
-        std::cout << 0 << "\n"; // in range
+        // std::cout << 0 << "\n"; // in range
     
         // Determine the hit point lies within the planar shape using its plane coordinates.
         auto intersection = r.at(t);
@@ -130,36 +132,36 @@ class quad : public hittable {
         // then the result of the corss adn dot is 15_48 but we trunc to 23 to do the comparison
         //
         auto tmp_cross_v = cross(planar_hitpt_vector, v);
-        tmp_cross_v = vec3(FixedPoint<23>(tmp_cross_v.x()).toDouble(), 
-                            FixedPoint<23>(tmp_cross_v.y()).toDouble(), FixedPoint<23>(tmp_cross_v.z()).toDouble());
+        // tmp_cross_v = vec3(FixedPoint<23>(tmp_cross_v.x()).toDouble(), 
+        //                     FixedPoint<23>(tmp_cross_v.y()).toDouble(), FixedPoint<23>(tmp_cross_v.z()).toDouble());
         auto alpha = dot(w, tmp_cross_v);
-        alpha = FixedPoint<23>(alpha).toDouble();
+        // alpha = FixedPoint<23>(alpha).toDouble();
         // 
         //
         auto tmp_cross_u = cross(u, planar_hitpt_vector);
-        tmp_cross_u = vec3(FixedPoint<23>(tmp_cross_u.x()).toDouble(), 
-                    FixedPoint<23>(tmp_cross_u.y()).toDouble(), FixedPoint<23>(tmp_cross_u.z()).toDouble());
+        // tmp_cross_u = vec3(FixedPoint<23>(tmp_cross_u.x()).toDouble(), 
+        //             FixedPoint<23>(tmp_cross_u.y()).toDouble(), FixedPoint<23>(tmp_cross_u.z()).toDouble());
         auto beta = dot(w, tmp_cross_u);
-        beta = FixedPoint<23>(beta).toDouble();
+        // beta = FixedPoint<23>(beta).toDouble();
 
         if (!is_interior(alpha, beta)){
-            std::cout << 1 << "\n"; // not in interior
-            std::cout << denom << "\n"; // denom
-            std::cout << t << "\n"; // t
-            std::cout << intersection << "\n"; // intersec
-            std::cout << planar_hitpt_vector << "\n"; // hitpt
-            std::cout << alpha << "\n"; // alpha
-            std::cout << beta << "\n\n"; // beta
+            // std::cout << 1 << "\n"; // not in interior
+            // std::cout << denom << "\n"; // denom
+            // std::cout << t << "\n"; // t
+            // std::cout << intersection << "\n"; // intersec
+            // std::cout << planar_hitpt_vector << "\n"; // hitpt
+            // std::cout << alpha << "\n"; // alpha
+            // std::cout << beta << "\n\n"; // beta
             return false;
         }
-        std::cout << 0 << "\n"; // in interior
+        // std::cout << 0 << "\n"; // in interior
 
-        std::cout << denom << "\n"; // denom
-        std::cout << t << "\n"; // t
-        std::cout << intersection << "\n"; // intersec
-        std::cout << planar_hitpt_vector << "\n"; // hitpt
-        std::cout << alpha << "\n"; // alpha
-        std::cout << beta << "\n\n"; // beta
+        // std::cout << denom << "\n"; // denom
+        // std::cout << t << "\n"; // t
+        // std::cout << intersection << "\n"; // intersec
+        // std::cout << planar_hitpt_vector << "\n"; // hitpt
+        // std::cout << alpha << "\n"; // alpha
+        // std::cout << beta << "\n\n"; // beta
         // Ray hits the 2D shape; set the rest of the hit record and return true.
         rec.t = t;
         rec.p = intersection;
