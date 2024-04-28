@@ -26,6 +26,7 @@ and compilation dependencies.
 #include <memory>
 
 
+
 // Usings
 using std::shared_ptr;    // Allows for the use of smart pointers without specifying the namespace.
 using std::make_shared;   // Simplifies the creation of smart pointers.

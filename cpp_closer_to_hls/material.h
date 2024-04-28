@@ -26,6 +26,8 @@ according to Snell's law and Fresnel equations.
 #include "rtweekend.h"
 #include "color.h"
 #include "hittable.h"
+#include "fixedpoint.h"
+// #include "quad.h"
 
 class hit_record;  // Forward declaration for usage in material methods.
 
@@ -68,9 +70,13 @@ class lambertian : public material {
       // if (std::abs(rec.p.x()) < 1e-16) {tmp_p.e[0] = 1e-7;}
       // if (std::abs(rec.p.y()) < 1e-16) {tmp_p.e[1] = 1e-7;}
       // if (std::abs(rec.p.y()) < 1e-16) {tmp_p.e[2] = 1e-7;}
-      if (std::abs(scatter_direction.x()) < 0.00012207031) {scatter_direction.e[0] = scatter_direction.x() < 0 ? -0.00012207031 : 0.00012207031;}
-      if (std::abs(scatter_direction.y()) < 0.00012207031) {scatter_direction.e[1] = scatter_direction.y() < 0 ? -0.00012207031 : 0.00012207031;}
-      if (std::abs(scatter_direction.z()) < 0.00012207031) {scatter_direction.e[2] = scatter_direction.z() < 0 ? -0.00012207031 : 0.00012207031;}
+      //2^-23
+      if (std::abs(scatter_direction.x()) < 0.00000011920929) {scatter_direction.e[0] = scatter_direction.x() < 0 ? -0.00000011920929 : 0.00000011920929;}
+      if (std::abs(scatter_direction.y()) < 0.00000011920929) {scatter_direction.e[1] = scatter_direction.y() < 0 ? -0.00000011920929 : 0.00000011920929;}
+      if (std::abs(scatter_direction.z()) < 0.00000011920929) {scatter_direction.e[2] = scatter_direction.z() < 0 ? -0.00000011920929 : 0.00000011920929;}
+      scatter_direction.e[0] = FixedPoint<23>(scatter_direction.x()).toDouble();
+      scatter_direction.e[1] = FixedPoint<23>(scatter_direction.y()).toDouble();
+      scatter_direction.e[2] = FixedPoint<23>(scatter_direction.z()).toDouble();
 
       scattered = ray(rec.p, scatter_direction);
       attenuation = albedo;  // The color is affected by the material's albedo.

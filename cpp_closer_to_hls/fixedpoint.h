@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <cstdint>
+#pragma once
 
 template<int num_f_bits>
 class FixedPoint {

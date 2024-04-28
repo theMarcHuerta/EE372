@@ -26,6 +26,7 @@ based on materials.
 #include "hittable.h"
 #include "vec3.h"
 #include "material.h"
+#include "quad.h"
 
 #include <iostream>
 #include <thread>
@@ -78,6 +79,7 @@ class camera {
                         color pixel_color(0,0,0);
                         for (int sample = 0; sample < samples_per_pixel; ++sample) {
                             auto r = get_ray(i, j);
+                            r = ray(r.origin(), vec3(FixedPoint<23>(r.direction().x()).toDouble(), FixedPoint<23>(r.direction().y()).toDouble(), FixedPoint<23>(r.direction().z()).toDouble()));
                             // std::cout << 1 << std::endl;
                             // std::cout << r.origin() << "\n";
                             // std::cout << r.direction() << "\n\n";
@@ -189,12 +191,12 @@ class camera {
             if (!world.hit(current_ray, interval(0.001, 2048), rec)) {
                 // std::cout << 1 << "\n";
                 
-                std::cout << 0 << " " << 0 << " " << 0 << "\n";
-                std::cout << 0 << " " << 0 << " " << 0 << "\n";
-                std::cout << 0 << "\n";
-                std::cout << 0 << "\n";
-                std::cout << 0 << "\n";
-                std::cout << 0 << " " << 0 << " " << 0 << "\n\n";
+                // std::cout << 0 << " " << 0 << " " << 0 << "\n";
+                // std::cout << 0 << " " << 0 << " " << 0 << "\n";
+                // std::cout << 0 << "\n";
+                // std::cout << 0 << "\n";
+                // std::cout << 0 << "\n";
+                // std::cout << 0 << " " << 0 << " " << 0 << "\n\n";
                 // std::cout << 0 << "\n";
                 // std::cout << 0 << "\n\n";
                 accumulated_color += current_attenuation * background; // Apply background color
@@ -202,21 +204,25 @@ class camera {
             }
 
             hit_record rec_tmp = rec;
+            // 2^-10
             if (std::abs(rec_tmp.p.x()) < 0.0009765625) {rec_tmp.p.e[0] = rec_tmp.p.x() < 0 ? -0.0009765625 : 0.0009765625;}
             if (std::abs(rec_tmp.p.y()) < 0.0009765625) {rec_tmp.p.e[1] = rec_tmp.p.y() < 0 ? -0.0009765625 : 0.0009765625;}
             if (std::abs(rec_tmp.p.z()) < 0.0009765625) {rec_tmp.p.e[2] = rec_tmp.p.z() < 0 ? -0.0009765625 : 0.0009765625;}
 
+            rec_tmp.p.e[0] = FixedPoint<10>(rec_tmp.p.x()).toDouble();
+            rec_tmp.p.e[1] = FixedPoint<10>(rec_tmp.p.y()).toDouble();
+            rec_tmp.p.e[2] = FixedPoint<10>(rec_tmp.p.z()).toDouble();
             // if (std::abs(rec_tmp.t) < 0.0009765625) {rec_tmp.t = rec_tmp.t < 0 ? -0.0009765625 : 0.0009765625;}
             // if (std::abs(rec_tmp.u) < 0.0009765625) {rec_tmp.u = rec_tmp.u < 0 ? -0.0009765625 : 0.0009765625;}
             // if (std::abs(rec_tmp.v) < 0.0009765625) {rec_tmp.v = rec_tmp.v < 0 ? -0.0009765625 : 0.0009765625;}
             // std::cout << 1 << "\n";
 
-            std::cout << rec_tmp.p << "\n";
-            std::cout << rec_tmp.normal << "\n";
-            std::cout << rec_tmp.front_face << "\n";
-            std::cout << rec_tmp.t << "\n";
-            std::cout << rec_tmp.mat->matnum() << "\n";
-            std::cout << rec_tmp.mat->colorofmat() << "\n\n";
+            // std::cout << rec_tmp.p << "\n";
+            // std::cout << rec_tmp.normal << "\n";
+            // std::cout << rec_tmp.front_face << "\n";
+            // std::cout << rec_tmp.t << "\n";
+            // std::cout << rec_tmp.mat->matnum() << "\n";
+            // std::cout << rec_tmp.mat->colorofmat() << "\n\n";
 
 
             // After the first iteration, any ray is considered a secondary ray
