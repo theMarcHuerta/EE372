@@ -9,28 +9,27 @@
 #include "LambertianScatter.h"
 #include "MetalScatter.h"
 
-template<typename T, typename D>
 class MaterialScatter {
 public:
     MaterialScatter(){}
     // Function to find the closest hit from channels of spheres and quads
     #pragma hls_design interface
     #pragma hls_pipeline_init_interval 1
-    void CCS_BLOCK(scatter)(ac_channel<ray<T>>& ray_in,
-                 ac_channel<HitRecord<T>>& hit_in,
+    void CCS_BLOCK(scatter)(ac_channel<ray>& ray_in,
+                 ac_channel<HitRecord>& hit_in,
                  ac_channel<rgb_in> &attenuation_chan_in,
                  ac_channel<rgb_in> &accumalated_color_chan_in,
                  ac_channel<bool> &isHit,
                  ac_channel<rgb_in> &attenuation_chan_out,
                  ac_channel<rgb_in> &accumalated_color_out,
-                 ac_channel<ray<T>> &ray_out
+                 ac_channel<ray> &ray_out
                  )
     {
 
-        ray<T> tmp_ray;
+        ray tmp_ray;
         tmp_ray = ray_in.read();
 
-        ray<T> scattered_ray;
+        ray scattered_ray;
 
         rgb_in tmp_color_in;
         tmp_color_in = accumalated_color_chan_in.read();
@@ -42,7 +41,7 @@ public:
 
         rgb_in attenuation_from_scatter;
 
-        HitRecord<T> tmp_rec;
+        HitRecord tmp_rec;
         tmp_rec = hit_in.read();
 
         bool readHit;
@@ -66,27 +65,9 @@ public:
 
                 color_out = {tmp_color_in.r, tmp_color_in.g, tmp_color_in.b};
             }
-            else if ((tmp_rec.mat >= METAL_MIN) && (tmp_rec.mat <= METAL_MAX)){ // metal
-                D fuzz;
-                if (tmp_rec.mat == 1) fuzz = 0;
-                if (tmp_rec.mat == 2) fuzz = 0.1875;
-                if (tmp_rec.mat == 3) fuzz = 0.375;
-                if (tmp_rec.mat == 4) fuzz = 0.625;
-                if (tmp_rec.mat == 5) fuzz = 0.8125;
-                if (tmp_rec.mat == 6) fuzz = 1;
-                bool doesScatter;
-                metalScatter.run(tmp_ray, tmp_rec, fuzz, scattered_ray, doesScatter);
-                if (doesScatter){
-                    attenuation_from_scatter = rec.color;
-                }
-                else {
-                    attenuation_from_scatter = max_atten;
-                }
-                color_out = tmp_color_in;
-            }
             else if (tmp_rec.mat == EMISSIVE){ //emission
                 rgb_in colorMulOut;
-
+                // should auto truncate the big multiplication
                 colorMulOut.r = tmp_atten_in.r * tmp_rec.color.r;
                 colorMulOut.g = tmp_atten_in.g * tmp_rec.color.g;
                 colorMulOut.b = tmp_atten_in.b * tmp_rec.color.b;
@@ -106,9 +87,8 @@ public:
     }
 
 private:
-    HitRecord<T> rec;
-    LambertianScatter<T> lambertianScatter;
-    MetalScatter<T, D> metalScatter;
+    HitRecord rec;
+    LambertianScatter lambertianScatter;
 };
 
 #endif

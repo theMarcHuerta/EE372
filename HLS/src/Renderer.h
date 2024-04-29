@@ -56,21 +56,20 @@ public:
     RendererWrapper(){}
     
 #pragma hls_design interface
-    void run(ac_channel<sphere_hittable> &spheres_in,
-             ac_channel<quad_hittable> &quads_in, 
+    void run(ac_channel<quad_hittable> &quads_in, 
              ac_channel<img_params> &render_params,
              ac_channel<rgb_in> &output_pxl_sample)
     {
         renderLooper.run(render_params, paramsChanneltoRayGen, loopIndicesChanneltoRayGen);
         rayGeneration.run(loopIndicesChanneltoRayGen, paramsChanneltoRayGen, paramsChanneltoShader, rayOut); // TO DO ADD LOOP INDICIES OUT CHANNEL
-        shaderCores.run(paramsChanneltoShader, rayOut, spheres_in, quads_in, output_pxl_sample);
+        shaderCores.run(paramsChanneltoShader, rayOut, quads_in, output_pxl_sample);
     }
 private:
     RenderLooper renderLooper;
     RayGeneration rayGeneration;
     ShaderCores shaderCores;
 
-    ac_channel<ray<sfp_11_22>> rayOut;
+    ac_channel<ray> rayOut;
     ac_channel<img_params> paramsChanneltoRayGen;
     ac_channel<buffer_obj_count> paramsChanneltoShader;
     ac_channel<LoopIndices> loopIndicesChanneltoRayGen;

@@ -22,9 +22,13 @@ void run(ac_channel<img_params> &accumulator_parms,
         tmp_params = accumulator_parms.read();
         // MAKE SURE WE HAVE A readble pxl_sample_in to read
         vec3<ac_fixed<33, 11, false>> accumulation_reg; // SUBJECT TO CHANGE
+        ac_fixed<33, 11, false> max_value = 2047.999999761581; // max value we can get with this
         accumulation_reg.x = 0; //r
         accumulation_reg.y = 0; //g
         accumulation_reg.z = 0; //b
+        bool red_of = false;
+        bool green_of = false;
+        bool blue_of = false;
         for (int samps = 0; samps < tmp_params.samp_per_pxl; samps++){
             #ifndef __SYNTHESIS__
             while(pxl_sample.available(1))
@@ -35,8 +39,15 @@ void run(ac_channel<img_params> &accumulator_parms,
             accumulation_reg.x = accumulation_reg.x + cur_sample.r;
             accumulation_reg.y = accumulation_reg.y + cur_sample.g;
             accumulation_reg.z = accumulation_reg.z + cur_sample.b;
+            // checks for saturations
+            if (accumulation_reg.x[32] == 1) red_of = true;
+            if (accumulation_reg.y[32] == 1) green_of = true;
+            if (accumulation_reg.z[32] == 1) blue_of = true;
             }
         }
+        if (red_of) accumulation_reg.x = max_value;
+        if (green_of) accumulation_reg.y = max_value;
+        if (blue_of) accumulation_reg.z = max_value;
 
         vec3<ac_fixed<15, 1, false>> rounded_accuracy_col;
         // STORE TRUNCATED PIXEL COLOR HERE 
@@ -69,7 +80,7 @@ void run(ac_channel<img_params> &accumulator_parms,
         ac_math::ac_sqrt(rounded_accuracy_col.y, gamme_corrected.y);
         ac_math::ac_sqrt(rounded_accuracy_col.z, gamme_corrected.z);
 
-        //accounts for overflow (checks the int bit)
+        //accounts for overflow (checks the int bit), then takes 8 bits to make it 8 bit rgb
         pre_output_reg.r = gamme_corrected.x.slc<1>(14) == 1 ? 255 : gamme_corrected.x.slc<8>(6);
         pre_output_reg.g = gamme_corrected.y.slc<1>(14) == 1 ? 255 : gamme_corrected.y.slc<8>(6);
         pre_output_reg.b = gamme_corrected.z.slc<1>(14) == 1 ? 255 : gamme_corrected.z.slc<8>(6);

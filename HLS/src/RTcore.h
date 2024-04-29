@@ -123,9 +123,9 @@ struct pxl_deltas {
 };
 
 struct rgb_in {
-  fp_1_22 r;
-  fp_1_22 g;
-  fp_1_22 b;
+  ac_int<27, 5, false> r;
+  ac_int<27, 5, false> g;
+  ac_int<27, 5, false> b;
 };
 
 struct rgb_out {

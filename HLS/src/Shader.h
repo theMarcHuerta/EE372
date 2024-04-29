@@ -32,7 +32,7 @@ public:
     }
 private:
     WorldHit worldHit;
-    MaterialScatter<T, D> materialScatter;
+    MaterialScatter materialScatter;
 
     ac_channel<ray> rayToScatter;
     ac_channel<rgb_in> attenuation_chan_through;
