@@ -64,8 +64,8 @@ class quad : public hittable {
             return false;
         }
         // std::cout << 0 << "\n"; // not invis
-        auto denom = FixedPoint<47>(dot(normal, r.direction())).toDouble(); //24 bit * 23bit
-        if (std::abs(denom) < 1.1920929e-7) {denom = denom < 0 ? 1.1920929e-7 : 1.1920929e-7;}
+        auto denom = FixedPoint<47>(dot(normal, r.direction())).toDouble(); //24 bit * 23bit = 47
+        if (std::abs(denom) < 1.1920929e-7) {denom = denom < 0 ? -1.1920929e-7 : 1.1920929e-7;}
         denom = FixedPoint<23>(denom).toDouble();
 
         auto tmp_denom = FixedPoint<20>(denom).toDouble(); // so far 24 bits made no difference, 20 no difference, can just truncate here
@@ -96,15 +96,16 @@ class quad : public hittable {
         if (std::abs(dot_normal_ray_origin) < 0.000000953674316) {dot_normal_ray_origin = dot_normal_ray_origin < 0 ? -0.0009765625 : 0.0009765625;}
         dot_normal_ray_origin = FixedPoint<20>(dot(normal, r.origin())).toDouble();
         // 17 max integer bits (including sign), 
-        // max d is 11_20, dotnormal is 13_20 then divided by a 11_47 // max result is 13+11 + (47-20) = 24_27
+        // max d is 11_20, dotnormal is 13_20 then divided by a 11_23 // max result is 13+11 + (23+20) = 43
         auto t = (D - dot_normal_ray_origin) / denom; // 20 fbit number minus result of (24fbit * 10fbit (max is 34fbit) truncated to 20)
-        // then we divid by a 47 bit number // 20 fbit divided by 47fbit
-        // if (std::abs(t) < 9.094947e-13) {t = t < 0 ? 9.094947e-13 : 9.094947e-13;}
-        double tmp_int = 0;
-        double frac_part = std::modf(t, &tmp_int);
+        // then we divid by a 23 bit number // 20 fbit divided by 23fbit
+        // double tmp_int = 0;
+        // double frac_part = std::modf(t, &tmp_int);
+                // 2^-30
+        if (std::abs(t) < 9.3132257e-10) {t = t < 0 ? -9.3132257e-10 : 9.3132257e-10;}
 
-        // frac_part = FixedPoint<60>(frac_part).toDouble();
-        t = tmp_int + frac_part;
+        t = FixedPoint<30>(t).toDouble();
+        // t = tmp_int + frac_part;
         if (!ray_t.contains(t)){
             // std::cout << 1 << "\n"; // not in range
             // std::cout << 0 << "\n"; // in interior
@@ -120,6 +121,7 @@ class quad : public hittable {
         // std::cout << 0 << "\n"; // in range
     
         // Determine the hit point lies within the planar shape using its plane coordinates.
+        // t (30 bits * dir (23) + orig (1)
         auto intersection = r.at(t);
         intersection = vec3(FixedPoint<23>(intersection.x()).toDouble(), 
                             FixedPoint<23>(intersection.y()).toDouble(), FixedPoint<23>(intersection.z()).toDouble());
