@@ -16,6 +16,7 @@ struct vec3 {
   T z;
 };
 
+//kind of inefficient cant we just set its leading bit to ~1
 template<typename T>
 class Vec3_negate {
   public:
