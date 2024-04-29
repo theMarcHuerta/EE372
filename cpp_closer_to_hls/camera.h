@@ -43,7 +43,7 @@ class camera {
     int    max_depth         = 10;   // Max depth for ray bouncing. Limits recursion in ray_color.
     color  background;               // Scene background color
     //mt stuff
-    static constexpr int num_threads = 4;
+    static constexpr int num_threads = 1;
     std::atomic<int> lines_remaining;
 
     double vfov = 90;  // Vertical field of view in degrees.
@@ -55,7 +55,7 @@ class camera {
         initialize();
         lines_remaining = image_height; // Initialize the atomic counter with the total number of scanlines
 
-        std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+        // std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
         std::vector<std::thread> threads;
         std::vector<std::string> output(image_height); // Correctly pre-allocated output vector
@@ -82,7 +82,8 @@ class camera {
                             r = ray(r.origin(), vec3(FixedPoint<23>(r.direction().x()).toDouble(), FixedPoint<23>(r.direction().y()).toDouble(), FixedPoint<23>(r.direction().z()).toDouble()));
                             // std::cout << 1 << std::endl;
                             // std::cout << r.origin() << "\n";
-                            // std::cout << r.direction() << "\n\n";
+                            // std::cout << r.direction() << "\n";
+                            // std::cout << 1 << "\n\n";
                             // auto tmp_color = ray_color(r, max_depth, world);
                             // std::cout << tmp_color << "\n";
                             pixel_color += ray_color(r, max_depth, world);
@@ -106,10 +107,10 @@ class camera {
         progress_thread.join();
         std::clog << "\rDone.                                  \n";
 
-        // Output the combined results
-        for (const auto& line : output) {
-            std::cout << line;
-        }
+        // // Output the combined results
+        // for (const auto& line : output) {
+        //     std::cout << line;
+        // }
     }
 
 
@@ -198,6 +199,7 @@ class camera {
                 // std::cout << 0 << "\n";
                 // std::cout << 0 << " " << 0 << " " << 0 << "\n\n";
                 // std::cout << 0 << "\n";
+                // std::cout << 0 << "\n";
                 // std::cout << 0 << "\n\n";
                 accumulated_color += current_attenuation * background; // Apply background color
                 break;
@@ -246,11 +248,13 @@ class camera {
                 // current_ray = ray(tmp_p, scattered.direction()); // The scattered ray becomes the current ray for the next iteration
                 // if (depth==0){
                 // std::cout << current_ray.origin() << "\n";
-                // std::cout << current_ray.direction() << "\n\n";
+                // std::cout << current_ray.direction() << "\n";
+                // std::cout << 0 << "\n\n";
                 // }
             } else {
                 // If the material does not scatter the ray, no further color contributions are expected
                 // if (depth==7){
+                // std::cout << 0 << "\n";
                 // std::cout << 0 << "\n";
                 // std::cout << 0 << "\n\n";
                 // }

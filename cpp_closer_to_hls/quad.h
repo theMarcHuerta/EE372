@@ -40,30 +40,30 @@ class quad : public hittable {
     }
 
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
-        // std::cout << Q << "\n";
-        // std::cout << u << "\n";
-        // std::cout << v << "\n";
-        // std::cout << mat->matnum() << "\n";
-        // std::cout << invis << "\n";
-        // std::cout << normal << "\n";
-        // std::cout << w << "\n";
-        // std::cout << D << "\n";
-        // std::cout << mat->colorofmat() << "\n";
+        std::cout << Q << "\n";
+        std::cout << u << "\n";
+        std::cout << v << "\n";
+        std::cout << mat->matnum() << "\n";
+        std::cout << invis << "\n";
+        std::cout << normal << "\n";
+        std::cout << w << "\n";
+        std::cout << D << "\n";
+        std::cout << mat->colorofmat() << "\n";
         if (r.first_ray && invis){
-            // std::cout << 1 << "\n"; // invis
-            // std::cout << 0 << "\n"; // NOT parallel
-            // std::cout << 0 << "\n"; // in range
-            // std::cout << 0 << "\n"; // in interior
+            std::cout << 1 << "\n"; // invis
+            std::cout << 0 << "\n"; // NOT parallel
+            std::cout << 0 << "\n"; // in range
+            std::cout << 0 << "\n"; // in interior
 
-            // std::cout << 0 << "\n"; // denom
-            // std::cout << 0 << "\n"; // t
-            // std::cout << 0 << " " << 0 << " " << 0 << "\n"; // intersec
-            // std::cout << 0 << " " << 0 << " " << 0 << "\n";// hitpt
-            // std::cout << 0 << "\n"; // alpha
-            // std::cout << 0 << "\n\n"; // beta
+            std::cout << 0 << "\n"; // denom
+            std::cout << 0 << "\n"; // t
+            std::cout << 0 << " " << 0 << " " << 0 << "\n"; // intersec
+            std::cout << 0 << " " << 0 << " " << 0 << "\n";// hitpt
+            std::cout << 0 << "\n"; // alpha
+            std::cout << 0 << "\n\n"; // beta
             return false;
         }
-        // std::cout << 0 << "\n"; // not invis
+        std::cout << 0 << "\n"; // not invis
         auto denom = FixedPoint<47>(dot(normal, r.direction())).toDouble(); //24 bit * 23bit = 47
         if (std::abs(denom) < 1.1920929e-7) {denom = denom < 0 ? -1.1920929e-7 : 1.1920929e-7;}
         denom = FixedPoint<23>(denom).toDouble();
@@ -76,19 +76,19 @@ class quad : public hittable {
         
         // No hit if the ray is parallel to the plane.
         if (fabs(tmp_denom) < 1e-6) {
-            // std::cout << 1 << "\n"; // parallel
-            // std::cout << 0 << "\n"; // in range
-            // std::cout << 0 << "\n"; // in interior
+            std::cout << 1 << "\n"; // parallel
+            std::cout << 0 << "\n"; // in range
+            std::cout << 0 << "\n"; // in interior
 
-            // std::cout << denom << "\n"; // denom
-            // std::cout << 0 << "\n"; // t
-            // std::cout << 0 << " " << 0 << " " << 0 << "\n"; // intersec
-            // std::cout << 0 << " " << 0 << " " << 0 << "\n";// hitpt
-            // std::cout << 0 << "\n"; // alpha
-            // std::cout << 0 << "\n\n"; // beta
+            std::cout << denom << "\n"; // denom
+            std::cout << 0 << "\n"; // t
+            std::cout << 0 << " " << 0 << " " << 0 << "\n"; // intersec
+            std::cout << 0 << " " << 0 << " " << 0 << "\n";// hitpt
+            std::cout << 0 << "\n"; // alpha
+            std::cout << 0 << "\n\n"; // beta
             return false;
         }
-        // std::cout << 0 << "\n"; // NOT parallel
+        std::cout << 0 << "\n"; // NOT parallel
 
         // Return false if the hit point parameter t is outside the ray interval.
         auto dot_normal_ray_origin = FixedPoint<34>(dot(normal, r.origin())).toDouble(); //(24fbit * 10fbit = max 34fbit)
@@ -107,18 +107,18 @@ class quad : public hittable {
         t = FixedPoint<30>(t).toDouble();
         // t = tmp_int + frac_part;
         if (!ray_t.contains(t)){
-            // std::cout << 1 << "\n"; // not in range
-            // std::cout << 0 << "\n"; // in interior
+            std::cout << 1 << "\n"; // not in range
+            std::cout << 0 << "\n"; // in interior
 
-            // std::cout << denom << "\n"; // denom
-            // std::cout << t << "\n"; // denom
-            // std::cout << 0 << " " << 0 << " " << 0 << "\n"; // intersec
-            // std::cout << 0 << " " << 0 << " " << 0 << "\n";// hitpt
-            // std::cout << 0 << "\n"; // alpha
-            // std::cout << 0 << "\n\n"; // beta
+            std::cout << denom << "\n"; // denom
+            std::cout << t << "\n"; // denom
+            std::cout << 0 << " " << 0 << " " << 0 << "\n"; // intersec
+            std::cout << 0 << " " << 0 << " " << 0 << "\n";// hitpt
+            std::cout << 0 << "\n"; // alpha
+            std::cout << 0 << "\n\n"; // beta
             return false;
         }
-        // std::cout << 0 << "\n"; // in range
+        std::cout << 0 << "\n"; // in range
     
         // Determine the hit point lies within the planar shape using its plane coordinates.
         // t (30 bits * dir (23) + orig (1)
@@ -134,36 +134,36 @@ class quad : public hittable {
         // then the result of the corss adn dot is 15_48 but we trunc to 23 to do the comparison
         //
         auto tmp_cross_v = cross(planar_hitpt_vector, v);
-        // tmp_cross_v = vec3(FixedPoint<23>(tmp_cross_v.x()).toDouble(), 
-        //                     FixedPoint<23>(tmp_cross_v.y()).toDouble(), FixedPoint<23>(tmp_cross_v.z()).toDouble());
+        tmp_cross_v = vec3(FixedPoint<23>(tmp_cross_v.x()).toDouble(), 
+                            FixedPoint<23>(tmp_cross_v.y()).toDouble(), FixedPoint<23>(tmp_cross_v.z()).toDouble());
         auto alpha = dot(w, tmp_cross_v);
-        // alpha = FixedPoint<23>(alpha).toDouble();
+        alpha = FixedPoint<23>(alpha).toDouble();
         // 
         //
         auto tmp_cross_u = cross(u, planar_hitpt_vector);
-        // tmp_cross_u = vec3(FixedPoint<23>(tmp_cross_u.x()).toDouble(), 
-        //             FixedPoint<23>(tmp_cross_u.y()).toDouble(), FixedPoint<23>(tmp_cross_u.z()).toDouble());
+        tmp_cross_u = vec3(FixedPoint<23>(tmp_cross_u.x()).toDouble(), 
+                    FixedPoint<23>(tmp_cross_u.y()).toDouble(), FixedPoint<23>(tmp_cross_u.z()).toDouble());
         auto beta = dot(w, tmp_cross_u);
-        // beta = FixedPoint<23>(beta).toDouble();
+        beta = FixedPoint<23>(beta).toDouble();
 
         if (!is_interior(alpha, beta)){
-            // std::cout << 1 << "\n"; // not in interior
-            // std::cout << denom << "\n"; // denom
-            // std::cout << t << "\n"; // t
-            // std::cout << intersection << "\n"; // intersec
-            // std::cout << planar_hitpt_vector << "\n"; // hitpt
-            // std::cout << alpha << "\n"; // alpha
-            // std::cout << beta << "\n\n"; // beta
+            std::cout << 1 << "\n"; // not in interior
+            std::cout << denom << "\n"; // denom
+            std::cout << t << "\n"; // t
+            std::cout << intersection << "\n"; // intersec
+            std::cout << planar_hitpt_vector << "\n"; // hitpt
+            std::cout << alpha << "\n"; // alpha
+            std::cout << beta << "\n\n"; // beta
             return false;
         }
-        // std::cout << 0 << "\n"; // in interior
+        std::cout << 0 << "\n"; // in interior
 
-        // std::cout << denom << "\n"; // denom
-        // std::cout << t << "\n"; // t
-        // std::cout << intersection << "\n"; // intersec
-        // std::cout << planar_hitpt_vector << "\n"; // hitpt
-        // std::cout << alpha << "\n"; // alpha
-        // std::cout << beta << "\n\n"; // beta
+        std::cout << denom << "\n"; // denom
+        std::cout << t << "\n"; // t
+        std::cout << intersection << "\n"; // intersec
+        std::cout << planar_hitpt_vector << "\n"; // hitpt
+        std::cout << alpha << "\n"; // alpha
+        std::cout << beta << "\n\n"; // beta
         // Ray hits the 2D shape; set the rest of the hit record and return true.
         rec.t = t;
         rec.p = intersection;
@@ -199,7 +199,7 @@ vec3 rotate_y(const vec3& v, double sin_theta, double cos_theta) {
     return vec3(cos_theta * v.x() + sin_theta * v.z(), v.y(), -sin_theta * v.x() + cos_theta * v.z());
 }
 
-inline shared_ptr<hittable_list> box(const point3& a, const point3& b, shared_ptr<material> mat, double angle_degrees)
+inline void box(const point3& a, const point3& b, shared_ptr<material> mat, double angle_degrees, hittable_list& world)
 {
     auto sides = make_shared<hittable_list>();
     auto min = point3(fmin(a.x(), b.x()), fmin(a.y(), b.y()), fmin(a.z(), b.z()));
@@ -229,12 +229,11 @@ inline shared_ptr<hittable_list> box(const point3& a, const point3& b, shared_pt
     point3 front_bottom_right = front_bottom_left + rotated_dx;
 
     // Construct quads with rotated vectors and adjusted positions
-    sides->add(make_shared<quad>(front_bottom_left, rotated_dx, dy, mat, false)); // Front
-    sides->add(make_shared<quad>(front_bottom_left, rotated_dx, dy, mat, false)); // Back
-    sides->add(make_shared<quad>(front_bottom_right, rotated_dz, dy, mat, false)); // Right
-    sides->add(make_shared<quad>(front_bottom_left, rotated_dz, dy, mat, false)); // Left
-    sides->add(make_shared<quad>(front_bottom_left + dy, rotated_dx, rotated_dz, mat, false)); // Top
+    world.add(make_shared<quad>(front_bottom_left, rotated_dx, dy, mat, false)); // Front
+    world.add(make_shared<quad>(front_bottom_left, rotated_dx, dy, mat, false)); // Back
+    world.add(make_shared<quad>(front_bottom_right, rotated_dz, dy, mat, false)); // Right
+    world.add(make_shared<quad>(front_bottom_left, rotated_dz, dy, mat, false)); // Left
+    world.add(make_shared<quad>(front_bottom_left + dy, rotated_dx, rotated_dz, mat, false)); // Top
 
-    return sides;
 }
 #endif

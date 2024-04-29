@@ -57,26 +57,24 @@ void cornell_w_sphere() {
     // auto material1 = make_shared<dielectric>(1.33);
     // world.add(make_shared<sphere>(point3(182, 240, 148), 75.0, blue_metal, false));
 
-    shared_ptr<hittable> box1 = box(point3(265,0,275), point3(430,330,420), white, 14);
+    box(point3(265,0,275), point3(430,330,420), white, 14, world);
     // shared_ptr<hittable> box1 = box(point3(0,0,0), point3(165,330,165), white);
     // box1 = make_shared<rotate_y>(box1, 15);
     // box1 = make_shared<translate>(box1, vec3(265,0,295));
-    world.add(box1);
 
-    shared_ptr<hittable> box2 = box(point3(105,0,85), point3(260,165,235), white, -18);
+    box(point3(105,0,85), point3(260,165,235), white, -18, world);
     // shared_ptr<hittable> box2 = box(point3(0,0,0), point3(165,165,165), white);
     // box2 = make_shared<rotate_y>(box2, -18);
     // box2 = make_shared<translate>(box2, vec3(130,0,65));
-    world.add(box2);
 
     // world = hittable_list(make_shared<bvh_node>(world));
 
     camera cam;
 
     cam.aspect_ratio      = 1.0;
-    cam.image_width       = 2160;
-    cam.samples_per_pixel = 1024;
-    cam.max_depth         = 8;
+    cam.image_width       = 240;
+    cam.samples_per_pixel = 1;
+    cam.max_depth         = 1;
     cam.background        = color(0,0,0);
 
     cam.vfov     = 40;
