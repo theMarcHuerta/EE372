@@ -14,7 +14,7 @@ class RayGeneration
     void CCS_BLOCK(run)(ac_channel<LoopIndices> &loopIndicesIn,
                         ac_channel<img_params> &paramsIn, // do i need to make it so i can fetch on command
                         ac_channel<buffer_obj_count> &paramsOut,
-                        ac_channel<ray<sfp_11_22>> &rayOut)
+                        ac_channel<ray> &rayOut)
     {
       #ifndef __SYNTHESIS__
       while(paramsIn.available(1))
@@ -47,7 +47,7 @@ class RayGeneration
         vec3<sfp_11_22> full_pix_sample = {pixelSampleSquareOut.x, pixelSampleSquareOut.y, pixelSampleSquareOut.z};
 
         sampleAdd.run(pixelCenter, full_pix_sample, pixelSample);
-        ray<sfp_11_22> tmp_ray;
+        ray tmp_ray;
         tmp_ray.orig = {tmp_params.center.x, tmp_params.center.y, tmp_params.center.z};  // Ray starts at the camera's position.
         rayDiff.run(pixelSample, tmp_ray.orig, tmp_ray.dir);  // Direction from camera to sampled point.
         rayOut.write(tmp_ray);

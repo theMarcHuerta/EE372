@@ -12,10 +12,11 @@ class QuadHit {
     QuadHit() {}
 
     #pragma hls_design ccore
-    bool run(ray& r, ac_fixed<41, 11, true>& closest_so_far, quad_hittable& _quad, HitRecord& rec) {        
+    void run(ray& r, ac_fixed<47, 17, true>& closest_so_far, quad_hittable& _quad, HitRecord& rec, bool hitWorld) {        
 
         if (r.camera_ray && _quad.is_invis){
-            return false;
+            hitWorld = false;
+            return;
         }
 
         ac_fixed<58, 11, true> denom; //47 fractional bits out as result, 24*23 fractioanl bit and tested 11 int bits largest value gotten in c test
@@ -32,9 +33,11 @@ class QuadHit {
         // ac_math::ac_abs(rounded_denom, abs_denom);
 
         ac_fixed<24,1, false> parallel_check = 9.53674316e-7; // 2^-20
-        if (rounded_denom < parallel_check)  // Check for parallel ray TO DO MAKE FIXED POINT REP FOR 1e-8
+        if (rounded_denom < parallel_check)  {// Check for parallel ray TO DO MAKE FIXED POINT REP FOR 1e-8
         //  absolute value of a floating-point number is what fabs is so we have to implement that
-            return false;
+            hitWorld = false;
+            return;
+        }
 
         ac_fixed<49, 14, true> x; //added 2 overflow bits to results
         qnorm_rorig.run(_quad.normal, r.orig, x);
@@ -50,8 +53,10 @@ class QuadHit {
 
         ac_fixed<11,1,true> min_val = 0.0009765625; // 2^-10 approx 0.001
         // can there be overflow with different types of compos or will it auto adjust the comparison to the largest number 
-        if (t_trunc < min_val || t_trunc > closest_so_far)  // Check if t is within the valid interval
-            return false;
+        if (t_trunc < min_val || t_trunc > closest_so_far)  {// Check if t is within the valid interval
+            hitWorld = false;
+            return;
+        }
 
         // Calculate intersection point
         vec3<ax_fixed<75, 22, true>> intersection;
@@ -79,10 +84,13 @@ class QuadHit {
 
         // Given the hit point in plane coordinates, return false if it is outside the
         // primitive, otherwise set the hit record UV coordinates and return true
-        if ((alpha < 0) || (alpha > 1) || (beta < 0) || (beta > 1))  // Check if inside quad bounds
-            return false;
+        if ((alpha < 0) || (alpha > 1) || (beta < 0) || (beta > 1)) { // Check if inside quad bounds
+            hitWorld = false;
+            return;
 
-        rec.t = t_trunc;
+        }
+
+        // rec.t = t_trunc; // HOPE IT AUTO TRUNCS
         rec.hit_loc = trunc_intersection; // HAVE TO HOPE IT TRUNCS THIS TOO
         rec.color = _quad.quad_color;
 
@@ -91,7 +99,7 @@ class QuadHit {
         rec.mat = _quad.mat_type;
 
         closest_so_far = t_trunc;  // Update the closest hit // HOPE IT TRUNCATES LARGEST 6 BITS
-        return true;
+        hitWorld = true;
     }
 
 private:

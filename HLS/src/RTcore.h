@@ -104,7 +104,7 @@ struct HitRecord {
     vec3<ac_fixed<26, 2, true>> normal;
     bool front_face;
     // WE DONT EVEN NEED T BEYOND WORLD HIT SO MAYBE REMOVE IT OR CREATE NEW STRUCT OUT OF WORLD HIT
-    ac_fixed<41, 11, true> t; // how far along the hit occured, 11_30
+    // ac_fixed<43, 13, true> t; // how far along the hit occured, 11_30
     uint_3 mat;
     rgb_in color;
 

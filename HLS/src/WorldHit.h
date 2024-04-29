@@ -7,7 +7,6 @@
 #include "QuadHit.h"
 
 
-template<typename T, typename D>
 class WorldHit {
 public:
     WorldHit(){}
@@ -15,15 +14,15 @@ public:
     #pragma hls_design interface
     #pragma hls_pipeline_init_interval 1
     // #pragma hls_interface ap_ctrl_none port=return
-    void CCS_BLOCK(hit)(ac_channel<ray<T>>& ray_in,
+    void CCS_BLOCK(hit)(ac_channel<ray>& ray_in,
              ac_channel<buffer_obj_count> &params_in,
              ac_channel<quad_hittable>& quads,
              ac_channel<rgb_in> &attenuation_chan_in,
              ac_channel<rgb_in> &accumalated_color_chan_in,
              ac_channel<rgb_in> &attenuation_chan_out,
              ac_channel<rgb_in> &accumalated_color_out,
-             ac_channel<HitRecord<T>>& hit_out,
-             ac_channel<ray<T>> &ray_out,
+             ac_channel<HitRecord>& hit_out,
+             ac_channel<ray> &ray_out,
              ac_channel<bool> &isHit
              ) 
     {
@@ -31,7 +30,7 @@ public:
         buffer_obj_count tmp_params;
         tmp_params = params_in.read();
 
-        ray<T> ray_temp;
+        ray ray_temp;
         ray_temp = ray_in.read(); 
 
         rgb_in tmp_color_in;
@@ -41,21 +40,23 @@ public:
         tmp_accum_in = attenuation_chan_in.read();
 
         bool quad_hit_anything = false;
-        T closest_so_far_quad = LONGEST_DISTANCE;  // Use t_max from the ray as the initial closest distance
+        ac_fixed<47, 17, true> closest_so_far_quad = LONGEST_DISTANCE;  // Use t_max from the ray as the initial closest distance
 
         // WE CAN HAVE THE READS HAPPEN IN PARALLEL THEN DECIDE WHICH ONE WAS THE CLOSEST OUT OF ALL QUADS
         // MIGHT BE TOO MUCH AREA AND RELIES ON EVEN SPLIT SO PROBABLY NOT
         
         // PROBABLY COMBINE LOOPS TO SERIALIZE AND NOT HAVE TO KEEP TRACK OF 2 VARIABLES
 
-        for (int i = 0; i < tmp_params.num_quads; i++) {
+        for (int i = 0; i < MAX_QUADS_IN_BUFFER; i++) {
             quad_hittable quad = quads.read();
-            HitRecord<T> temp_rec;
-            if (quadInters.run(ray_temp, closest_so_far_quad, quad, temp_rec)) {
+            HitRecord temp_rec;
+            bool hitWorld;
+            quadInters.run(ray_temp, closest_so_far_quad, quad, temp_rec, hitWorld)
+            if (hitWorld) {
                 quad_hit_anything = true;
-                closest_so_far_quad = temp_rec.t;
                 rec_quad = temp_rec;
             }
+            if (i == tmp_params.num_quads) break;
         }
 
         if (quad_hit_anything) {
@@ -88,9 +89,9 @@ public:
     }
 
 private:
-    QuadHit<T> quadInters;
+    QuadHit quadInters;
 
-    HitRecord<T> rec_quad;
+    HitRecord rec_quad;
 };
 
 #endif
