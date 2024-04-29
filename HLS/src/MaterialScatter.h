@@ -15,6 +15,7 @@ public:
     MaterialScatter(){}
     // Function to find the closest hit from channels of spheres and quads
     #pragma hls_design interface
+    #pragma hls_pipeline_init_interval 1
     void CCS_BLOCK(scatter)(ac_channel<ray<T>>& ray_in,
                  ac_channel<HitRecord<T>>& hit_in,
                  ac_channel<rgb_in> &attenuation_chan_in,

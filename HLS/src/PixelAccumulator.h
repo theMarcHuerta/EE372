@@ -79,4 +79,18 @@ void run(ac_channel<img_params> &accumulator_parms,
     }
 };
 
+// #ifndef __ACCUM__
+// 2 #define __ACCUM__
+// 3 #include <ac_int.h>
+// 4 #include “../../helper_classes/src/log2ceil.h”
+// 5 template<int W, bool S, int N>
+// 6 ac_int<W+LOG2_CEIL<N>::val,S> accumulate(ac_int<W,S> din[N]){
+// 7 ac_int<W+LOG2_CEIL<N>::val,S> acc = 0;
+// 8
+// 9 ACCUM:for(int i=0;i<N;i++){
+// 10 acc += din[i];
+// 11 }
+// 12 return acc;
+// 13 }
+
 #endif

@@ -4,17 +4,6 @@
 #include "RTcore.h"
 
 template<typename T>
-struct HitRecord {
-    vec3<T> hit_loc;
-    vec3<T> normal;
-    bool front_face;
-    T t; // how far along the hit occured
-    uint_3 mat;
-    rgb_in color;
-
-};
-
-template<typename T>
 class HitRecord_setNorm {
   Vec3_dot<T> dot;
   Vec3_negate<T> negate;

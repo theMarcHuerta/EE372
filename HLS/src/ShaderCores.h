@@ -12,6 +12,7 @@ public:
     ShaderCores(){}
     
 #pragma hls_design interface
+#pragma hls_pipeline_init_interval 1
     void run(ac_channel<sphere_hittable> &spheres_in,
              ac_channel<quad_hittable> &quads_in, 
              ac_channel<ray<sfp_11_22>> &ray_in,

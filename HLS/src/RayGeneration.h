@@ -10,6 +10,7 @@ class RayGeneration
     RayGeneration(){ } // on reset these will be the values
     
     #pragma hls_design interface
+    #pragma hls_pipeline_init_interval 1
     void CCS_BLOCK(run)(ac_channel<LoopIndices> &loopIndicesIn,
                         ac_channel<img_params> &paramsIn, // do i need to make it so i can fetch on command
                         ac_channel<buffer_obj_count> &paramsOut,

@@ -29,6 +29,9 @@
 #define EMISSIVE 7
 #define MAX_SPHERES_IN_BUFFER 80
 #define MAX_QUADS_IN_BUFFER 80
+#define MAX_SAMPS_PER_PIXEL 1024
+#define MAX_IMAGE_WIDTH 2048
+#define MAX_IMAGE_HEIGHT 2048
 
 // smallest value that can be represented with 22 fractional bits
 #define SMALLEST 2.384185791015625e-07
@@ -69,6 +72,49 @@ struct vec3_fp_11_22 { // vector point-- can be as big as the world space
   int_11 z_f2;
 };
 
+
+struct steamed_in_quad_hittable {
+    vec3<int_11> corner_pt; // for quads its corner
+    vec3<int_11> u; // defining u component 
+    vec3<int_11> v; // defining v componenet
+    uint_3 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
+    pbool is_invis;
+    vec3<int_11> normal; // cross of u and v
+    vec3<int_11> w; // dot of u and v
+    int_12 d_plane;
+    rgb_in quad_color;
+};
+
+// create an additional templatated version for the struct to allow for arithmetic in function, without screwing
+// up I/O
+struct quad_hittable {
+    vec3<ac_fixed<12, 11, true>> corner_pt;
+    vec3<ac_fixed<12, 11, true>> u; // defining u component 
+    vec3<ac_fixed<12, 11, true>> v; // defining v componenet
+    uint_3 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
+    pbool is_invis;
+    vec3<ac_fixed<26, 2, true>> normal; // cross of u and v, 2_24
+    vec3<ac_fixed<25, 1, true>> w; // dot of u and v, 1_24
+    ac_fixed<31, 11, true> d_plane; // 11_20
+    rgb_in quad_color;
+};
+
+struct HitRecord {
+    vec3<ac_fixed<21, 11, true>> hit_loc;
+    vec3<ac_fixed<25, 2, true>> normal;
+    bool front_face;
+    ac_fixed<41, 11, true> t; // how far along the hit occured, 11_30
+    uint_3 mat;
+    rgb_in color;
+
+};
+
+struct ray {
+  vec3<ac_fixed<21, 11, true>> orig; 
+  vec3<ac_fixed<34, 11, true>> dir;
+  bool camera_ray;
+};
+
 template <typename T>
 struct pxl_deltas { 
   vec3<T> pixel_delta_u;
@@ -88,26 +134,16 @@ struct rgb_out {
 };
 
 struct img_params {
-  // might not even need these
-//   uint_2 aspect_ratio; // 
   int_11          num_spheres;
   int_11          num_quads;
   uint_2          samp_per_pxl; // 32-64-256-1024
-//   uint_2 vfov; // 20,40,60,80
   rgb_in           background;
-//   vec3<int_11> lookfrom;
-//   vec3<int_11> lookat;
-  // derrivied values (might just pass these in)
   uint_10         image_height;   // Height of the image, computed from width and aspect ratio.
   uint_10         image_width;   // Height of the image, computed from width and aspect ratio.
   vec3<int_11>        center;         // The position of the camera (same as lookfrom).
   vec3<sfp_11_22>   pixel00_loc;    // Location in space of the top-left pixel.
   vec3<sfp_3_22>   pixel_delta_u;  // Vector to move one pixel to the right on the image plane.
   vec3<sfp_3_22>   pixel_delta_v;  // Vector to move one pixel down on the image plane.
-//   cam_params(uint_2 a, uint_2 b, uint_2 c) {
-//     aspect_ratio=a;
-//     samp_per_pxl=b;
-//   }
 };
 
 struct buffer_params {

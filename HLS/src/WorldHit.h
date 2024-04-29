@@ -5,19 +5,18 @@
 #include "ray.h"
 #include "HitRecord.h"
 #include "QuadHit.h"
-#include "SphHit.h"
 
 
 template<typename T, typename D>
 class WorldHit {
 public:
     WorldHit(){}
-    // Function to find the closest hit from channels of spheres and quads
+    // Function to find the closest hit from channels of quads
     #pragma hls_design interface
+    #pragma hls_pipeline_init_interval 1
     // #pragma hls_interface ap_ctrl_none port=return
     void CCS_BLOCK(hit)(ac_channel<ray<T>>& ray_in,
              ac_channel<buffer_obj_count> &params_in,
-             ac_channel<sphere_hittable>& spheres, /// WHAT IS CORRECT WAY TO PASS IN RAM WANT TO READ 1 BY 1 AND PIPELINE READS; ONLY STORE CLOSEST
              ac_channel<quad_hittable>& quads,
              ac_channel<rgb_in> &attenuation_chan_in,
              ac_channel<rgb_in> &accumalated_color_chan_in,
@@ -41,29 +40,14 @@ public:
         rgb_in tmp_accum_in;
         tmp_accum_in = attenuation_chan_in.read();
 
-        bool sph_hit_anything = false;
         bool quad_hit_anything = false;
-        T closest_so_far_sph = LONGEST_DISTANCE;  // Use t_max from the ray as the initial closest distance
         T closest_so_far_quad = LONGEST_DISTANCE;  // Use t_max from the ray as the initial closest distance
 
-        // WE CAN HAVE THE READS HAPPEN IN PARALLEL THEN DECIDE WHICH ONE WAS THE CLOSEST OUT OF ALL SPHERES AND QUADS
+        // WE CAN HAVE THE READS HAPPEN IN PARALLEL THEN DECIDE WHICH ONE WAS THE CLOSEST OUT OF ALL QUADS
         // MIGHT BE TOO MUCH AREA AND RELIES ON EVEN SPLIT SO PROBABLY NOT
-
-        // Process all spheres
-        for (int i = 0; i < tmp_params.num_spheres; i++) { // FIGURE OUT TO LOOP THROUGH WITH STTI VERIBLES IN 272 THEY DID IT WITH VARIABLE ITERATION AMUNT
-            sphere_hittable sph = spheres.read();
-            HitRecord<T> temp_rec;
-            if (sphInters.run(ray_temp, closest_so_far_sph , sph, temp_rec)) { // again see what the best return type and exact syntax is for this function call
-                sph_hit_anything = true;
-                closest_so_far_sph = temp_rec.t;// Update the closest hit distance.
-                rec_sphere = temp_rec; // Update the closest hit distance.
-            }
-        }
         
         // PROBABLY COMBINE LOOPS TO SERIALIZE AND NOT HAVE TO KEEP TRACK OF 2 VARIABLES
 
-        // Process all quads
-        // p much exact same as sph intersection with same questions
         for (int i = 0; i < tmp_params.num_quads; i++) {
             quad_hittable quad = quads.read();
             HitRecord<T> temp_rec;
@@ -74,13 +58,8 @@ public:
             }
         }
 
-        if (quad_hit_anything || sph_hit_anything) {
-            if (closest_so_far_sph < closest_so_far_quad){
-                hit_out.write(rec_sphere);  // Write the closest hit record to the output channel
-            }
-            else {
-                hit_out.write(rec_quad);  // Write the closest hit record to the output channel
-            }
+        if (quad_hit_anything) {
+            hit_out.write(rec_quad);  // Write the closest hit record to the output channel
             isHit.write(true);
             accumalated_color_out.write(tmp_color_in);
         }
@@ -109,10 +88,8 @@ public:
     }
 
 private:
-    SphereHit<T> sphInters;
     QuadHit<T> quadInters;
 
-    HitRecord<T> rec_sphere;
     HitRecord<T> rec_quad;
 };
 

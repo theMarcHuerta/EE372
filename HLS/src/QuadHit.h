@@ -6,49 +6,19 @@
 #include "ray.h"
 #include "HitRecord.h"
 
-struct quad_hittable {
-    vec3<int_11> corner_pt; // for quads its corner
-    vec3<int_11> u; // defining u component 
-    vec3<int_11> v; // defining v componenet
-    uint_3 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
-    pbool is_invis;
-    vec3<int_11> normal; // cross of u and v
-    vec3<int_11> w; // dot of u and v
-    int_12 d_plane;
-    rgb_in quad_color;
-};
-
-// create an additional templatated version for the struct to allow for arithmetic in function, without screwing
-// up I/O
-template<typename T>
-struct _quad_hittable {
-    vec3<T> corner_pt;
-    vec3<T> u; // defining u component 
-    vec3<T> v; // defining v componenet
-    uint_3 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
-    pbool is_invis;
-    vec3<T> normal; // cross of u and v
-    vec3<T> w; // dot of u and v
-    T d_plane;
-    rgb_in quad_color;
-};
-
 template<typename T>
 class QuadHit {
-  private:
-    Vec3_sub<T> sub;
-    Vec3_dot<T> dot;
-    Vec3_cross<T> cross;
-    Ray_at<T> at;
+
   public:
     QuadHit() {}
 
     #pragma hls_design ccore
-    bool run(ray<T>& r, T& closest_so_far, _quad_hittable<T>& _quad, HitRecord<T>& rec) {        
+    bool run(ray& r, ac_fixed<41, 11, true>& closest_so_far, quad_hittable& _quad, HitRecord& rec) {        
 
         if (r.camera_ray && _quad.is_invis){
             return false;
         }
+        
         T denom;
         dot.run(_quad.normal, r.dir, denom);
 
@@ -102,6 +72,12 @@ class QuadHit {
         closest_so_far = t;  // Update the closest hit
         return true;
     }
+
+private:
+    Vec3_sub<T> sub;
+    Vec3_dot<T> dot;
+    Vec3_cross<T> cross;
+    Ray_at<T> at;
 };
 
 #endif

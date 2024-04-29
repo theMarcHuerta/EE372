@@ -5,13 +5,6 @@
 #include "vec3.h"
 
 template<typename T>
-struct ray {
-  vec3<T> orig; 
-  vec3<T> dir;
-  bool camera_ray;
-};
-
-template<typename T>
 class Ray_at {
   Vec3_mult_s<T> mult;
   Vec3_add<T> add;
