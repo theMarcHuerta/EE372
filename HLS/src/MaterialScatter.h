@@ -7,7 +7,6 @@
 #include "RayGeneration.h"
 #include "HitRecord.h"
 #include "LambertianScatter.h"
-#include "MetalScatter.h"
 
 class MaterialScatter {
 public:

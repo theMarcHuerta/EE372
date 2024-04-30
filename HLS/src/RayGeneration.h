@@ -27,7 +27,6 @@ class RayGeneration
         tmp_params = paramsIn.read();
 
         buffer_obj_count boc;
-        boc.num_spheres = tmp_params.num_spheres;
         boc.num_quads = tmp_params.num_quads;
         boc.background = tmp_params.background;
 
@@ -35,9 +34,9 @@ class RayGeneration
         tmp_indices = loopIndicesIn.read();
 
         // sets bits from int to fixed point
-        ax_fixed<13,12,true> x_pix = 0;
+        ac_fixed<13,12,true> x_pix = 0;
         x_pix.set_slc(0, (tmp_indices.x_pxl).slc<11>(1));
-        ax_fixed<13,12,true> y_pix= 0;
+        ac_fixed<13,12,true> y_pix= 0;
         y_pix.set_slc(0, (tmp_indices.y_pxl).slc<11>(1));
 
         vec3<ac_fixed<37, 14, true>> deltaUIndexMultOut;
@@ -48,7 +47,7 @@ class RayGeneration
         vec3<ac_fixed<38, 15, true>> deltsOut;
         deltAdd.run(deltaUIndexMultOut, deltaVIndexMultOut, deltsOut);
         
-        ac_fixed<39, 16, true> pxlCenter;
+        vec3<ac_fixed<39, 16, true>> pxlCenter;
         locDeltsAdd.run(deltsOut, tmp_params.pixel00_loc, pxlCenter);
 
         vec3<sfp_3_22> pixelSampleSquareOut;

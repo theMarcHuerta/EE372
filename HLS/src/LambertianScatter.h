@@ -18,9 +18,11 @@ class LambertianScatter {
         rand_unit.run(state1, state2, rand_dir);
         add.run(rec.normal, rand_dir, scatter_direction);
 
-        vec3<ac_fixed<34, 2, true>> near_zero_val = 1.49011612e-8; // 2^-26
+        ac_fixed<34, 2, true> near_zero_val = 1.49011612e-8; // 2^-26
         if ((scatter_direction.x < near_zero_val) && (scatter_direction.y < near_zero_val) && (scatter_direction.z < near_zero_val)) {
-            scatter_direction = rec.normal;
+            scatter_direction.x = rec.normal.x;
+            scatter_direction.y = rec.normal.y;
+            scatter_direction.z = rec.normal.z;
         }
 
         // LETS SEE IF IT TRUNCATES TO RIGHT SIZE OTHERWISE WE HAVE TO MANUALLY SET IT

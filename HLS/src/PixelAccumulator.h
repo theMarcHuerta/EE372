@@ -81,9 +81,10 @@ void run(ac_channel<img_params> &accumulator_parms,
         ac_math::ac_sqrt(rounded_accuracy_col.z, gamme_corrected.z);
 
         //accounts for overflow (checks the int bit), then takes 8 bits to make it 8 bit rgb
-        pre_output_reg.r = gamme_corrected.x.slc<1>(14) == 1 ? 255 : gamme_corrected.x.slc<8>(6);
-        pre_output_reg.g = gamme_corrected.y.slc<1>(14) == 1 ? 255 : gamme_corrected.y.slc<8>(6);
-        pre_output_reg.b = gamme_corrected.z.slc<1>(14) == 1 ? 255 : gamme_corrected.z.slc<8>(6);
+        ac_int<8, false> rgb_max = 255;
+        pre_output_reg.r = gamme_corrected.x.slc<1>(14) == 1 ? rgb_max : gamme_corrected.x.slc<8>(6);
+        pre_output_reg.g = gamme_corrected.y.slc<1>(14) == 1 ? rgb_max : gamme_corrected.y.slc<8>(6);
+        pre_output_reg.b = gamme_corrected.z.slc<1>(14) == 1 ? rgb_max : gamme_corrected.z.slc<8>(6);
 
         output_pxl_serial.write(pre_output_reg);
     }

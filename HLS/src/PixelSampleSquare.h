@@ -19,18 +19,18 @@ class PixelSampleSquare
                          // do i need to make it so i can fetch on command
                         vec3<sfp_3_22> &output_num)
     {
-      ac_int<33, 1, false> rnum1;
-      ac_int<33, 1, false> rnum2; 
+      ac_fixed<33, 1, false> rnum1;
+      ac_fixed<33, 1, false> rnum2; 
       rand_val.run(state1, rnum1);
       rand_val2.run(state2, rnum2);
-      ac_int<34, 2, true> rnum1_s = 0;
-      ac_int<34, 2, true> rnum2_s = 0; 
+      ac_fixed<34, 2, true> rnum1_s = 0;
+      ac_fixed<34, 2, true> rnum2_s = 0; 
       // sets the lower 32 bits of the signed number to the rand
       rnum1_s.set_slc(0, (rnum1).slc<33>(0));
       rnum2_s.set_slc(0, (rnum2).slc<33>(0));
 
-      ac_int<34, 2, true> px = rnum1_s - point_five;  // Random offset in the x direction. IS SUPPOSED TO CHOP OFF
-      ac_int<34, 2, true> py = rnum2_s - point_five;  // Random offset in the y direction.
+      ac_fixed<34, 2, true> px = rnum1_s - point_five;  // Random offset in the x direction. IS SUPPOSED TO CHOP OFF
+      ac_fixed<34, 2, true> py = rnum2_s - point_five;  // Random offset in the y direction.
 
       vec3<sfp_3_22> multOut1;
       vec3<sfp_3_22> multOut2;
@@ -49,8 +49,8 @@ class PixelSampleSquare
     Rand_val rand_val;
     Rand_val rand_val2;
 
-    Vec3_mult_s<sfp_3_22, ac_int<34, 2, true>, sfp_3_22> vecMul1;
-    Vec3_mult_s<sfp_3_22, ac_int<34, 2, true>, sfp_3_22> vecMul2;
+    Vec3_mult_s<sfp_3_22, ac_fixed<34, 2, true>, sfp_3_22> vecMul1;
+    Vec3_mult_s<sfp_3_22, ac_fixed<34, 2, true>, sfp_3_22> vecMul2;
 
     const sfp_3_22 point_five = 0.5; // supposed to be .5
 

@@ -25,7 +25,6 @@ public:
         while(params_in.available(1))
         #endif
         {
-            sphere_hittable tmp_sphere;
             quad_hittable tmp_quad;
             ray tmp_ray;
             buffer_obj_count tmp_obj_count;

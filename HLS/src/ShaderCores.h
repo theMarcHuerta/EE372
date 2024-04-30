@@ -14,7 +14,7 @@ public:
 #pragma hls_design interface
 #pragma hls_pipeline_init_interval 1
     void run(ac_channel<quad_hittable> &quads_in, 
-             ac_channel<ray<sfp_11_22>> &ray_in,
+             ac_channel<ray> &ray_in,
              ac_channel<buffer_obj_count> &params_in,
              ac_channel<rgb_in> &output_pxl_serial
             )
@@ -73,7 +73,7 @@ public:
           accumalated_color_chan3.write(accumalated_color_chan2.read());
           ray_in2.write(ray_out1.read());
           // from shader too after 8 bounces, then we have our output pixel
-          output_pxl_serial.write(accumalated_color_chan3);
+          output_pxl_serial.write(accumalated_color_chan3.read());
           ray_out2.read(); // read to make sure it doesnt get jammed? not sure how it works but this goes nowehere
           attenuation_chan4.read();
         }

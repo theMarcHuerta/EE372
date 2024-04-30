@@ -39,7 +39,7 @@ void run(ac_channel<img_params> &render_params,
                 temp_idxs.x_pxl = fx;
                 for (int samps = 0; samps < MAX_SAMPS_PER_PIXEL; samps++){
                     temp_idxs.cur_samp = samps;
-                    render_params_out.write(temp_idxs)
+                    render_params_out.write(tmp_params);
                     loopIndicesOut.write(temp_idxs); 
                     if (samps == tmp_params.samp_per_pxl) break;
                 }

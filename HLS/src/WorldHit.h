@@ -51,7 +51,7 @@ public:
             quad_hittable quad = quads.read();
             HitRecord temp_rec;
             bool hitWorld;
-            quadInters.run(ray_temp, closest_so_far_quad, quad, temp_rec, hitWorld)
+            quadInters.run(ray_temp, closest_so_far_quad, quad, temp_rec, hitWorld);
             if (hitWorld) {
                 quad_hit_anything = true;
                 rec_quad = temp_rec;
