@@ -20,14 +20,15 @@ class QuadHit {
         }
 
         ac_fixed<58, 11, true> denom; //47 fractional bits out as result, 24*23 fractioanl bit and tested 11 int bits largest value gotten in c test
-        dot.run(_quad.normal, r.dir, denom);
+        denom_dot.run(_quad.normal, r.dir, denom);
         ac_fixed<57, 11, false> abs_denom = denom.slc<57>(0); // gets rid of sign bit
 
         //new type will be 11_23
-        ax_fixed<34, 11, true> rounded_denom = denom; // HAVE TO CHECK IF IT TRUNCATES THE INTEGER OR FRACTIONAL BITS ON IT'S OWN
+        ac_fixed<34, 11, true> rounded_denom = denom; // HAVE TO CHECK IF IT TRUNCATES THE INTEGER OR FRACTIONAL BITS ON IT'S OWN
         // checks if denom was negative and saturates the rounded denom
-        ac_fixed<24,1, false> rounding_val= 1.1920929e-7; // 2^-23-- hope it sets lowest bit
-        if (abs_denom < rounding_val) {rounded_denom = denom[57] == 1 ? -rounding_val : rounding_val;}
+        ac_fixed<24,1, true> rounding_val = 1.1920929e-7; // 2^-23-- hope it sets lowest bit
+        ac_fixed<24,1, true> rounding_val_neg = -1.1920929e-7;
+        if (abs_denom < rounding_val) {rounded_denom = (denom[57] == 1) ? rounding_val_neg : rounding_val;}
 
         // T abs_denom;
         // ac_math::ac_abs(rounded_denom, abs_denom);
@@ -46,10 +47,11 @@ class QuadHit {
 
         //20fractioanl bits + 23 fractional bits from denom = 43 fractional bits from result at least, 43+17
         ac_fixed<60, 17, true> t = (_quad.d_plane - x) / rounded_denom; // initate correct dot product format and all
-        ax_fixed<47, 17, true> t_trunc = t; 
+        ac_fixed<47, 17, true> t_trunc = t; 
         // now truncate fractional bits to 30 
-        ac_fixed<31,1, false> rounding_val2= -9.3132257e-10; // 2^-30 - hope it sets lowest bit
-        if (t < rounding_val2) {t_trunc = t[59] == 1 ? -rounding_val2 : rounding_val2;}
+        ac_fixed<31,1, false> rounding_val2 = 9.3132257e-10; // 2^-30 - hope it sets lowest bit
+        ac_fixed<31,1, false> rounding_val2_neg = -9.3132257e-10;
+        if (t < rounding_val2) {t_trunc = t[59] == 1 ? rounding_val2_neg : rounding_val2;}
 
         ac_fixed<11,1,true> min_val = 0.0009765625; // 2^-10 approx 0.001
         // can there be overflow with different types of compos or will it auto adjust the comparison to the largest number 
@@ -59,7 +61,7 @@ class QuadHit {
         }
 
         // Calculate intersection point
-        vec3<ax_fixed<75, 22, true>> intersection;
+        vec3<ac_fixed<75, 22, true>> intersection;
         at.run(r, t_trunc, intersection);
 
         vec3<ac_fixed<45, 22, true>> trunc_intersection;
@@ -105,13 +107,14 @@ class QuadHit {
 private:
     Vec3_sub<ac_fixed<45, 22, true>, ac_fixed<12, 11, true>, ac_fixed<45, 22, true>> sub;
 
+    Vec3_dot<ac_fixed<26, 2, true>, ac_fixed<34, 11, true>, ac_fixed<58, 11, true>> denom_dot;
     Vec3_dot<ac_fixed<26, 2, true>, ac_fixed<21, 11, true>, ac_fixed<49, 14, true>> qnorm_rorig; //added 2 overflow bits to results
     Vec3_dot<ac_fixed<25, 1, true>, ac_fixed<56, 33, true>, ac_fixed<38, 15, true>> alpha_dot; //added 2 overflow bits to results
     Vec3_dot<ac_fixed<25, 1, true>, ac_fixed<56, 33, true>, ac_fixed<38, 15, true>> beta_dot; //added 2 overflow bits to results
 
     Vec3_cross<ac_fixed<45, 22, true>, ac_fixed<12, 11, true>, ac_fixed<56, 33, true>> cross_v;
     Vec3_cross<ac_fixed<12, 11, true>, ac_fixed<45, 22, true>, ac_fixed<56, 33, true>> cross_u;
-    Ray_at<ax_fixed<47, 17, true>, ax_fixed<75, 22, true>> at; // first val + ray dir frac bits// capped at 22 int bits according to c
+    Ray_at<ac_fixed<47, 17, true>, ac_fixed<75, 22, true>> at; // first val + ray dir frac bits// capped at 22 int bits according to c
 
     HitRecord_setNorm setfacenorm;  // type is size of normla of 
 };

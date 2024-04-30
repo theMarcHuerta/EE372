@@ -73,6 +73,17 @@ struct vec3_fp_11_22 { // vector point-- can be as big as the world space
   int_11 z_f2;
 };
 
+struct rgb_in {
+  ac_fixed<27, 5, false> r;
+  ac_fixed<27, 5, false> g;
+  ac_fixed<27, 5, false> b;
+};
+
+struct rgb_out {
+  uint_8 r;
+  uint_8 g;
+  uint_8 b;
+};
 
 struct steamed_in_quad_hittable {
     vec3<int_11> corner_pt; // for quads its corner
@@ -121,18 +132,6 @@ template <typename T>
 struct pxl_deltas { 
   vec3<T> pixel_delta_u;
   vec3<T> pixel_delta_v;
-};
-
-struct rgb_in {
-  ac_int<27, 5, false> r;
-  ac_int<27, 5, false> g;
-  ac_int<27, 5, false> b;
-};
-
-struct rgb_out {
-  uint_8 r;
-  uint_8 g;
-  uint_8 b;
 };
 
 struct img_params {

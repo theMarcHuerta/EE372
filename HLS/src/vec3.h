@@ -64,7 +64,7 @@ class Vec3_mult_s {
     // Multiplies the components by a scalar. Useful for scaling vectors.
     #pragma hls_design ccore
     #pragma hls_ccore_type combinational
-    void run(vec3<T1>& a, T2& b, vec3<T3>& out) {
+    void run(vec3<T1>& in, T2& t, vec3<T3>& out) {
       out.x = in.x * t;
       out.y = in.y * t;
       out.z = in.z * t;
@@ -72,13 +72,12 @@ class Vec3_mult_s {
 };
 
 template<typename T1, typename T2, typename T3>
-template<typename T>
 class Vec3_mult_v {
   public:
     // Multiplies the components by a vector.
     #pragma hls_design ccore
     #pragma hls_ccore_type combinational
-    void run(vec3<T1>& a, vec3<T2>& b, vec3<T>& out) {
+    void run(vec3<T1>& a, vec3<T2>& b, vec3<T3>& out) {
       out.x = a.x * b.x;
       out.y = a.y * b.y;
       out.z = a.z * b.z;
@@ -121,43 +120,43 @@ class Vec3_len_sq {
     }
 };
 
-template<typename T>
+template<typename T1, typename T2>
 class Vec3_len {
-  Vec3_len_sq<T, ac_fixed<T.width * 2, T.i_width * 2, true>> length_squared;
+  Vec3_len_sq<T1, T2> length_squared;
   public:
     // Computes the length (magnitude) of the vector. Essential for normalization and distance calculations.
     #pragma hls_design ccore
-    void run(vec3<T>& in, T& out) {
-      ac_fixed<T.width * 2, T.i_width * 2, true> l_sq;
+    void run(vec3<T1>& in, T1& out) {
+      T2 l_sq;
       length_squared.run(in, l_sq);
 
       // unsigned variables for ac_sqrt()
       ac_fixed<l_sq.width-1, l_sq.i_width-1, false> u_l_sq = l_sq;
-      ac_fixed<T.width - 1, T.i_width - 1, false> u_result;
+      ac_fixed<out.width - 1, out.i_width - 1, false> u_result;
 
       ac_math::ac_sqrt(u_l_sq, u_result);
 
-      T tmp_result = u_result;
+      T1 tmp_result = u_result;
       // convert back to type T
       out = tmp_result;
     }
 };
 
-template<typename T, typname T_DivOut>
-class Vec3_unit {
-  Vec3_len<T> length;
-  Vec3_div_s<T, T, T_DivOut> div;
-  public:
-    // Normalizes a vec3 vector, scaling it to a length of 1. This is often required when dealing with directions.
-    #pragma hls_design ccore
-    #pragma hls_ccore_type combinational
-    void run(vec3<T>& in, vec3<T_DivOut>& out) {
-      T len;
-      length.run(in, len);
+// template<typename T1, typename T2, typename T_DivOut>
+// class Vec3_unit {
+//   Vec3_len<T1, T2> length;
+//   Vec3_div_s<T1, T1, T_DivOut> div;
+//   public:
+//     // Normalizes a vec3 vector, scaling it to a length of 1. This is often required when dealing with directions.
+//     #pragma hls_design ccore
+//     #pragma hls_ccore_type combinational
+//     void run(vec3<T1>& in, vec3<T_DivOut>& out) {
+//       T1 len;
+//       length.run(in, len);
 
-      div.run(in, len, out);
-    }
-};
+//       div.run(in, len, out);
+//     }
+// };
 
 template<typename T1, typename T2, typename T3>
 class Vec3_dot {
