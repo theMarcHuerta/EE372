@@ -2,10 +2,6 @@
 #define MATERIAL_SCATTER_H
 
 #include "RTcore.h"
-#include "ray.h"
-#include "ShaderCores.h"
-#include "RayGeneration.h"
-#include "HitRecord.h"
 #include "LambertianScatter.h"
 
 class MaterialScatter {

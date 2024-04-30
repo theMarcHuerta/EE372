@@ -46,7 +46,8 @@ class QuadHit {
         ac_fixed<34, 14, true> x_trunc = x;
 
         //20fractioanl bits + 23 fractional bits from denom = 43 fractional bits from result at least, 43+17
-        ac_fixed<60, 17, true> t = (_quad.d_plane - x_trunc) / rounded_denom; // initate correct dot product format and all
+        ac_fixed<34, 14, true> sub_result = (_quad.d_plane - x_trunc);
+        ac_fixed<60, 17, true> t = sub_result / rounded_denom; // initate correct dot product format and all
         ac_fixed<47, 17, true> t_trunc = t; 
         // now truncate fractional bits to 30 
         ac_fixed<31,1, false> rounding_val2 = 9.3132257e-10; // 2^-30 - hope it sets lowest bit
@@ -93,9 +94,9 @@ class QuadHit {
         }
 
         // rec.t = t_trunc; // HOPE IT AUTO TRUNCS
-        rec.hit_loc.x = trunc_intersection.x; // HAVE TO HOPE IT TRUNCS THIS TOO
-        rec.hit_loc.y = trunc_intersection.y;
-        rec.hit_loc.z = trunc_intersection.z;
+        rec.hit_loc.x = 0; // HAVE TO HOPE IT TRUNCS THIS TOO
+        rec.hit_loc.y = 0;
+        rec.hit_loc.z = 0;
 
         rec.color = _quad.quad_color;
 
@@ -103,7 +104,7 @@ class QuadHit {
         setfacenorm.run(r, _quad.normal, rec);
         rec.mat = _quad.mat_type;
 
-        closest_so_far = t_trunc;  // Update the closest hit // HOPE IT TRUNCATES LARGEST 6 BITS
+        closest_so_far = 0;  // Update the closest hit // HOPE IT TRUNCATES LARGEST 6 BITS
         hitWorld = true;
     }
 

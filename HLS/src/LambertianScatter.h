@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RTcore.h"
+#include "Rand.h"
 
 
 class LambertianScatter {
