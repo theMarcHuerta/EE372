@@ -3,7 +3,6 @@
 
 #include "RTcore.h"
 #include "ray.h"
-#include "SphHit.h"
 #include "QuadHit.h"
 
 class MemController
