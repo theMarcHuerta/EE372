@@ -2,7 +2,10 @@
 #define RAND_H
 
 #include "RTcore.h"
-#include <math/mgc_ac_math.h>
+// #include <math/mgc_ac_trig.h>
+#include <ac_math/ac_sincos_cordic.h>
+#include <ac_math/ac_arccos_cordic.h>
+using namespace ac_math;
 
 class Rand_val {
   public:
@@ -41,17 +44,19 @@ class random_in_unit_sphere {
       ac_fixed<36, 4,  true> onee = 1.0;
       ac_fixed<36, 4,  true> theta = twoo * fixed_pi * xi1; // Uniform distribution from 0 to 2π
       ac_fixed<36, 4,  true> into_acos = twoo * xi2 - onee;
-      ac_fixed<36, 4,  true> phi;
-      ac_math::arccos(into_acos, phi);// Correctly distribute from -1 to 1 and acos
+      ac_fixed<35, 4,  false> phi;
+      ac_fixed<36, 4,  true> phi_signed;
+      ac_arccos_cordic(into_acos, phi);// Correctly distribute from -1 to 1 and acos
+      phi_signed = phi;
       
       ac_fixed<36, 4,  true> sin_phi;
       ac_fixed<36, 4,  true> cos_phi;
       ac_fixed<36, 4,  true> cos_theta;
       ac_fixed<36, 4,  true> sin_theta;
-      mgc_ac_math::ac_sin(phi, sin_phi);
-      mgc_ac_math::ac_cos(theta, cos_theta);
-      mgc_ac_math::ac_sin(theta, sin_theta);
-      mgc_ac_math::ac_cos(phi, cos_phi);
+      ac_sin_cordic(phi_signed, sin_phi);
+      ac_cos_cordic(theta, cos_theta);
+      ac_sin_cordic(theta, sin_theta);
+      ac_cos_cordic(phi_signed, cos_phi);
 
       ac_fixed<33, 1, false> xs = sin_phi * cos_theta;
       ac_fixed<33, 1, false> ys = sin_phi * sin_theta;

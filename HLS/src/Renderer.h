@@ -62,7 +62,7 @@ public:
     {
         renderLooper.run(render_params, paramsChanneltoRayGen, loopIndicesChanneltoRayGen);
         rayGeneration.run(loopIndicesChanneltoRayGen, paramsChanneltoRayGen, paramsChanneltoShader, rayOut); // TO DO ADD LOOP INDICIES OUT CHANNEL
-        shaderCores.run(paramsChanneltoShader, rayOut, quads_in, output_pxl_sample);
+        shaderCores.run(quads_in, rayOut, paramsChanneltoShader, output_pxl_sample);
     }
 private:
     RenderLooper renderLooper;
