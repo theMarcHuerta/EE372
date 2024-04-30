@@ -94,9 +94,9 @@ class QuadHit {
         }
 
         // rec.t = t_trunc; // HOPE IT AUTO TRUNCS
-        rec.hit_loc.x = 0; // HAVE TO HOPE IT TRUNCS THIS TOO
-        rec.hit_loc.y = 0;
-        rec.hit_loc.z = 0;
+        rec.hit_loc.x = trunc_intersection.x; // HAVE TO HOPE IT TRUNCS THIS TOO
+        rec.hit_loc.y = trunc_intersection.y;
+        rec.hit_loc.z = trunc_intersection.z;
 
         rec.color = _quad.quad_color;
 
@@ -104,7 +104,7 @@ class QuadHit {
         setfacenorm.run(r, _quad.normal, rec);
         rec.mat = _quad.mat_type;
 
-        closest_so_far = 0;  // Update the closest hit // HOPE IT TRUNCATES LARGEST 6 BITS
+        closest_so_far = t_trunc;  // Update the closest hit // HOPE IT TRUNCATES LARGEST 6 BITS
         hitWorld = true;
     }
 
