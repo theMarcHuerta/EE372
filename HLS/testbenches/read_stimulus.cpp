@@ -14,8 +14,6 @@ struct output {
     vec3<double> normal;
     bool front_face;
     double t; // how far along the hit occured
-    double u;
-    double v;
     uint_3 mat;
     rgb_in color;
 
@@ -24,26 +22,41 @@ struct output {
     bool operator==(const HitRecord<sfp_11_22>& o) {
         return  (std::abs(o.hit_loc.x.to_double() - hit_loc.x) < thresh &&
                 std::abs(o.hit_loc.y.to_double() - hit_loc.y) < thresh &&
-                std::abs(o.hit_loc.z.to_double() - hit_loc.z) < thresh);
-                // std::abs(o.normal.x.to_double() - normal.x) < thresh &&
-                // std::abs(o.normal.y.to_double() - normal.y) < thresh &&
-                // std::abs(o.normal.z.to_double() - normal.z) < thresh &&
-                // std::abs(o.t.to_double() - t) < thresh &&
-                // std::abs(o.u.to_double() - u) < thresh &&
-                // std::abs(o.v.to_double() - v) < thresh &&
-                // std::abs(o.color.r.to_double() - color.r.to_double()) < thresh &&
-                // std::abs(o.color.g.to_double() - color.g.to_double()) < thresh &&
-                // std::abs(o.color.b.to_double() - color.b.to_double()) < thresh &&
-                // o.mat == mat);               
+                std::abs(o.hit_loc.z.to_double() - hit_loc.z) < thresh &&
+                std::abs(o.normal.x.to_double() - normal.x) < thresh &&
+                std::abs(o.normal.y.to_double() - normal.y) < thresh &&
+                std::abs(o.normal.z.to_double() - normal.z) < thresh &&
+                std::abs(o.color.r.to_double() - color.r.to_double()) < thresh &&
+                std::abs(o.color.g.to_double() - color.g.to_double()) < thresh &&
+                std::abs(o.color.b.to_double() - color.b.to_double()) < thresh &&
+                o.mat == mat);               
     }
 };
 
 // set comparison threshold
-double output::thresh = 1.0;
+double output::thresh = 1e-1;
 
 std::istream& operator>>(std::istream& is, sfp_11_22& val) {
     // Implementation depends on the specifics of sfp_11_22
     double temp;
+    if (is >> temp) {
+        val = temp; // Assuming conversion from double or similar
+    }
+    return is;
+}
+
+std::istream& operator>>(std::istream& is, uint_3& val) {
+    // Implementation depends on the specifics of pbool
+    unsigned int temp;
+    if (is >> temp) {
+        val = temp; // Assuming conversion from double or similar
+    }
+    return is;
+}
+
+std::istream& operator>>(std::istream& is, pbool& val) {
+    // Implementation depends on the specifics of pbool
+    int temp;
     if (is >> temp) {
         val = temp; // Assuming conversion from double or similar
     }
@@ -158,6 +171,12 @@ std::vector<ray<T>> read_rays(const std::string& filename) {
         iss.str(line);  // Set new string to parse
 
         iss >> ray.dir.x >> ray.dir.y >> ray.dir.z;
+
+        std::getline(file, line);
+        iss.clear();  // Clear any error flags
+        iss.str(line);  // Set new string to parse
+
+        iss >> ray.camera_ray;
 
         rays.push_back(ray);
     }
