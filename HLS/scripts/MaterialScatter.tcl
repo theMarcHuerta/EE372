@@ -2,11 +2,8 @@ set blockname [file rootname [file tail [info script] ]]
 
 source scripts/common_no_mod.tcl
 
-set type1 "sfp_11_22"
-set type2 "fp_1_22"
-
 directive set -DESIGN_HIERARCHY " 
-    {MaterialScatter<${type1}, ${type2}>} 
+    {MaterialScatter} 
 "
 
 go compile

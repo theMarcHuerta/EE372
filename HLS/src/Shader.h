@@ -6,7 +6,6 @@
 #include "WorldHit.h"
 #include "MaterialScatter.h"
 
-template<typename T, typename D>
 class Shader
 {
 public:

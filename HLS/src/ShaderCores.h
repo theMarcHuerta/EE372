@@ -92,8 +92,8 @@ private:
   ac_channel<quad_hittable> quad_read_copy1;
   ac_channel<quad_hittable> quad_read_copy2; 
 
-  Shader<sfp_11_22, fp_1_22> shader1;
-  Shader<sfp_11_22, fp_1_22> shader2;
+  Shader shader1;
+  Shader shader2;
 
   MemController memController;
 
