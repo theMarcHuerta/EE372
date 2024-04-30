@@ -12,7 +12,7 @@ class QuadHit {
     QuadHit() {}
 
     #pragma hls_design ccore
-    void run(ray& r, ac_fixed<47, 17, true>& closest_so_far, quad_hittable& _quad, HitRecord& rec, bool hitWorld) {        
+    void run(ray& r, ac_fixed<47, 17, true>& closest_so_far, quad_hittable& _quad, HitRecord& rec, bool& hitWorld) {        
 
         if (r.camera_ray && _quad.is_invis){
             hitWorld = false;
@@ -76,7 +76,7 @@ class QuadHit {
         cross_v.run(planar_hitpt_vector, _quad.v, cross_v_result);
 
         vec3<ac_fixed<56, 33, true>> cross_u_result;
-        cross_u.run(_quad.u. planar_hitpt_vector, cross_u_result);
+        cross_u.run(_quad.u, planar_hitpt_vector, cross_u_result);
 
         ac_fixed<38, 15, true> alpha;
         ac_fixed<38, 15, true> beta;
@@ -93,7 +93,10 @@ class QuadHit {
         }
 
         // rec.t = t_trunc; // HOPE IT AUTO TRUNCS
-        rec.hit_loc = trunc_intersection; // HAVE TO HOPE IT TRUNCS THIS TOO
+        rec.hit_loc.x = trunc_intersection.x; // HAVE TO HOPE IT TRUNCS THIS TOO
+        rec.hit_loc.y = trunc_intersection.y;
+        rec.hit_loc.z = trunc_intersection.z;
+
         rec.color = _quad.quad_color;
 
         // HitRecord_setNorm<T> setfacenorm; 
