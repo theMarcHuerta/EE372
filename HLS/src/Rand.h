@@ -2,13 +2,12 @@
 #define RAND_H
 
 #include "RTcore.h"
-#include "vec3.h"
 
 class Rand_val {
   public:
-    Rand_val(int seed = 375821) : state(seed) {}
+    // Rand_val(int seed = 375821) {}
     // Generates a random fixed point value between 0 and 1
-    void run(ac_int<33, 1, false>& out) {
+    void run(ac_int<32, false>& state , ac_int<33, 1, false>& out) {
       ac_int<32, false> x = state;
       x ^= x << 13;
       x ^= x >> 17;
@@ -26,33 +25,54 @@ class random_in_unit_sphere {
     Rand_val random1;
     Rand_val random2;
     public:
-    voic run(){
+    void run(ac_int<32, false>& state1, ac_int<32, false>& state2, vec3<ax_fixed<34, 2, true>>& rand_vec_out){
+      ax_fixed<33, 1, false> xi1;
+      ax_fixed<33, 1, false> xi2;
+      random1.run(state1, xi1);
+      random2.run(state2, xi2);
+      ax_fixed<36, 4,  true> xi1_s = 0;
+      ax_fixed<36, 4, true> xi2_s = 0;
+      // extend the integer part to account for overflow
+      xi1_s.set_slc(0, (xi1).slc<33>(0));
+      xi2_s.set_slc(0, (xi2).slc<33>(0));
+      ax_fixed<36, 4,  true> fixed_pi = 3.14159; // pi with 32 fractional bits 
+      ax_fixed<36, 4,  true> twoo = 2.0;
+      ax_fixed<36, 4,  true> onee = 1.0;
+      ax_fixed<36, 4,  true> theta = twoo * fixed_pi * xi1; // Uniform distribution from 0 to 2π
+      ax_fixed<36, 4,  true> into_acos = twoo * xi2 - onee;
+      ax_fixed<36, 4,  true> phi;
+      arccos(into_acos, phi);// Correctly distribute from -1 to 1 and acos
+      
+      ax_fixed<36, 4,  true> sin_phi;
+      ax_fixed<36, 4,  true> cos_phi;
+      ax_fixed<36, 4,  true> cos_theta;
+      ax_fixed<36, 4,  true> sin_theta;
+      sin(phi, sin_phi);
+      cos(theta, cos_theta);
+      sin(theta, sin_theta);
+      cos(phi, cos_phi);
 
-      Rand_val.run(xi1);
-      Rand_val.run(xi2);
+      ax_fixed<33, 1, false> xs = sin_phi * cos_theta;
+      ax_fixed<33, 1, false> ys = sin_phi * sin_theta;
+      ax_fixed<33, 1, false> zs = cos_phi;
 
-      ax_fixed theta = 2.0 * 3.1415926 * xi1; // Uniform distribution from 0 to 2π
-      ax_fixed phi = std::acos(2.0 * xi2 - 1.0); // Correctly distribute from -1 to 1 and acos
-
-      ax_fixed xs = std::sin(phi) * std::cos(theta); // Note the switch of phi and theta here
-      ax_fixed ys = std::sin(phi) * std::sin(theta);
-      ax_fixed zs = std::cos(phi);
-
-      out = vec3(xs, ys, zs);
+      rand_vec_out.x = xs;
+      rand_vec_out.y = ys;
+      rand_vec_out.z = zs;
     }
 }
 
 
-class Rand_unit_vec {
-  random_in_unit_sphere rand_iuv;
-  Vec3_unit<ac_fixed<34, 2, true>, ac_fixed<34, 2, true>> unit;
-  public:
-    // Generates a random unit vector. Useful in simulating diffuse reflections.
-    void run(vec3<T>& out) {
-      rand_iuv.run();
-      unit.run();
-    }
-};
+// class Rand_unit_vec {
+//   random_in_unit_sphere rand_iuv;
+//   Vec3_unit<ac_fixed<34, 2, true>, ac_fixed<34, 2, true>> unit;
+//   public:
+//     // Generates a random unit vector. Useful in simulating diffuse reflections.
+//     void run(vec3<T>& out) {
+//       rand_iuv.run();
+//       unit.run();
+//     }
+// };
 
 // class Rand_val {
 //   public:

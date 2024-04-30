@@ -12,6 +12,7 @@
 #include <ac_math.h>
 #include <ac_channel.h>
 #include <mc_scverify.h>
+#include <math/mgc_ac_math.h>
 
 #define WS_MAX_X 1023
 #define WS_MAX_Y 1023
@@ -92,7 +93,7 @@ struct quad_hittable {
     vec3<ac_fixed<12, 11, true>> u; // defining u component 
     vec3<ac_fixed<12, 11, true>> v; // defining v componenet
     uint_3 mat_type; // allows for 4 possible materials, light, lambertian, metallic/specular, diaelectric??
-    pbool is_invis;
+    bool is_invis;
     vec3<ac_fixed<26, 2, true>> normal; // cross of u and v, 2_24
     vec3<ac_fixed<25, 1, true>> w; // dot of u and v, 1_24
     ac_fixed<31, 11, true> d_plane; // 11_20
@@ -135,7 +136,6 @@ struct rgb_out {
 };
 
 struct img_params {
-  int_11          num_spheres;
   int_11          num_quads;
   uint_2          samp_per_pxl; // 32-64-256-1024
   rgb_in           background;

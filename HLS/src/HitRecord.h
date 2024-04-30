@@ -3,7 +3,7 @@
 
 #include "RTcore.h"
 
-template<typename T>
+
 class HitRecord_setNorm {
   Vec3_dot<ac_fixed<34, 11, true>, ac_fixed<26, 2, true>, ac_fixed<60, 13, true>> dot;
   Vec3_negate<ac_fixed<26, 2, true>> negate;

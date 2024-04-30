@@ -13,17 +13,32 @@ class PixelSampleSquare
   public:
     PixelSampleSquare(){ } // on reset these will be the values
     
-    void CCS_BLOCK(run)(img_params &paramsIn, // do i need to make it so i can fetch on command
+    void CCS_BLOCK(run)(img_params &paramsIn,
+                        ac_int<32, false>& state1,
+                        ac_int<32, false>& state2,
+                         // do i need to make it so i can fetch on command
                         vec3<sfp_3_22> &output_num)
     {
-      rand_val.run(rnum1);
-      rand_val2.run(rnum2);
-      // rand1.run(rnum1);
-      // rand2.run(rnum2);
-      px = rnum1 - point_five;  // Random offset in the x direction. IS SUPPOSED TO CHOP OFF
-      py = rnum2 - point_five;  // Random offset in the y direction.
+      ac_int<33, 1, false> rnum1;
+      ac_int<33, 1, false> rnum2; 
+      rand_val.run(state1, rnum1);
+      rand_val2.run(state2, rnum2);
+      ac_int<34, 2, true> rnum1_s = 0;
+      ac_int<34, 2, true> rnum2_s = 0; 
+      // sets the lower 32 bits of the signed number to the rand
+      rnum1_s.set_slc(0, (rnum1).slc<33>(0));
+      rnum2_s.set_slc(0, (rnum2).slc<33>(0));
+
+      ac_int<34, 2, true> px = rnum1_s - point_five;  // Random offset in the x direction. IS SUPPOSED TO CHOP OFF
+      ac_int<34, 2, true> py = rnum2_s - point_five;  // Random offset in the y direction.
+
+      vec3<sfp_3_22> multOut1;
+      vec3<sfp_3_22> multOut2;
+
+      // HOPE THE OUTPUT TRUNCATES THE OUTPUT TO 22 FRACTIONAL BITS CORRECTLY
       vecMul1.run(paramsIn.pixel_delta_u, px, multOut1);
       vecMul2.run(paramsIn.pixel_delta_v, py, multOut2);
+
       output_num.x = multOut1.x + multOut2.x;
       output_num.y = multOut1.y + multOut2.y;
       output_num.z = multOut1.z + multOut2.z;
@@ -31,16 +46,11 @@ class PixelSampleSquare
 
   private:
 
-    Rand_val<sfp_3_22> rand_val;
-    Rand_val<sfp_3_22> rand_val2;
-    Vec3_mult_s<sfp_3_22> vecMul1;
-    Vec3_mult_s<sfp_3_22> vecMul2;
-    sfp_3_22 rnum1;
-    sfp_3_22 rnum2;
-    sfp_3_22 px;
-    sfp_3_22 py;
-    vec3<sfp_3_22> multOut1;
-    vec3<sfp_3_22> multOut2;
+    Rand_val rand_val;
+    Rand_val rand_val2;
+
+    Vec3_mult_s<sfp_3_22, ac_int<34, 2, true>, sfp_3_22> vecMul1;
+    Vec3_mult_s<sfp_3_22, ac_int<34, 2, true>, sfp_3_22> vecMul2;
 
     const sfp_3_22 point_five = 0.5; // supposed to be .5
 

@@ -1,5 +1,5 @@
-#ifndef _GLOBAL_SIMPLE_H
-#define _GLOBAL_SIMPLE_H
+#ifndef RENDERER_TOP
+#define RENDERER_TOP
 
 #include <ac_int.h>
 #include <ac_fixed.h>

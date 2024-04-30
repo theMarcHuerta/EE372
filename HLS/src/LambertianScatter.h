@@ -5,17 +5,20 @@
 
 class LambertianScatter {
   public:
-    LambertianScatter() {}
+    LambertianScatter() {
+      state1=375821;
+      state2=39251088;
+    }
 
     #pragma hls_design
     void run(HitRecord& rec, ray& scattered) {
         vec3<ac_fixed<34, 2, true>> rand_dir;
-        vec3<ac_fixed<34, 3, true>> scatter_direction;
+        vec3<ac_fixed<35, 3, true>> scatter_direction;
 
-        rand_unit.run(rand_dir);
+        rand_unit.run(state1, state2, rand_dir);
         add.run(rec.normal, rand_dir, scatter_direction);
 
-        vec3<ac_fixed<34, 2, true>> near_zero_val = 1.49011612e-8;
+        vec3<ac_fixed<34, 2, true>> near_zero_val = 1.49011612e-8; // 2^-26
         if ((scatter_direction.x < near_zero_val) && (scatter_direction.y < near_zero_val) && (scatter_direction.z < near_zero_val)) {
             scatter_direction = rec.normal;
         }
@@ -28,6 +31,8 @@ class LambertianScatter {
 
   private:
   // rec normal size, rand dir size, resulting size
-    Vec3_add<ac_fixed<26, 2, true>, ac_fixed<34, 2, true>, ac_fixed<34, 3, true>> add;
-    Rand_unit_vec rand_unit;
+    Vec3_add<ac_fixed<26, 2, true>, ac_fixed<34, 2, true>, ac_fixed<35, 3, true>> add;
+    random_in_unit_sphere rand_unit;
+    ac_int<32, false> state1;
+    ac_int<32, false> state2;
 };
