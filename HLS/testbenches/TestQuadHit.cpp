@@ -15,12 +15,12 @@
 
 #pragma hls_design top
 class TestQuadHit {
-  QuadHit<sfp_11_22> quad_hit;
+  QuadHit quad_hit;
   public:
     TestQuadHit() {}
 
     #pragma hls_design interface
-    void CCS_BLOCK(run)(ac_channel<ray<sfp_11_22>>& ray_channel, ac_channel<_quad_hittable<sfp_11_22>>& quad_channel, ac_channel<HitRecord<sfp_11_22>>& rec_channel) {
+    void CCS_BLOCK(run)(ac_channel<ray>& ray_channel, ac_channel<quad_hittable>& quad_channel, ac_channel<HitRecord>& rec_channel) {
 
         ac_int<16, false> q_idx = 0;
         // load quads into array
@@ -43,16 +43,17 @@ class TestQuadHit {
 
             // read in ray and reset variables
             r = ray_channel.read();
-            sfp_11_22 csf = 2e11; 
-            HitRecord<sfp_11_22> rec;
+            ac_fixed<47, 17, true> csf = LONGEST_DISTANCE; 
+            HitRecord rec;
 
             #ifndef __SYNTHESIS__
             while (qchan.available(1))
             #endif
             {
                 // read in quad
-                _quad_hittable<sfp_11_22> q = qchan.read();
-                quad_hit.run(r, csf, q, rec);
+                quad_hittable q = qchan.read();
+                bool is_hit;
+                quad_hit.run(r, csf, q, rec, is_hit);
             }
 
             rec_channel.write(rec);
@@ -61,9 +62,9 @@ class TestQuadHit {
     }
 
   private:
-    ray<sfp_11_22> r;
-    _quad_hittable<sfp_11_22> quads[17];
-    ac_channel<_quad_hittable<sfp_11_22>> qchan;
+    ray r;
+    quad_hittable quads[17];
+    ac_channel<quad_hittable> qchan;
 
 };
 

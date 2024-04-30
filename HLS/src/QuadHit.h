@@ -46,7 +46,7 @@ class QuadHit {
         ac_fixed<34, 14, true> x_trunc = x;
 
         //20fractioanl bits + 23 fractional bits from denom = 43 fractional bits from result at least, 43+17
-        ac_fixed<60, 17, true> t = (_quad.d_plane - x) / rounded_denom; // initate correct dot product format and all
+        ac_fixed<60, 17, true> t = (_quad.d_plane - x_trunc) / rounded_denom; // initate correct dot product format and all
         ac_fixed<47, 17, true> t_trunc = t; 
         // now truncate fractional bits to 30 
         ac_fixed<31,1, false> rounding_val2 = 9.3132257e-10; // 2^-30 - hope it sets lowest bit

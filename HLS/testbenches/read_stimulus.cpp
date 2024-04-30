@@ -19,7 +19,7 @@ struct output {
 
     static double thresh;
 
-    bool operator==(const HitRecord<sfp_11_22>& o) {
+    bool operator==(const HitRecord& o) {
         return  (std::abs(o.hit_loc.x.to_double() - hit_loc.x) < thresh &&
                 std::abs(o.hit_loc.y.to_double() - hit_loc.y) < thresh &&
                 std::abs(o.hit_loc.z.to_double() - hit_loc.z) < thresh &&
@@ -36,7 +36,61 @@ struct output {
 // set comparison threshold
 double output::thresh = 1e-1;
 
-std::istream& operator>>(std::istream& is, sfp_11_22& val) {
+std::istream& operator>>(std::istream& is, ac_fixed<12, 11, true>& val) {
+    // Implementation depends on the specifics of sfp_11_22
+    double temp;
+    if (is >> temp) {
+        val = temp; // Assuming conversion from double or similar
+    }
+    return is;
+}
+
+std::istream& operator>>(std::istream& is, ac_fixed<26, 2, true>& val) {
+    // Implementation depends on the specifics of sfp_11_22
+    double temp;
+    if (is >> temp) {
+        val = temp; // Assuming conversion from double or similar
+    }
+    return is;
+}
+
+std::istream& operator>>(std::istream& is, ac_fixed<25, 1, true>& val) {
+    // Implementation depends on the specifics of sfp_11_22
+    double temp;
+    if (is >> temp) {
+        val = temp; // Assuming conversion from double or similar
+    }
+    return is;
+}
+
+std::istream& operator>>(std::istream& is, ac_fixed<31, 11, true>& val) {
+    // Implementation depends on the specifics of sfp_11_22
+    double temp;
+    if (is >> temp) {
+        val = temp; // Assuming conversion from double or similar
+    }
+    return is;
+}
+
+std::istream& operator>>(std::istream& is, ac_fixed<27, 5, false>& val) {
+    // Implementation depends on the specifics of sfp_11_22
+    double temp;
+    if (is >> temp) {
+        val = temp; // Assuming conversion from double or similar
+    }
+    return is;
+}
+
+std::istream& operator>>(std::istream& is, ac_fixed<21, 11, true>& val) {
+    // Implementation depends on the specifics of sfp_11_22
+    double temp;
+    if (is >> temp) {
+        val = temp; // Assuming conversion from double or similar
+    }
+    return is;
+}
+
+std::istream& operator>>(std::istream& is, ac_fixed<34, 11, true>& val) {
     // Implementation depends on the specifics of sfp_11_22
     double temp;
     if (is >> temp) {
@@ -72,10 +126,9 @@ std::istream& operator>>(std::istream& is, fp_1_22& val) {
     return is;
 }
 
-template<typename T>
-std::vector<_quad_hittable<T>> read_hittables(const std::string& filename) {
+std::vector<quad_hittable> read_hittables(const std::string& filename) {
     std::ifstream file(filename);
-    std::vector<_quad_hittable<T>> hittables;
+    std::vector<quad_hittable> hittables;
     std::string line;
 
     if (!file) {
@@ -86,7 +139,7 @@ std::vector<_quad_hittable<T>> read_hittables(const std::string& filename) {
     while (std::getline(file, line)) {
         if (line.empty()) continue; // Skip empty lines
 
-        _quad_hittable<T> hittable;
+        quad_hittable hittable;
         std::istringstream iss(line);
 
         // Read each component of the struct
@@ -146,10 +199,9 @@ std::vector<_quad_hittable<T>> read_hittables(const std::string& filename) {
     return hittables;
 }
 
-template<typename T>
-std::vector<ray<T>> read_rays(const std::string& filename) {
+std::vector<ray> read_rays(const std::string& filename) {
     std::ifstream file(filename);
-    std::vector<ray<T>> rays;
+    std::vector<ray> rays;
     std::string line;
 
     if (!file) {
@@ -160,7 +212,7 @@ std::vector<ray<T>> read_rays(const std::string& filename) {
     while (std::getline(file, line)) {
         if (line.empty()) continue; // Skip empty lines
 
-        ray<T> ray;
+        ray ray;
         std::istringstream iss(line);
 
         // Read each component of the struct
