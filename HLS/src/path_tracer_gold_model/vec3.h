@@ -3,17 +3,18 @@
 
 #include <cmath>
 #include <iostream>
+#include "rtweekend.h"
 
 using std::sqrt;
 
 // Defines a three-dimensional vector used for points, colors, etc.
-class vec3 {
+class cpp_vec3 {
   public:
     double e[3];  // Stores the three components of the vector.
 
     // Constructors.
-    vec3() : e{0,0,0} {}  // Default constructor initializes to zero.
-    vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}  // Initializes with specified values.
+    cpp_vec3() : e{0,0,0} {}  // Default constructor initializes to zero.
+    cpp_vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}  // Initializes with specified values.
 
     // Accessors for the vector components, useful for readability and when using the vector as a point or color.
     double x() const { return e[0]; }
@@ -21,13 +22,13 @@ class vec3 {
     double z() const { return e[2]; }
 
     // Unary minus returns the negation of the vector, useful for reversing directions.
-    vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }
+    cpp_vec3 operator-() const { return cpp_vec3(-e[0], -e[1], -e[2]); }
     // Subscript operators for accessing components by index.
     double operator[](int i) const { return e[i]; }
     double& operator[](int i) { return e[i]; }
 
-    // Adds the components of another vec3 to this one. Useful for vector addition.
-    vec3& operator+=(const vec3 &v) {
+    // Adds the components of another cpp_vec3 to this one. Useful for vector addition.
+    cpp_vec3& operator+=(const cpp_vec3 &v) {
         e[0] += v.e[0];
         e[1] += v.e[1];
         e[2] += v.e[2];
@@ -35,7 +36,7 @@ class vec3 {
     }
 
     // Multiplies the components by a scalar. Useful for scaling vectors.
-    vec3& operator*=(double t) {
+    cpp_vec3& operator*=(double t) {
         e[0] *= t;
         e[1] *= t;
         e[2] *= t;
@@ -43,7 +44,7 @@ class vec3 {
     }
 
     // Divides the components by a scalar. Useful for normalizing vectors or scaling them down.
-    vec3& operator/=(double t) {
+    cpp_vec3& operator/=(double t) {
         return *this *= 1/t;
     }
 
@@ -65,66 +66,66 @@ class vec3 {
 
 };
 
-// Aliasing vec3 as point3 for semantic clarity: points represent positions in space.
-using point3 = vec3;
+// Aliasing cpp_vec3 as point3 for semantic clarity: points represent positions in space.
+using point3 = cpp_vec3;
 
 // Vector Utility Functions
-// Utility function to output a vec3 to an ostream, typically used for debugging.
-inline std::ostream& operator<<(std::ostream &out, const vec3 &v) {
+// Utility function to output a cpp_vec3 to an ostream, typically used for debugging.
+inline std::ostream& operator<<(std::ostream &out, const cpp_vec3 &v) {
     return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
 }
 
-// Adds two vec3 vectors and returns the result. Useful for position, direction, and color calculations.
-inline vec3 operator+(const vec3 &u, const vec3 &v) {
-    return vec3(u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]);
+// Adds two cpp_vec3 vectors and returns the result. Useful for position, direction, and color calculations.
+inline cpp_vec3 operator+(const cpp_vec3 &u, const cpp_vec3 &v) {
+    return cpp_vec3(u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]);
 }
 
 // Subtracts vector v from vector u and returns the result. Useful for vector calculations like finding a ray direction.
-inline vec3 operator-(const vec3 &u, const vec3 &v) {
-    return vec3(u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]);
+inline cpp_vec3 operator-(const cpp_vec3 &u, const cpp_vec3 &v) {
+    return cpp_vec3(u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]);
 }
 
-// Multiplies two vec3 vectors component-wise and returns the result. This can represent color blending.
-inline vec3 operator*(const vec3 &u, const vec3 &v) {
-    return vec3(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
+// Multiplies two cpp_vec3 vectors component-wise and returns the result. This can represent color blending.
+inline cpp_vec3 operator*(const cpp_vec3 &u, const cpp_vec3 &v) {
+    return cpp_vec3(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
 }
 
-// Multiplies a vec3 vector by a scalar and returns the result. Useful for scaling vectors.
-inline vec3 operator*(double t, const vec3 &v) {
-    return vec3(t*v.e[0], t*v.e[1], t*v.e[2]);
+// Multiplies a cpp_vec3 vector by a scalar and returns the result. Useful for scaling vectors.
+inline cpp_vec3 operator*(double t, const cpp_vec3 &v) {
+    return cpp_vec3(t*v.e[0], t*v.e[1], t*v.e[2]);
 }
 
 // Equivalent to the previous function, demonstrating commutativity of scalar multiplication.
-inline vec3 operator*(const vec3 &v, double t) {
+inline cpp_vec3 operator*(const cpp_vec3 &v, double t) {
     return t * v;
 }
 
-// Divides a vec3 vector by a scalar (performs the multiplication by the reciprocal of the scalar).
-inline vec3 operator/(vec3 v, double t) {
+// Divides a cpp_vec3 vector by a scalar (performs the multiplication by the reciprocal of the scalar).
+inline cpp_vec3 operator/(cpp_vec3 v, double t) {
     return (1/t) * v;
 }
 
-// Computes the dot product of two vec3 vectors. Fundamental in calculating angles between vectors and for many shading calculations.
-inline double dot(const vec3 &u, const vec3 &v) {
+// Computes the dot product of two cpp_vec3 vectors. Fundamental in calculating angles between vectors and for many shading calculations.
+inline double dot(const cpp_vec3 &u, const cpp_vec3 &v) {
     return u.e[0] * v.e[0] + u.e[1] * v.e[1] + u.e[2] * v.e[2];
 }
 
-// Computes the cross product of two vec3 vectors. Useful for finding a vector perpendicular to the plane defined by two vectors.
-inline vec3 cross(const vec3 &u, const vec3 &v) {
-    return vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
+// Computes the cross product of two cpp_vec3 vectors. Useful for finding a vector perpendicular to the plane defined by two vectors.
+inline cpp_vec3 cross(const cpp_vec3 &u, const cpp_vec3 &v) {
+    return cpp_vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
                 u.e[2] * v.e[0] - u.e[0] * v.e[2],
                 u.e[0] * v.e[1] - u.e[1] * v.e[0]);
 }
 
-// Normalizes a vec3 vector, scaling it to a length of 1. This is often required when dealing with directions.
-inline vec3 unit_vector(vec3 v) {
+// Normalizes a cpp_vec3 vector, scaling it to a length of 1. This is often required when dealing with directions.
+inline cpp_vec3 unit_vector(cpp_vec3 v) {
     return v / v.length();
 }
 
 // Utility function to generate a random point inside a unit sphere. Frequently used in generating diffuse materials.
-inline vec3 random_in_unit_sphere() {
+inline cpp_vec3 random_in_unit_sphere() {
     // while (true) {
-    //     auto p = vec3::random(-1,1);
+    //     auto p = cpp_vec3::random(-1,1);
     //     if (p.length_squared() < 1) return p;
     // }
     float xi1 = random_double(); // Uniformly distributed from 0 to 1
@@ -137,11 +138,11 @@ inline vec3 random_in_unit_sphere() {
     float ys = std::sin(phi) * std::sin(theta);
     float zs = std::cos(phi);
 
-    return vec3(xs, ys, zs);
+    return cpp_vec3(xs, ys, zs);
 }
 
 // Generates a random unit vector. Useful in simulating diffuse reflections.
-inline vec3 random_unit_vector() {
+inline cpp_vec3 random_unit_vector() {
     return unit_vector(random_in_unit_sphere());
 }
 

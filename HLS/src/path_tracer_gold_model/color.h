@@ -7,11 +7,13 @@ more accurate color representation.
 #ifndef COLOR_H
 #define COLOR_H
 
-#include "vec3.h"  // Include the vec3 class for mathematical operations on 3D vectors.
+#include "vec3.h"  // Include the cpp_vec3 class for mathematical operations on 3D vectors.
 
 #include <iostream>
 
-using color = vec3;  // Defines color as an alias for vec3, representing RGB colors.
+class cpp_vec3;
+
+// using color = cpp_vec3;  // Defines color as an alias for cpp_vec3, representing RGB colors.
 
 // Converts linear RGB component to gamma-corrected component.
 inline double linear_to_gamma(double linear_component) {
@@ -19,7 +21,7 @@ inline double linear_to_gamma(double linear_component) {
 }
 
 // Outputs a color to an ostream, applying gamma correction and averaging over samples per pixel.
-void write_color(std::ostream &out, color pixel_color, int samples_per_pixel) {
+void write_color(std::ostream &out, cpp_vec3 pixel_color, int samples_per_pixel) {
     auto r = pixel_color.x();
     auto g = pixel_color.y();
     auto b = pixel_color.z();

@@ -8,17 +8,17 @@ provides a method to compute a point along the ray given a parameter t
 
 #include "vec3.h"  // Include the vec3 class for using 3D vectors and points.
 
-class ray {
+class c_ray {
   public:
 
-    ray() {}  // Default constructor.
+    c_ray() {}  // Default constructor.
 
     // Constructor initializing a ray with an origin and direction.
-    ray(const point3& origin, const vec3& direction) : orig(origin), dir(direction) {}
+    c_ray(const point3& origin, const cpp_vec3& direction) : orig(origin), dir(direction) {}
 
     // Getters for the ray's origin and direction.
     point3 origin() const { return orig; }
-    vec3 direction() const { return dir; }
+    cpp_vec3 direction() const { return dir; }
 
     // Calculates a point along the ray at parameter t.
     point3 at(double t) const {
@@ -27,9 +27,8 @@ class ray {
 
     bool first_ray; 
 
-  private:
     point3 orig;  // The ray's origin point.
-    vec3 dir;     // The ray's direction vector.
+    cpp_vec3 dir;     // The ray's direction vector.
 };
 
 #endif

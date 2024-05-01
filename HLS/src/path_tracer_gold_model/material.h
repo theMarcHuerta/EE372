@@ -6,17 +6,18 @@
 #include "color.h"
 #include "hittable.h"
 #include "fixedpoint.h"
+#include "vec3.h"
 // #include "quad.h"
 
 struct hit_record;  // Forward declaration for usage in material methods.
 
 class lambertian {
   public:
-    lambertian(const color& a) : albedo(a){}
+    lambertian(const cpp_vec3& a) : albedo(a){}
 
     // Implements the scattering function for a diffuse material.
     // Scatters rays in random directions with no reflection.
-    bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) {
+    bool scatter(const c_ray& r_in, const hit_record& rec, cpp_vec3& attenuation, c_ray& scattered) {
       auto scatter_direction = rec.normal + random_unit_vector();
 
       // Catch degenerate scatter direction
@@ -31,12 +32,12 @@ class lambertian {
       scatter_direction.e[1] = FixedPoint<23>(scatter_direction.y()).toDouble();
       scatter_direction.e[2] = FixedPoint<23>(scatter_direction.z()).toDouble();
 
-      scattered = ray(rec.p, scatter_direction);
+      scattered = c_ray(rec.p, scatter_direction);
       attenuation = albedo;  // The color is affected by the material's albedo.
       return true;
     }
 
-    color albedo;  // Represents the color and intensity of the scattered light.
+    cpp_vec3 albedo;  // Represents the color and intensity of the scattered light.
     int matnumber = 0;
 };
 

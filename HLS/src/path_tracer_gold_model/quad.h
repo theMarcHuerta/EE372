@@ -11,29 +11,29 @@
 struct quad {
     
     point3 Q;
-    vec3 u, v;
+    cpp_vec3 u, v;
     int mat;
-    vec3 normal;
+    cpp_vec3 normal;
     double D;
-    vec3 w;
+    cpp_vec3 w;
     bool invis;
-    color obj_color;
+    cpp_vec3 obj_color;
 
-    quad(const point3& _Q, const vec3& _u, const vec3& _v, int m, const bool is_invis, color quad_color)
+    quad(const point3& _Q, const cpp_vec3& _u, const cpp_vec3& _v, int m, const bool is_invis, cpp_vec3 quad_color)
       : Q(_Q), u(_u), v(_v), mat(m), invis(is_invis), obj_color(quad_color)
     {
         auto n = cross(u, v);
-        // n = vec3(FixedPoint<24>(n.x()).toDouble(), FixedPoint<24>(n.y()).toDouble(), FixedPoint<24>(n.z()).toDouble());
+        // n = cpp_vec3(FixedPoint<24>(n.x()).toDouble(), FixedPoint<24>(n.y()).toDouble(), FixedPoint<24>(n.z()).toDouble());
         normal = unit_vector(n);
-        normal = vec3(FixedPoint<24>(normal.x()).toDouble(), FixedPoint<24>(normal.y()).toDouble(), FixedPoint<24>(normal.z()).toDouble());
+        normal = cpp_vec3(FixedPoint<24>(normal.x()).toDouble(), FixedPoint<24>(normal.y()).toDouble(), FixedPoint<24>(normal.z()).toDouble());
         D = FixedPoint<20>(dot(normal, Q)).toDouble();        
         // D = dot(normal, Q);
         w = n / dot(n,n);
-        w = vec3(FixedPoint<24>(w.x()).toDouble(), FixedPoint<24>(w.y()).toDouble(), FixedPoint<24>(w.z()).toDouble());
+        w = cpp_vec3(FixedPoint<24>(w.x()).toDouble(), FixedPoint<24>(w.y()).toDouble(), FixedPoint<24>(w.z()).toDouble());
 
-        Q = vec3(FixedPoint<1>(Q.x()).toDouble(), FixedPoint<1>(Q.y()).toDouble(), FixedPoint<1>(Q.z()).toDouble());
-        u = vec3(FixedPoint<1>(u.x()).toDouble(), FixedPoint<1>(u.y()).toDouble(), FixedPoint<1>(u.z()).toDouble());
-        v = vec3(FixedPoint<1>(v.x()).toDouble(), FixedPoint<1>(v.y()).toDouble(), FixedPoint<1>(v.z()).toDouble());
+        Q = cpp_vec3(FixedPoint<1>(Q.x()).toDouble(), FixedPoint<1>(Q.y()).toDouble(), FixedPoint<1>(Q.z()).toDouble());
+        u = cpp_vec3(FixedPoint<1>(u.x()).toDouble(), FixedPoint<1>(u.y()).toDouble(), FixedPoint<1>(u.z()).toDouble());
+        v = cpp_vec3(FixedPoint<1>(v.x()).toDouble(), FixedPoint<1>(v.y()).toDouble(), FixedPoint<1>(v.z()).toDouble());
 
     }
 
@@ -46,7 +46,7 @@ bool is_interior(double a, double b) {
     return true;
 }
 
-bool quad_hit(const ray& r, const quad& quado, double& closest_so_far, hit_record& rec) {
+bool quad_hit(const c_ray& r, const quad& quado, double& closest_so_far, hit_record& rec) {
     if (r.first_ray && quado.invis){
         return false;
     }
@@ -87,10 +87,10 @@ bool quad_hit(const ray& r, const quad& quado, double& closest_so_far, hit_recor
     // Determine the hit point lies within the planar shape using its plane coordinates.
     // t (30 bits * dir (23) + orig (1)
     auto intersection = r.at(t);
-    intersection = vec3(FixedPoint<23>(intersection.x()).toDouble(), 
+    intersection = cpp_vec3(FixedPoint<23>(intersection.x()).toDouble(), 
                         FixedPoint<23>(intersection.y()).toDouble(), FixedPoint<23>(intersection.z()).toDouble());
     //PLANAR IS 22_23
-    vec3 planar_hitpt_vector = intersection - quado.Q;
+    cpp_vec3 planar_hitpt_vector = intersection - quado.Q;
     // cross is 22_23 * 11_1 and 11_1 so result is 33_24 
     // w is 24 frac bits, and 1 int bit
     // but checked and all we need is 15 integer bits for the alpha and beta result max
@@ -98,14 +98,14 @@ bool quad_hit(const ray& r, const quad& quado, double& closest_so_far, hit_recor
     // then the result of the corss adn dot is 15_48 but we trunc to 23 to do the comparison
     //
     auto tmp_cross_v = cross(planar_hitpt_vector, quado.v);
-    tmp_cross_v = vec3(FixedPoint<23>(tmp_cross_v.x()).toDouble(), 
+    tmp_cross_v = cpp_vec3(FixedPoint<23>(tmp_cross_v.x()).toDouble(), 
                         FixedPoint<23>(tmp_cross_v.y()).toDouble(), FixedPoint<23>(tmp_cross_v.z()).toDouble());
     auto alpha = dot(quado.w, tmp_cross_v);
     alpha = FixedPoint<23>(alpha).toDouble();
     // 
     //
     auto tmp_cross_u = cross(quado.u, planar_hitpt_vector);
-    tmp_cross_u = vec3(FixedPoint<23>(tmp_cross_u.x()).toDouble(), 
+    tmp_cross_u = cpp_vec3(FixedPoint<23>(tmp_cross_u.x()).toDouble(), 
                 FixedPoint<23>(tmp_cross_u.y()).toDouble(), FixedPoint<23>(tmp_cross_u.z()).toDouble());
     auto beta = dot(quado.w, tmp_cross_u);
     beta = FixedPoint<23>(beta).toDouble();
@@ -122,6 +122,46 @@ bool quad_hit(const ray& r, const quad& quado, double& closest_so_far, hit_recor
     return true;
 }
 
+// Rotation function around the y-axis for vectors
+cpp_vec3 rotate_y(const cpp_vec3& v, double sin_theta, double cos_theta) {
+    return cpp_vec3(cos_theta * v.x() + sin_theta * v.z(), v.y(), -sin_theta * v.x() + cos_theta * v.z());
+}
 
+inline void box(const point3& a, const point3& b, int mat, cpp_vec3 mat_color, double angle_degrees, std::vector<shared_ptr<quad>>& world)
+{
+    auto min = point3(fmin(a.x(), b.x()), fmin(a.y(), b.y()), fmin(a.z(), b.z()));
+    auto max = point3(fmax(a.x(), b.x()), fmax(a.y(), b.y()), fmax(a.z(), b.z()));
+
+    // Center of the box (only x and z are used for calculating the rotation)
+    point3 center = 0.5 * (min + max);
+    cpp_vec3 center_horizontal(center.x(), 0, center.z());
+
+    // Vectors defining the box dimensions
+    cpp_vec3 dx = cpp_vec3(max.x() - min.x(), 0, 0);
+    cpp_vec3 dy = cpp_vec3(0, max.y() - min.y(), 0);
+    cpp_vec3 dz = cpp_vec3(0, 0, max.z() - min.z());
+
+    // Calculate sine and cosine for the rotation
+    double radians = angle_degrees * pi / 180.0;
+    double cos_theta = cos(radians);
+    double sin_theta = sin(radians);
+
+    // Rotate vectors
+    cpp_vec3 rotated_dx = rotate_y(dx, sin_theta, cos_theta);
+    cpp_vec3 rotated_dz = rotate_y(dz, sin_theta, cos_theta);
+
+    // Apply rotation around the center by adjusting corner positions
+    // Start at the bottom front left corner and rotate around the horizontal center
+    point3 front_bottom_left = center_horizontal + rotate_y(min - center_horizontal, sin_theta, cos_theta);
+    point3 front_bottom_right = front_bottom_left + rotated_dx;
+
+    // Construct quads with rotated vectors and adjusted positions
+    world.push_back(make_shared<quad>(front_bottom_left, rotated_dx, dy, mat, false, mat_color)); // Front
+    world.push_back(make_shared<quad>(front_bottom_left, rotated_dx, dy, mat, false, mat_color)); // Back
+    world.push_back(make_shared<quad>(front_bottom_right, rotated_dz, dy, mat, false, mat_color)); // Right
+    world.push_back(make_shared<quad>(front_bottom_left, rotated_dz, dy, mat, false, mat_color)); // Left
+    world.push_back(make_shared<quad>(front_bottom_left + dy, rotated_dx, rotated_dz, mat, false, mat_color)); // Top
+
+}
 
 #endif
