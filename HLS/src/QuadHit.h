@@ -21,7 +21,8 @@ class QuadHit {
 
         ac_fixed<58, 11, true> denom; //47 fractional bits out as result, 24*23 fractioanl bit and tested 11 int bits largest value gotten in c test
         denom_dot.run(_quad.normal, r.dir, denom);
-        ac_fixed<57, 11, false> abs_denom = denom.slc<57>(0); // gets rid of sign bit
+        ac_fixed<58, 11, true> abs_denom; // gets rid of sign bit
+        ac_math::ac_abs(denom, abs_denom);
 
         //new type will be 11_23
         ac_fixed<34, 11, true> rounded_denom = denom; // HAVE TO CHECK IF IT TRUNCATES THE INTEGER OR FRACTIONAL BITS ON IT'S OWN
@@ -33,8 +34,10 @@ class QuadHit {
         // T abs_denom;
         // ac_math::ac_abs(rounded_denom, abs_denom);
 
-        ac_fixed<24,1, false> parallel_check = 9.53674316e-7; // 2^-20
-        if (rounded_denom < parallel_check)  {// Check for parallel ray TO DO MAKE FIXED POINT REP FOR 1e-8
+        ac_fixed<24,1, true> parallel_check = 9.53674316e-7; // 2^-20
+        ac_fixed<33, 10, false> abs_rounded_denom;
+        ac_math::ac_abs(rounded_denom, abs_rounded_denom);
+        if (abs_denom < parallel_check)  {// Check for parallel ray TO DO MAKE FIXED POINT REP FOR 1e-8
         //  absolute value of a floating-point number is what fabs is so we have to implement that
             hitWorld = false;
             return;
@@ -50,8 +53,8 @@ class QuadHit {
         ac_fixed<60, 17, true> t = sub_result / rounded_denom; // initate correct dot product format and all
         ac_fixed<47, 17, true> t_trunc = t; 
         // now truncate fractional bits to 30 
-        ac_fixed<31,1, false> rounding_val2 = 9.3132257e-10; // 2^-30 - hope it sets lowest bit
-        ac_fixed<31,1, false> rounding_val2_neg = -9.3132257e-10;
+        ac_fixed<31,1, true> rounding_val2 = 9.3132257e-10; // 2^-30 - hope it sets lowest bit
+        ac_fixed<31,1, true> rounding_val2_neg = -9.3132257e-10;
         if (t < rounding_val2) {t_trunc = t[59] == 1 ? rounding_val2_neg : rounding_val2;}
 
         ac_fixed<11,1,true> min_val = 0.0009765625; // 2^-10 approx 0.001
