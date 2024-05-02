@@ -14,7 +14,7 @@
 #include "../src/QuadHit.h"
 
 #pragma hls_design top
-class TestQuadHit {
+class TestQuadHit_copy {
   QuadHit quad_hit;
   public:
     TestQuadHit() {}
