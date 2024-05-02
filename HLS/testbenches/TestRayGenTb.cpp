@@ -156,12 +156,12 @@ CCS_MAIN(int argc, char** argv) {
     for (int i = 0; i < num_rays_generated; i++){
         // read in HLS output
         ray hls_out = rayOut.read();
-        if (std::abs(hls_out.orig.x.to_double() - cpp_rays[i].orig.x() > 1.0) ||
-            std::abs(hls_out.orig.y.to_double() - cpp_rays[i].orig.y() > 1.0) ||
-            std::abs(hls_out.orig.z.to_double() - cpp_rays[i].orig.z() > 1.0) ||
-            std::abs(hls_out.dir.x.to_double() - cpp_rays[i].dir.x() > 1.0) ||
-            std::abs(hls_out.dir.y.to_double() - cpp_rays[i].dir.y() > 1.0) ||
-            std::abs(hls_out.dir.z.to_double() - cpp_rays[i].dir.z() > 1.0)) {
+        if (std::abs(hls_out.orig.x.to_double() - cpp_rays[i].orig.x() > 1e-3) ||
+            std::abs(hls_out.orig.y.to_double() - cpp_rays[i].orig.y() > 1e-3) ||
+            std::abs(hls_out.orig.z.to_double() - cpp_rays[i].orig.z() > 1e-3) ||
+            std::abs(hls_out.dir.x.to_double() - cpp_rays[i].dir.x() > 1e-3) ||
+            std::abs(hls_out.dir.y.to_double() - cpp_rays[i].dir.y() > 1e-3) ||
+            std::abs(hls_out.dir.z.to_double() - cpp_rays[i].dir.z() > 1e-3)) {
 
             mismatches++;
             if (i % 10 == 0) {
