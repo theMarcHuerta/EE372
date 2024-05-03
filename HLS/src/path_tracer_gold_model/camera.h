@@ -788,6 +788,38 @@ class camera {
         return scattered;
     }
 
+    void material_scatter(c_ray& r, bool wasHit, hit_record& rec, 
+                            cpp_vec3& accumulated_color, cpp_vec3& current_attenuation, c_ray& scattered_ray) {
+        // cpp_vec3 accumulated_color(0, 0, 0); // Initialize accumulated color as black
+        // cpp_vec3 current_attenuation(1, 1, 1); // Start with no attenuation
+        c_ray current_ray = r; // The current ray starts as the initial ray
+
+        // Check if the ray hits the background
+        if (!wasHit) {
+            accumulated_color += current_attenuation * background; // Apply background color
+            current_attenuation = cpp_vec3(0, 0, 0);
+            scattered_ray = current_ray;
+            return;
+        }
+
+        // Emitted light from the material (if any)
+        if (rec.mat == 1){
+            cpp_vec3 emitted = rec.mat_color;
+            accumulated_color += current_attenuation * emitted; // Add emitted light to accumulated color
+            current_attenuation = cpp_vec3(0, 0, 0);
+            scattered_ray = current_ray;
+        }
+        else {
+            lambertian scatterfunc(rec.mat_color);
+            c_ray scattered; // The ray that results from scattering
+            cpp_vec3 attenuation; // The attenuation of the ray after scattering
+            scatterfunc.scatter(current_ray, rec, attenuation, scattered);
+            current_attenuation = current_attenuation * attenuation; // Update attenuation
+            scattered_ray = scattered;
+        }
+        return;
+    }
+
     cpp_vec3 ray_color(const c_ray& r, int max_depth, const std::vector<shared_ptr<quad>>& world) const {
         cpp_vec3 accumulated_color(0, 0, 0); // Initialize accumulated color as black
         cpp_vec3 current_attenuation(1, 1, 1); // Start with no attenuation
