@@ -21,12 +21,16 @@ CCS_MAIN(int argc, char** argv) {
     // read in N input data sets
     std::vector<ray> HLS_rays;
     std::vector<ray> HLS_bounced_rays;
+    std::vector<rgb_in> HLS_color_out;
+    std::vector<rgb_in> HLS_atten_out;
     std::vector<quad_hittable> HLS_quads;
     // output to compare with
     std::vector<HitRecord> HLS_records;
 
     std::vector<c_ray> cpp_rays;
     std::vector<c_ray> cpp_bounced_rays;
+    std::vector<cpp_vec3> cpp_color_out;
+    std::vector<cpp_vec3> cpp_atten_out;
     std::vector<quad> cpp_quads;
     // output to compare with
     std::vector<hit_record> cpp_records;
@@ -210,23 +214,32 @@ CCS_MAIN(int argc, char** argv) {
     }
 
     for (int i = 0; i < cpp_records.size(); i++){
-        c_ray bounced_ray = cam.get_scattered(cpp_records[i], cpp_rays[i]);
-        cpp_bounced_rays.push_back(bounced_ray);
+        cpp_vec3 accumulated_color(0, 0, 0); // Initialize accumulated color as black
+        cpp_vec3 current_attenuation(1, 1, 1); // Start with no attenuation
+        c_ray scattered_ray_out;
+        cam.material_scatter(cpp_rays[i], cpp_hit[i], cpp_records[i], accumulated_color, current_attenuation, scattered_ray_out);
+        cpp_bounced_rays.push_back(scattered_ray_out);
+        cpp_atten_out.push_back(current_attenuation);
+        cpp_color_out.push_back(accumulated_color);
+        cpp_bounced_rays.push_back(scattered_ray_out);
         // if (i == 10000) break;
     }
      
-    for (int i = 0; i < cpp_bounced_rays.size(); i++){
-        double closest_so_far = LONGEST_DISTANCE;
-        hit_record tmp_rec;
-        for (int quad_num = 0; quad_num < cpp_quads.size(); quad_num++){
-            bool wasHit = quad_hit(cpp_bounced_rays[i], cpp_quads[quad_num], closest_so_far, tmp_rec);
-            cpp_bounce_hit.push_back(wasHit);
-            if (wasHit){
-                num_hit_bounced_cpp++;
-                //  cout << "WAS HIT CPP : " << wasHit << endl; 
-            }
-        }
-    }
+    // for (int i = 0; i < cpp_bounced_rays.size(); i++){
+    //     double closest_so_far = LONGEST_DISTANCE;
+    //     hit_record tmp_rec;
+    //     for (int quad_num = 0; quad_num < cpp_quads.size(); quad_num++){
+    //         bool wasHit = quad_hit(cpp_bounced_rays[i], cpp_quads[quad_num], closest_so_far, tmp_rec);
+    //         cpp_bounce_hit.push_back(wasHit);
+    //         if (wasHit){
+    //             num_hit_bounced_cpp++;
+    //             //  cout << "WAS HIT CPP : " << wasHit << endl; 
+    //         }
+    //     }
+    // }
+
+    // std::vector<rgb_in> cpp_fb_col_out;
+    // std::vector<rgb_in> cpp_fb_atten_out;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -244,7 +257,7 @@ CCS_MAIN(int argc, char** argv) {
 
     printf("Running HLS C design\n");
 
-    for (int i = 0; i < cpp_bounced_rays.size(); i++){
+    for (int i = 0; i < cpp_records.size(); i++){
         hit_record tmp_Rec_cpp = cpp_records[i];
         HitRecord tmp_rec_hls;
 
@@ -274,36 +287,44 @@ CCS_MAIN(int argc, char** argv) {
         tmp_rec_hls.hit_loc = hit_loc;
 
         HLS_records.push_back(tmp_rec_hls);
+        HLS_hit.push_back(cpp_hit[i]);
     }
 
+
+
+    rgb_in shader1_atten = {1, 1, 1};
+    rgb_in shader1_color = {0, 0, 0};
 
     TestScatter scatpack;
-    for (int i = 0; i < cpp_bounced_rays.size(); i++){
-        ray tmp_ray;
-        scatpack.run(HLS_records[i], tmp_ray);
+    ac_channel<ray> ray_in;
+    ac_channel<HitRecord> hit_in;
+    ac_channel<rgb_in> attenuation_chan_in;
+    ac_channel<rgb_in> accumalated_color_chan_in;
+    ac_channel<bool> isHit;
+    ac_channel<rgb_in> attenuation_chan_out;
+    ac_channel<rgb_in> accumalated_color_out;
+    ac_channel<ray> ray_out;
+    for (int i = 0; i < cpp_records.size(); i++){
+        ray_in.write(HLS_rays[i]);
+        hit_in.write(HLS_records[i]);
+        attenuation_chan_in.write(shader1_atten);
+        accumalated_color_out.write(shader1_color);
+        isHit.write(HLS_hit[i]);
+
+        scatpack.run(ray_in, hit_in, attenuation_chan_in, accumalated_color_out, isHit,
+                        attenuation_chan_out, accumalated_color_out, ray_out);
+        
+        ray tmp_ray = ray_out.read();
+        rgb_in tmp_atten = attenuation_chan_out.read();
+        rgb_in tmp_col = accumalated_color_out.read();
+
         HLS_bounced_rays.push_back(tmp_ray);
-        // if (i == 10000) break;
+        HLS_atten_out.push_back(tmp_atten);
+        HLS_color_out.push_back(tmp_col);
+
     }
 
-    // for (int i = 0; i < cpp_bounced_rays.size(); i++){
-    //     c_ray r = cpp_bounced_rays[i];
-    //     ray tmp_ray;
 
-    //     vec3<ac_fixed<21, 11, true>> orig;
-    //     orig.x = r.orig.e[0];
-    //     orig.y = r.orig.e[1];
-    //     orig.z = r.orig.e[2];
-
-    //     vec3<ac_fixed<34, 11, true>> dir;
-    //     dir.x = r.dir.e[0];
-    //     dir.y = r.dir.e[1];
-    //     dir.z = r.dir.e[2];
-
-    //     tmp_ray.camera_ray = false;
-    //     tmp_ray.orig = orig;
-    //     tmp_ray.dir = dir;
-
-    //     HLS_bounced_rays.push_back(tmp_ray);
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -347,12 +368,12 @@ CCS_MAIN(int argc, char** argv) {
 
         if (!(loc_close && dir_close)){
             mismatches++;
-            cout << "Ray mismatch " << i << endl;
-            cout << "Ray HLS orig: " << tmp_loc_x << " " << tmp_loc_y << " " << tmp_loc_z << endl;
-            cout << "Ray CPP orig: " << tmp_scattered_cpp.orig.e[0] << " " << tmp_scattered_cpp.orig.e[1] << " " << tmp_scattered_cpp.orig.e[2] << endl;
-            cout << "Ray HLS dir: " << dir_x << " " << dir_y << " " << dir_z << endl;
-            cout << "Ray CPP dir: " << tmp_scattered_cpp.dir.e[0] << " " << tmp_scattered_cpp.dir.e[1] << " " << tmp_scattered_cpp.dir.e[2] << endl << endl;
-            // break;
+            // cout << "Ray mismatch " << i << endl;
+            // cout << "Ray HLS orig: " << tmp_loc_x << " " << tmp_loc_y << " " << tmp_loc_z << endl;
+            // cout << "Ray CPP orig: " << tmp_scattered_cpp.orig.e[0] << " " << tmp_scattered_cpp.orig.e[1] << " " << tmp_scattered_cpp.orig.e[2] << endl;
+            // cout << "Ray HLS dir: " << dir_x << " " << dir_y << " " << dir_z << endl;
+            // cout << "Ray CPP dir: " << tmp_scattered_cpp.dir.e[0] << " " << tmp_scattered_cpp.dir.e[1] << " " << tmp_scattered_cpp.dir.e[2] << endl << endl;
+            // // break;
         }
         // if (i == 1300) break;
     }
