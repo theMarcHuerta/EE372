@@ -54,11 +54,11 @@ public:
                 lambertianScatter.run(tmp_rec, scattered_ray); //sets scattery ray
 
                 // set attenuation
-                attenuation_from_scatter.r = tmp_atten_in.r * rec.color.r;
-                attenuation_from_scatter.g = tmp_atten_in.g * rec.color.g;
-                attenuation_from_scatter.b = tmp_atten_in.b * rec.color.b;
+                attenuation_from_scatter.r = tmp_atten_in.r * tmp_rec.color.r;
+                attenuation_from_scatter.g = tmp_atten_in.g * tmp_rec.color.g;
+                attenuation_from_scatter.b = tmp_atten_in.b * tmp_rec.color.b;
 
-                color_out = {tmp_color_in.r, tmp_color_in.g, tmp_color_in.b};
+                color_out = tmp_color_in;
             }
             else if (tmp_rec.mat == EMISSIVE){ //emission
                 rgb_in colorMulOut;
@@ -82,7 +82,6 @@ public:
     }
 
 private:
-    HitRecord rec;
     LambertianScatter lambertianScatter;
 };
 
