@@ -202,12 +202,20 @@ inline double random_double() {
 
 }
 
+double uint32ToFixedPoint(uint32_t value) {
+    // Maximum value for 32 fractional bits
+    const double maxFractionalValue = 4294967296.0;  // 2^32
+
+    // Convert the unsigned integer to a double as the fraction of the maximum possible value
+    return value / maxFractionalValue;
+}
+
 inline double random_double1() {
     // // Returns a random real number in [0,1).
 
     static uint32_t state = 375821;  // Seed with a non-zero value
     uint32_t result = xorshift32(state);
-    return static_cast<double>(result) / static_cast<double>(UINT32_MAX);
+    return static_cast<double>(result) / (static_cast<double>(UINT32_MAX)+1);
 
 }
 
@@ -216,10 +224,28 @@ inline double random_double2() {
 
     static uint32_t state = 39251088;  // Seed with a non-zero value
     uint32_t result = xorshift32(state);
-    return static_cast<double>(result) / static_cast<double>(UINT32_MAX);
+    return static_cast<double>(result) / (static_cast<double>(UINT32_MAX)+1);
 
 }
 
+
+inline double random_double3() {
+    // // Returns a random real number in [0,1).
+
+    static uint32_t state = 375821;  // Seed with a non-zero value
+    uint32_t result = xorshift32(state);
+    return uint32ToFixedPoint(result);
+
+}
+
+inline double random_double4() {
+    // // Returns a random real number in [0,1).
+
+    static uint32_t state = 39251088;  // Seed with a non-zero value
+    uint32_t result = xorshift32(state);
+    return uint32ToFixedPoint(result);
+
+}
 
 
  /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,7 +311,7 @@ class cpp_vec3 {
 
     // Determines if the vector is close to zero in all dimensions. Important for avoiding divide-by-zero errors.
     bool near_zero() const {
-        const auto s = 1e-8;
+        const auto s = 1.49011612e-8;
         return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
     }
 
@@ -353,15 +379,21 @@ inline cpp_vec3 random_in_unit_sphere() {
     //     auto p = cpp_vec3::random(-1,1);
     //     if (p.length_squared() < 1) return p;
     // }
-    float xi1 = random_double(); // Uniformly distributed from 0 to 1
-    float xi2 = random_double(); // Uniformly distributed from 0 to 1
+    float xi1 = random_double3(); // Uniformly distributed from 0 to 1
+    float xi2 = random_double4(); // Uniformly distributed from 0 to 1
 
-    float theta = 2.0 * 3.1415926 * xi1; // Uniform distribution from 0 to 2π
+    float theta = 2.0 * 3.14159 * xi1; // Uniform distribution from 0 to 2π
     float phi = std::acos(2.0 * xi2 - 1.0); // Correctly distribute from -1 to 1 and acos
 
     float xs = std::sin(phi) * std::cos(theta); // Note the switch of phi and theta here
     float ys = std::sin(phi) * std::sin(theta);
-    float zs = std::cos(phi);
+    float zs = std::cos(phi); 
+    // std::cout << "X11 CPP " << xi1  << std::endl;
+    // std::cout << "X12 CPP " << xi2  << std::endl;
+    // std::cout << "COS PHI IN CPP " << 2.0 * xi2 - 1.0 << std::endl;
+    // std::cout << "COS PHI IN CPP " << phi << std::endl;
+    // std::cout << "COS PHI IN CPP " << std::cos(phi) << std::endl;
+
 
     return cpp_vec3(xs, ys, zs);
 }
@@ -421,6 +453,13 @@ void write_color(std::ostream &out, cpp_vec3 pixel_color, int samples_per_pixel)
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool isWithinTolerance(double num1, double num2, double tolerancePercent) {
+        // Calculate the tolerance threshold based on the second number
+        double tolerance = std::fabs(num2 * (tolerancePercent / 100.0));
+
+        // Check if the absolute difference between the numbers is within the tolerance
+        return std::fabs(num1 - num2) <= tolerance;
+    }
 
 class c_ray {
   public:
@@ -738,6 +777,15 @@ class camera {
             }
         }
         return hit_anything;  // Returns true if any object was hit.x
+    }
+
+    c_ray get_scattered(hit_record& input_hr, c_ray& ray_in){
+        lambertian scatterfunc(input_hr.mat_color);
+        c_ray scattered; // The ray that results from scattering
+        cpp_vec3 attenuation; // The attenuation of the ray after scattering
+        scatterfunc.scatter(ray_in, input_hr, attenuation, scattered);
+        scattered.first_ray = false;
+        return scattered;
     }
 
     cpp_vec3 ray_color(const c_ray& r, int max_depth, const std::vector<shared_ptr<quad>>& world) const {
