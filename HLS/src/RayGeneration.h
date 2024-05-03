@@ -33,11 +33,8 @@ class RayGeneration
         LoopIndices tmp_indices;
         tmp_indices = loopIndicesIn.read();
 
-        // sets bits from int to fixed point
-        ac_fixed<13,12,true> x_pix = 0;
-        x_pix.set_slc(0, (tmp_indices.x_pxl).slc<11>(1));
-        ac_fixed<13,12,true> y_pix= 0;
-        y_pix.set_slc(0, (tmp_indices.y_pxl).slc<11>(1));
+        ac_fixed<13,12,true> x_pix = tmp_indices.x_pxl;
+        ac_fixed<13,12,true> y_pix = tmp_indices.y_pxl;
 
         vec3<ac_fixed<37, 14, true>> deltaUIndexMultOut;
         vec3<ac_fixed<37, 14, true>> deltaVIndexMultOut;  
@@ -61,6 +58,8 @@ class RayGeneration
         tmp_ray.orig = {tmp_params.center.x, tmp_params.center.y, tmp_params.center.z};  // Ray starts at the camera's position.
 
         rayDiff.run(pixelSample, tmp_ray.orig, tmp_ray.dir);  // Direction from camera to sampled point.
+
+        tmp_ray.camera_ray = true;
 
         rayOut.write(tmp_ray);
         paramsOut.write(boc);

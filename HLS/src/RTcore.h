@@ -147,7 +147,7 @@ struct img_params {
 };
 
 struct buffer_params {
-  int_11          num_spheres;
+  // int_11          num_spheres; no longer using spheres
   int_11          num_quads;
   uint_2          samp_per_pxl; // 32-64-256-1024
   uint_10         image_height;   // Height of the image, computed from width and aspect ratio.
@@ -156,7 +156,7 @@ struct buffer_params {
 
 
 struct buffer_obj_count {
-  int_11          num_spheres;
+  // int_11          num_spheres;   no longer using spheres
   int_11          num_quads;
   rgb_in          background;
  };
