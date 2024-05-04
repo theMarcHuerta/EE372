@@ -633,7 +633,7 @@ bool quad_hit(const c_ray& r, const quad& quado, double& closest_so_far, hit_rec
 
     t = FixedPoint<30>(t).toDouble();
     // t = tmp_int + frac_part;
-    if (t < 0.001 || t > closest_so_far){
+    if (t < 0.0009765625 || t > closest_so_far){
         return false;
     }
     // Determine the hit point lies within the planar shape using its plane coordinates.

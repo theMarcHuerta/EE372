@@ -19,7 +19,7 @@ class QuadHit {
             return;
         }
 
-        ac_fixed<58, 11, true> denom; //47 fractional bits out as result, 24*23 fractioanl bit and tested 11 int bits largest value gotten in c test
+        ac_fixed<58, 11, true> denom = 0; //47 fractional bits out as result, 24*23 fractioanl bit and tested 11 int bits largest value gotten in c test
         denom_dot.run(_quad.normal, r.dir, denom);
         ac_fixed<58, 11, true> abs_denom; // gets rid of sign bit
         ac_math::ac_abs(denom, abs_denom);
@@ -65,13 +65,13 @@ class QuadHit {
         }
 
         // Calculate intersection point
-        vec3<ac_fixed<75, 22, true>> intersection;
-        at.run(r, t_trunc, intersection);
-
         vec3<ac_fixed<45, 22, true>> trunc_intersection;
-        trunc_intersection.x = intersection.x;
-        trunc_intersection.y = intersection.y;
-        trunc_intersection.z = intersection.z;
+        at.run(r, t_trunc, trunc_intersection);
+
+        // vec3<ac_fixed<45, 22, true>> trunc_intersection;
+        // trunc_intersection.x = intersection.x;
+        // trunc_intersection.y = intersection.y;
+        // trunc_intersection.z = intersection.z;
         // Convert point to planar coordinates relative to the quad
         vec3<ac_fixed<45, 22, true>> planar_hitpt_vector;
         sub.run(trunc_intersection, _quad.corner_pt, planar_hitpt_vector);
@@ -121,7 +121,7 @@ private:
 
     Vec3_cross<ac_fixed<45, 22, true>, ac_fixed<12, 11, true>, ac_fixed<56, 33, true>> cross_v;
     Vec3_cross<ac_fixed<12, 11, true>, ac_fixed<45, 22, true>, ac_fixed<56, 33, true>> cross_u;
-    Ray_at<ac_fixed<47, 17, true>, ac_fixed<75, 22, true>> at; // first val + ray dir frac bits// capped at 22 int bits according to c
+    Ray_at<ac_fixed<47, 17, true>, ac_fixed<45, 22, true>> at; // first val + ray dir frac bits// capped at 22 int bits according to c
 
     HitRecord_setNorm setfacenorm;  // type is size of normla of 
 };
