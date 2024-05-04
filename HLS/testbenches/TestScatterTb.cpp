@@ -221,7 +221,7 @@ CCS_MAIN(int argc, char** argv) {
         cpp_bounced_rays.push_back(scattered_ray_out);
         cpp_atten_out.push_back(current_attenuation);
         cpp_color_out.push_back(accumulated_color);
-        cpp_bounced_rays.push_back(scattered_ray_out);
+        // cpp_bounced_rays.push_back(scattered_ray_out);
         // if (i == 10000) break;
     }
      
@@ -313,7 +313,10 @@ CCS_MAIN(int argc, char** argv) {
 
         scatpack.run(ray_in, hit_in, attenuation_chan_in, accumalated_color_out, isHit,
                         attenuation_chan_out, accumalated_color_out, ray_out);
-        
+
+    }
+
+    for (int i = 0; i < cpp_records.size(); i++){
         ray tmp_ray = ray_out.read();
         rgb_in tmp_atten = attenuation_chan_out.read();
         rgb_in tmp_col = accumalated_color_out.read();
@@ -321,10 +324,7 @@ CCS_MAIN(int argc, char** argv) {
         HLS_bounced_rays.push_back(tmp_ray);
         HLS_atten_out.push_back(tmp_atten);
         HLS_color_out.push_back(tmp_col);
-
     }
-
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -335,51 +335,102 @@ CCS_MAIN(int argc, char** argv) {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     uint64_t mismatches = 0;
     uint64_t tot_intersection_tests = cpp_records.size();
-
+    uint64_t testss = 0;
 
     for (int i = 0; i < tot_intersection_tests; i++){
-        c_ray tmp_scattered_cpp = cpp_bounced_rays[i];
+        testss++;
+
         ray tmp_scattered_hls = HLS_bounced_rays[i];
+        c_ray tmp_scattered_cpp = cpp_bounced_rays[i];
+
+        rgb_in color_hls = HLS_color_out[i];
+        cpp_vec3 color_cpp = cpp_color_out[i];
+
+        rgb_in attenout_hls = HLS_atten_out[i];
+        cpp_vec3 atten_cpp = cpp_atten_out[i];
+
+        ////////////////// RAY DIRECTION ORIGIN
 
         double tmp_loc_x = tmp_scattered_hls.orig.x.to_double();
         double tmp_loc_y = tmp_scattered_hls.orig.y.to_double();
         double tmp_loc_z = tmp_scattered_hls.orig.z.to_double();
-        // if (i == 0){
-        //      cout << "HLS ray: " << tmp_loc_x << " " << tmp_loc_y << " " << tmp_loc_z << endl;
-        //      cout << "CPP ray: " << tmp_scattered_cpp.orig.e[0] << " " << tmp_scattered_cpp.orig.e[1] << " " << tmp_scattered_cpp.orig.e[2] << endl;
-        // }
+
         bool loc_x = isWithinTolerance(tmp_scattered_cpp.orig.e[0],  tmp_loc_x, 10.0);
         bool loc_y = isWithinTolerance(tmp_scattered_cpp.orig.e[1],  tmp_loc_y, 10.0);
         bool loc_z = isWithinTolerance(tmp_scattered_cpp.orig.e[2],  tmp_loc_z, 10.0);
 
+        ////////////////// RAY DIRECTION OUT
+
         double tmp_dir_x = tmp_scattered_hls.dir.x.to_double();
         double tmp_dir_y = tmp_scattered_hls.dir.y.to_double();
         double tmp_dir_z = tmp_scattered_hls.dir.z.to_double();
-        // if (i == 0){
-        //      cout << "HLS ray: " << tmp_dir_x << " " << tmp_dir_y << " " << tmp_dir_z << endl;
-        //      cout << "CPP ray: " << tmp_scattered_cpp.dir.e[0] << " " << tmp_scattered_cpp.dir.e[1] << " " << tmp_scattered_cpp.dir.e[2] << endl;
-        // }
+
         bool dir_x = isWithinTolerance(tmp_scattered_cpp.dir.e[0],  tmp_dir_x, 10.0);
         bool dir_y = isWithinTolerance(tmp_scattered_cpp.dir.e[1],  tmp_dir_y, 10.0);
         bool dir_z = isWithinTolerance(tmp_scattered_cpp.dir.e[2],  tmp_dir_z, 10.0);
 
+        ////////////////// COLOR OUT
+
+        double tmp_col_x = color_hls.r.to_double();
+        double tmp_col_y = color_hls.g.to_double();
+        double tmp_col_z = color_hls.b.to_double();
+
+        bool col_x = isWithinTolerance(color_cpp.e[0],  tmp_col_x, 10.0);
+        bool col_y = isWithinTolerance(color_cpp.e[1],  tmp_col_y, 10.0);
+        bool col_z = isWithinTolerance(color_cpp.e[2],  tmp_col_z, 10.0);
+
+        ////////////////// ATENUATION OUT
+
+        double tmp_att_x = attenout_hls.r.to_double();
+        double tmp_att_y = attenout_hls.g.to_double();
+        double tmp_att_z = attenout_hls.b.to_double();
+
+        bool att_x = isWithinTolerance(atten_cpp.e[0],  tmp_att_x, 10.0);
+        bool att_y = isWithinTolerance(atten_cpp.e[1],  tmp_att_y, 10.0);
+        bool att_z = isWithinTolerance(atten_cpp.e[2],  tmp_att_z, 10.0);
+
+        ////////////////////////////////////////////////////////////////
+
         bool loc_close = loc_x && loc_y && loc_z;
         bool dir_close = dir_x && dir_y && dir_z;
-
-        if (!(loc_close && dir_close)){
+        bool col_close = col_x && col_y && col_z;
+        bool att_close = att_x && att_y && att_z;
+        
+        if (!(loc_close && dir_close && col_close && att_close)){
             mismatches++;
+            // ray temp_ray = HLS_rays[i];
+            // c_ray tmp_ccc_ray = cpp_rays[i];
             // cout << "Ray mismatch " << i << endl;
             // cout << "Ray HLS orig: " << tmp_loc_x << " " << tmp_loc_y << " " << tmp_loc_z << endl;
             // cout << "Ray CPP orig: " << tmp_scattered_cpp.orig.e[0] << " " << tmp_scattered_cpp.orig.e[1] << " " << tmp_scattered_cpp.orig.e[2] << endl;
-            // cout << "Ray HLS dir: " << dir_x << " " << dir_y << " " << dir_z << endl;
-            // cout << "Ray CPP dir: " << tmp_scattered_cpp.dir.e[0] << " " << tmp_scattered_cpp.dir.e[1] << " " << tmp_scattered_cpp.dir.e[2] << endl << endl;
-            // // break;
+            // cout << "Ray HLS dir: " << tmp_dir_x << " " << tmp_dir_y << " " << tmp_dir_z << endl;
+            // cout << "Ray CPP dir: " << tmp_scattered_cpp.dir.e[0] << " " << tmp_scattered_cpp.dir.e[1] << " " << tmp_scattered_cpp.dir.e[2] << endl;
+
+            // cout << "Ray HLS orig in: " << temp_ray.orig.x.to_double() << " " << temp_ray.orig.y.to_double() << " " << temp_ray.orig.z.to_double() << endl;
+            // cout << "Ray CPP orig in: " << tmp_ccc_ray.orig.e[0] << " " << tmp_ccc_ray.orig.e[1] << " " << tmp_ccc_ray.orig.e[2] << endl;
+            // cout << "Ray HLS dir in: " << temp_ray.dir.x.to_double() << " " << temp_ray.dir.y.to_double() << " " << temp_ray.dir.z.to_double() << endl;
+            // cout << "Ray CPP dir in: " << tmp_ccc_ray.dir.e[0] << " " << tmp_ccc_ray.dir.e[1] << " " << tmp_ccc_ray.dir.e[2] << endl << endl;
+            // if (mismatches == 10) break;
         }
+        // else {
+        //     ray temp_ray = HLS_rays[i];
+        //     c_ray tmp_ccc_ray = cpp_rays[i];
+        //     cout << "Ray mismatch " << i << endl;
+        //     cout << "Ray HLS orig: " << tmp_loc_x << " " << tmp_loc_y << " " << tmp_loc_z << endl;
+        //     cout << "Ray CPP orig: " << tmp_scattered_cpp.orig.e[0] << " " << tmp_scattered_cpp.orig.e[1] << " " << tmp_scattered_cpp.orig.e[2] << endl;
+        //     cout << "Ray HLS dir: " << tmp_dir_x << " " << tmp_dir_y << " " << tmp_dir_z << endl;
+        //     cout << "Ray CPP dir: " << tmp_scattered_cpp.dir.e[0] << " " << tmp_scattered_cpp.dir.e[1] << " " << tmp_scattered_cpp.dir.e[2] << endl;
+
+        //     cout << "Ray HLS orig in: " << temp_ray.orig.x.to_double() << " " << temp_ray.orig.y.to_double() << " " << temp_ray.orig.z.to_double() << endl;
+        //     cout << "Ray CPP orig in: " << tmp_ccc_ray.orig.e[0] << " " << tmp_ccc_ray.orig.e[1] << " " << tmp_ccc_ray.orig.e[2] << endl;
+        //     cout << "Ray HLS dir in: " << temp_ray.dir.x.to_double() << " " << temp_ray.dir.y.to_double() << " " << temp_ray.dir.z.to_double() << endl;
+        //     cout << "Ray CPP dir in: " << tmp_ccc_ray.dir.e[0] << " " << tmp_ccc_ray.dir.e[1] << " " << tmp_ccc_ray.dir.e[2] << endl << endl;
+        // }
         // if (i == 1300) break;
     }
 
     cout << "Test Completed with " << mismatches << " mismatches" << endl;
-    cout << "Number of Tests " << HLS_bounced_rays.size() << endl;
+    cout << "Number of Tests " << testss << endl;
     cout << endl;
     cout << endl;
     CCS_RETURN(0);

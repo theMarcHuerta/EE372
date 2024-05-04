@@ -60,7 +60,7 @@ public:
 
                 color_out = tmp_color_in;
             }
-            else if (tmp_rec.mat == EMISSIVE){ //emission
+            else { //emission
                 rgb_in colorMulOut;
                 // should auto truncate the big multiplication
                 colorMulOut.r = tmp_atten_in.r * tmp_rec.color.r;

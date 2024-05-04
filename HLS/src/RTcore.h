@@ -25,9 +25,9 @@
 // from point to point in the 2048x2048 box
 
 #define LAMBERTIAN 0
-#define METAL_MIN 1
-#define METAL_MAX 6
-#define EMISSIVE 7
+// #define METAL_MIN 1
+// #define METAL_MAX 6
+#define EMISSIVE 1
 #define MAX_SPHERES_IN_BUFFER 80
 #define MAX_QUADS_IN_BUFFER 80
 #define MAX_SAMPS_PER_PIXEL 1024

@@ -528,7 +528,7 @@ class lambertian {
     // Implements the scattering function for a diffuse material.
     // Scatters rays in random directions with no reflection.
     bool scatter(const c_ray& r_in, const hit_record& rec, cpp_vec3& attenuation, c_ray& scattered) {
-      auto scatter_direction = rec.normal + random_unit_vector();
+      auto scatter_direction = rec.normal + random_in_unit_sphere();
 
       // Catch degenerate scatter direction
       if (scatter_direction.near_zero())
