@@ -81,7 +81,7 @@ class RayGeneration
     ac_int<32, false> state1;
     ac_int<32, false> state2;
     
-    const fp_1_22 point_five = 0.5; // supposed to be .5
+    // const fp_1_22 point_five = 0.5; // supposed to be .5
 
 };
 

@@ -19,8 +19,8 @@ class PixelSampleSquare
                          // do i need to make it so i can fetch on command
                         vec3<sfp_3_22> &output_num)
     {
-      ac_fixed<33, 1, false> rnum1;
-      ac_fixed<33, 1, false> rnum2; 
+      ac_fixed<33, 1, false> rnum1 = 0;
+      ac_fixed<33, 1, false> rnum2 = 0; 
       rand_val.run(state1, rnum1);
       rand_val2.run(state2, rnum2);
       ac_fixed<34, 2, true> rnum1_s = 0;

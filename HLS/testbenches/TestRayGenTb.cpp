@@ -73,7 +73,8 @@ CCS_MAIN(int argc, char** argv) {
 
     printf("Running C++ design\n");
     std::vector<c_ray> cpp_rays;
-
+    std::cout << cam.pixel_delta_u << std::endl;
+    std::cout << cam.pixel_delta_v << std::endl;
      for (int i = 0; i < image_height; i++) {
         for (int j = 0; j < image_width; j++) {
             cpp_rays.push_back(cam.get_ray(j, i));

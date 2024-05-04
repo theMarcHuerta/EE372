@@ -215,7 +215,7 @@ inline double random_double1() {
 
     static uint32_t state = 375821;  // Seed with a non-zero value
     uint32_t result = xorshift32(state);
-    return static_cast<double>(result) / (static_cast<double>(UINT32_MAX)+1);
+    return uint32ToFixedPoint(result);
 
 }
 
@@ -224,7 +224,7 @@ inline double random_double2() {
 
     static uint32_t state = 39251088;  // Seed with a non-zero value
     uint32_t result = xorshift32(state);
-    return static_cast<double>(result) / (static_cast<double>(UINT32_MAX)+1);
+    return uint32ToFixedPoint(result);
 
 }
 
