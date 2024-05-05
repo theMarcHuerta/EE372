@@ -2,7 +2,6 @@
 #define SHADER_CORES_H
 
 #include "RTcore.h"
-#include "MemController.h"
 #include "Shader.h"
 
 

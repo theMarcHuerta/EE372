@@ -9,7 +9,7 @@
 #include <ac_math.h>
 #include <ac_channel.h>
 
-#include "TestShaderCores.cpp"
+#include "TestRenderer.cpp"
 #include "../src/path_tracer_gold_model/camera.h"
 #include "read_stimulus.cpp"
 
@@ -208,34 +208,56 @@ CCS_MAIN(int argc, char** argv) {
     std::vector<bool> HLS_hit;
     std::vector<bool> HLS_bounced_hit;
 
-    buffer_obj_count params_in_obj;
+    img_params params_in;
 
-    params_in_obj.num_quads = HLS_quads.size();
-    params_in_obj.background = {0.0, 0.0, 0.0};
+    params_in.num_quads = HLS_quads.size();
+    params_in.samp_per_pxl = 0;
+    params_in.background = {0.0, 0.0, 0.0};
+    params_in.image_height = image_height;
+    params_in.image_width = image_width;
+
+    params_in.center.x = cam.lookfrom.x();
+    params_in.center.y = cam.lookfrom.y();
+    params_in.center.z = cam.lookfrom.z();
+
+    params_in.pixel00_loc.x = cam.pixel00_loc.x();
+    params_in.pixel00_loc.y = cam.pixel00_loc.y();
+    params_in.pixel00_loc.z = cam.pixel00_loc.z();
+
+    params_in.pixel_delta_u.x = cam.pixel_delta_u.x();
+    params_in.pixel_delta_u.y = cam.pixel_delta_u.y();
+    params_in.pixel_delta_u.z = cam.pixel_delta_u.z();
+
+    params_in.pixel_delta_v.x = cam.pixel_delta_v.x();
+    params_in.pixel_delta_v.y = cam.pixel_delta_v.y();
+    params_in.pixel_delta_v.z = cam.pixel_delta_v.z();
 
     printf("Running HLS C design\n");
 
-    TestShaderCores core;
-    ac_channel<quad_hittable> quads_in; 
-    ac_channel<ray> ray_in;
-    ac_channel<buffer_obj_count> params_in;
-    ac_channel<rgb_in> output_pxl_serial;
+    TestRenderer render;
+    ac_channel<quad_hittable> quads_in;
+    ac_channel<img_params> render_params;
+    ac_channel<rgb_in> output_pxl_sample;
+
+    render_params.write(params_in);
 
     for (int i = 0; i < cpp_rays.size(); i++){
-        rgb_in accum_col = {0, 0, 0};
         for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
             for (int bounces = 0; bounces < 8; bounces++){
                 for (int quad_num = 0; quad_num < cpp_quads.size(); quad_num++){
                     quads_in.write(HLS_quads[quad_num]);
                 }
             }
+        }
+    }
 
-            params_in.write(params_in_obj);
-            ray_in.write(HLS_rays[i]);
+    render.run(quads_in, render_params, output_pxl_sample);
 
-            core.run(quads_in, ray_in, params_in, output_pxl_serial);
+    for (int i = 0; i < cpp_rays.size(); i++){
+        rgb_in accum_col = {0, 0, 0};
+        for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
 
-            rgb_in tmp_out = output_pxl_serial.read();
+            rgb_in tmp_out = output_pxl_sample.read();
 
             ac_fixed<28, 6, false> colx = tmp_out.r +  accum_col.r ;
             ac_fixed<28, 6, false> coly = tmp_out.g +  accum_col.g ;
@@ -262,7 +284,6 @@ CCS_MAIN(int argc, char** argv) {
                 accum_col.b = colz;
             }
         }
-
         HLS_color_out.push_back(accum_col);
     }
 
@@ -284,7 +305,7 @@ CCS_MAIN(int argc, char** argv) {
 
     uint64_t avg_px_cpp = 0;
     uint64_t avg_px_hls = 0;
-    std::string filenme = "hls_image.ppm";
+    std::string filenme = "hls_image_renderer.ppm";
 
     for (int i = 0; i < tot_intersection_tests; i++){
         testss++;

@@ -20,21 +20,16 @@ class TestShaderCores {
     TestShaderCores() {}
 
     #pragma hls_design interface
-    void CCS_BLOCK(run)(ac_channel<buffer_obj_count> &params_in,
-                        ac_channel<quad_hittable> &quad_in,
+    void CCS_BLOCK(run)(ac_channel<quad_hittable> &quads_in, 
                         ac_channel<ray> &ray_in,
-                        ac_channel<rgb_in> &attenuation_chan_in,
-                        ac_channel<rgb_in> &accumalated_color_chan_in,
-                        ac_channel<rgb_in> &attenuation_chan_out,
-                        ac_channel<rgb_in> &accumalated_color_out,
-                        ac_channel<ray> &ray_out) {
+                        ac_channel<buffer_obj_count> &params_in,
+                        ac_channel<rgb_in> &output_pxl_serial) {
 
-        core.run(params_in, quad_in, ray_in, attenuation_chan_in, accumalated_color_chan_in, 
-                            attenuation_chan_out, accumalated_color_out, ray_out);
+        core.run(quads_in, ray_in, params_in, output_pxl_serial);
     } 
 
   private:
-    Shader core;
+    ShaderCores core;
 
 };
 

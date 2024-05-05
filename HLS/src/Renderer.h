@@ -27,11 +27,24 @@ public:
 void run(ac_channel<img_params> &render_params,
          ac_channel<img_params> &render_params_out,
          ac_channel<LoopIndices> &loopIndicesOut)
-    {
+        {
         LoopIndices temp_idxs;
         img_params tmp_params;
 
         tmp_params = render_params.read();
+        ac_int<11, false> smp_p_pxl;
+        if (tmp_params.samp_per_pxl == 0){
+            smp_p_pxl = 31;
+        }
+        else if(tmp_params.samp_per_pxl == 1){
+            smp_p_pxl = 63;
+        }
+        else if(tmp_params.samp_per_pxl == 2){
+            smp_p_pxl = 255;
+        }
+        else{
+            smp_p_pxl = 1023;
+        }
         for (int fy = 0; fy < MAX_IMAGE_HEIGHT; fy++){
             temp_idxs.y_pxl = fy;
             // one scanline below
@@ -41,7 +54,7 @@ void run(ac_channel<img_params> &render_params,
                     temp_idxs.cur_samp = samps;
                     render_params_out.write(tmp_params);
                     loopIndicesOut.write(temp_idxs); 
-                    if (samps == tmp_params.samp_per_pxl) break;
+                    if (samps == smp_p_pxl) break;
                 }
                 if (fx == tmp_params.image_width) break;
             }

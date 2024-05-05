@@ -28,6 +28,7 @@ based on materials.
 #include <cstdlib>
 #include <limits>
 #include <memory>
+#include <fstream>  // Include for file operations
 #define LONGEST_DISTANCE 2896
 using std::sqrt;
 
@@ -938,5 +939,39 @@ class camera {
     }
 
 };
+
+
+void write_color(const std::string &filename, const cpp_vec3 &pixel_color, int samples_per_pixel) {
+    std::ofstream out(filename, std::ios::app);  // Open file for appending
+
+    // Handle possible file opening errors
+    if (!out.is_open()) {
+        std::cerr << "Failed to open " << filename << " for writing.\n";
+        return;
+    }
+
+    auto r = pixel_color.x();
+    auto g = pixel_color.y();
+    auto b = pixel_color.z();
+
+    // Average the color by the number of samples to reduce noise (Anti-aliasing).
+    auto scale = 1.0 / samples_per_pixel;
+    r *= scale;
+    g *= scale;
+    b *= scale;
+
+    // Apply gamma correction (simplified form for gamma=2.0).
+    r = linear_to_gamma(r);
+    g = linear_to_gamma(g);
+    b = linear_to_gamma(b);
+
+    // Convert to integer [0,255] and output.
+    static const interval intensity(0.000, 0.999);
+    out << static_cast<int>(256 * intensity.clamp(r)) << ' '
+        << static_cast<int>(256 * intensity.clamp(g)) << ' '
+        << static_cast<int>(256 * intensity.clamp(b)) << '\n';
+
+    out.close();  // Close the file
+}
 
 #endif
