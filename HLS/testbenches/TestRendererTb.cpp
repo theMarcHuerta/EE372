@@ -69,7 +69,7 @@ CCS_MAIN(int argc, char** argv) {
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = image_height;
-    cam.samples_per_pixel = 1;
+    cam.samples_per_pixel = 32;
     cam.max_depth         = 8;
     cam.background        = cpp_vec3(0,0,0);
 
@@ -186,12 +186,14 @@ CCS_MAIN(int argc, char** argv) {
     uint64_t num_hit_cpp = 0;
     uint64_t num_hit_bounced_cpp = 0;
 
-    for (int i = 0; i < cpp_rays.size(); ++i) {
-        cpp_vec3 pixel_color(0,0,0);
-        for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
-            pixel_color += cam.ray_color(cpp_rays[i], 8, world);
+     for (int j = 0; j < image_height; ++j) {
+        for (int i = 0; i < image_width; ++i) {
+            cpp_vec3 pixel_color(0,0,0);
+            for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
+                pixel_color += cam.ray_color(cpp_rays[j*image_width + i * cam.samples_per_pixel + sample], 8, world);
+            }
+            cpp_color_out.push_back(pixel_color);
         }
-        cpp_color_out.push_back(pixel_color);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,38 +255,40 @@ CCS_MAIN(int argc, char** argv) {
 
     render.run(quads_in, render_params, output_pxl_sample);
 
-    for (int i = 0; i < cpp_rays.size(); i++){
-        rgb_in accum_col = {0, 0, 0};
-        for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
+    for (int j = 0; j < image_height; ++j) {
+        for (int i = 0; i < image_width; ++i) {
+            rgb_in accum_col = {0, 0, 0};
+            for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
+                
+                rgb_in tmp_out = output_pxl_sample.read();
 
-            rgb_in tmp_out = output_pxl_sample.read();
+                ac_fixed<28, 6, false> colx = tmp_out.r +  accum_col.r ;
+                ac_fixed<28, 6, false> coly = tmp_out.g +  accum_col.g ;
+                ac_fixed<28, 6, false> colz = tmp_out.b +  accum_col.b ;
 
-            ac_fixed<28, 6, false> colx = tmp_out.r +  accum_col.r ;
-            ac_fixed<28, 6, false> coly = tmp_out.g +  accum_col.g ;
-            ac_fixed<28, 6, false> colz = tmp_out.b +  accum_col.b ;
+                if (colx[27] == 1){
+                    accum_col.r = 31;
+                }
+                else {
+                    accum_col.r = colx;
+                }
 
-            if (colx[27] == 1){
-                accum_col.r = 31;
-            }
-            else {
-                accum_col.r = colx;
-            }
+                if (coly[27] == 1){
+                    accum_col.g = 31;
+                }
+                else {
+                    accum_col.g = coly;
+                }
 
-            if (coly[27] == 1){
-                accum_col.g = 31;
+                if (colz[27] == 1){
+                    accum_col.b = 31;
+                }
+                else {
+                    accum_col.b = colz;
+                }
             }
-            else {
-                accum_col.g = coly;
-            }
-
-            if (colz[27] == 1){
-                accum_col.b = 31;
-            }
-            else {
-                accum_col.b = colz;
-            }
+            HLS_color_out.push_back(accum_col);
         }
-        HLS_color_out.push_back(accum_col);
     }
 
 
@@ -320,7 +324,7 @@ CCS_MAIN(int argc, char** argv) {
         double tmp_col_z = color_hls.b.to_double();
         cpp_vec3 pxl_col = cpp_vec3(tmp_col_x, tmp_col_y, tmp_col_z);
 
-        write_color(filenme, pxl_col, 1);
+        write_color(filenme, pxl_col, cam.samples_per_pixel);
 
         bool col_x = isWithinTolerance(color_cpp.e[0],  tmp_col_x, 10.0);
         bool col_y = isWithinTolerance(color_cpp.e[1],  tmp_col_y, 10.0);
