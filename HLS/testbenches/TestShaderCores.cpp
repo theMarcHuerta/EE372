@@ -1,5 +1,5 @@
-#ifndef TESTSHADER_H
-#define TESTSHADER_H
+#ifndef TESTSHADERCORES_H
+#define TESTSHADERCORES_H
 
 #ifdef __SYNTHESIS__
     #define LABEL(x) x:
@@ -11,13 +11,13 @@
 #include "../src/vec3.h"
 #include "../src/ray.h"
 #include "../src/HitRecord.h"
-#include "../src/Shader.h"
+#include "../src/ShaderCores.h"
 
 #pragma hls_design top
-class TestShader {
+class TestShaderCores {
 
   public:
-    TestShader() {}
+    TestShaderCores() {}
 
     #pragma hls_design interface
     void CCS_BLOCK(run)(ac_channel<buffer_obj_count> &params_in,

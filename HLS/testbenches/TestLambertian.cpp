@@ -1,5 +1,5 @@
-#ifndef TESTSCATTER_H
-#define TESTSCATTER_H
+#ifndef TESTLAMBERTIAN_H
+#define TESTLAMBERTIAN_H
 
 #ifdef __SYNTHESIS__
     #define LABEL(x) x:
