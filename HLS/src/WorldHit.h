@@ -56,7 +56,7 @@ public:
                 quad_hit_anything = true;
                 rec_quad = temp_rec;
             }
-            if (i == tmp_params.num_quads) break;
+            if (i == (tmp_params.num_quads - 1)) break;
         }
 
         if (quad_hit_anything) {

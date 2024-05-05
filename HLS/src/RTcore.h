@@ -115,8 +115,6 @@ struct HitRecord {
     vec3<ac_fixed<21, 11, true>> hit_loc;
     vec3<ac_fixed<26, 2, true>> normal;
     bool front_face;
-    // WE DONT EVEN NEED T BEYOND WORLD HIT SO MAYBE REMOVE IT OR CREATE NEW STRUCT OUT OF WORLD HIT
-    // ac_fixed<43, 13, true> t; // how far along the hit occured, 11_30
     uint_3 mat;
     rgb_in color;
 
@@ -147,7 +145,6 @@ struct img_params {
 };
 
 struct buffer_params {
-  // int_11          num_spheres; no longer using spheres
   int_11          num_quads;
   uint_2          samp_per_pxl; // 32-64-256-1024
   uint_10         image_height;   // Height of the image, computed from width and aspect ratio.
@@ -156,7 +153,6 @@ struct buffer_params {
 
 
 struct buffer_obj_count {
-  // int_11          num_spheres;   no longer using spheres
   int_11          num_quads;
   rgb_in          background;
  };

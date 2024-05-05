@@ -12,9 +12,9 @@ class HitRecord_setNorm {
     #pragma hls_design ccore
     #pragma hls_ccore_type combinational
     void run(ray& r, vec3<ac_fixed<26, 2, true>>& outwardNormal, HitRecord& record) {
-        ac_fixed<60, 13, true> dot_result; // can truncate this later 
+        ac_fixed<60, 13, true> dot_result = 0; // can truncate this later 
         dot.run(r.dir, outwardNormal, dot_result);
-        vec3<ac_fixed<26, 2, true>> negated_normal;
+        vec3<ac_fixed<26, 2, true>> negated_normal = {0, 0, 0};
         negate.run(outwardNormal, negated_normal);
         record.front_face = (dot_result[59] == 1);
         // record.front_face = (dot_result < 0);

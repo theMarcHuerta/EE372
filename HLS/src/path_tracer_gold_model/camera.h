@@ -634,11 +634,14 @@ bool quad_hit(const c_ray& r, const quad& quado, double& closest_so_far, hit_rec
     t = FixedPoint<30>(t).toDouble();
     // t = tmp_int + frac_part;
     if (t < 0.0009765625 || t > closest_so_far){
+        // std::cout << ((t)) << " NOT INSIDE" <<  std::endl;
         return false;
     }
     // Determine the hit point lies within the planar shape using its plane coordinates.
     // t (30 bits * dir (23) + orig (1)
+    
     auto intersection = r.at(t);
+    auto tmp_inttt = intersection;
     intersection = cpp_vec3(FixedPoint<23>(intersection.x()).toDouble(), 
                         FixedPoint<23>(intersection.y()).toDouble(), FixedPoint<23>(intersection.z()).toDouble());
     //PLANAR IS 22_23
@@ -665,6 +668,10 @@ bool quad_hit(const c_ray& r, const quad& quado, double& closest_so_far, hit_rec
     if (!is_interior(alpha, beta)){
         return false;
     }
+    // std::cout << ((tmp_inttt)) << " MADE IT TO END" <<  std::endl;
+    // std::cout << ((t)) << " MADE IT TO END" <<  std::endl;
+    // std::cout << ((r.dir.x())) << " MADE IT TO END" <<  std::endl;
+    // std::cout << ((r.orig.x())) << " MADE IT TO END" <<  std::endl <<  std::endl;
     closest_so_far = t;
     rec.p = intersection;
     rec.mat = quado.mat;
@@ -763,7 +770,7 @@ class camera {
     }
 
     // Overrides hit method to check all objects in the list for the closest hit.
-    bool WorldHit(const std::vector<shared_ptr<quad>>& objects, const c_ray& r, hit_record& rec) const {
+    bool worldhit(const std::vector<shared_ptr<quad>>& objects, const c_ray& r, hit_record& rec) const {
         hit_record temp_rec;
         bool hit_anything = false;
         double closest_so_far = LONGEST_DISTANCE;  // Tracks the closest hit so far.
@@ -830,7 +837,7 @@ class camera {
 
             current_ray.first_ray = depth == 0 ? true : false;
             // Check if the ray hits the background
-            if (!WorldHit(world, current_ray, rec)) {
+            if (!worldhit(world, current_ray, rec)) {
                 accumulated_color += current_attenuation * background; // Apply background color
                 break;
             }
