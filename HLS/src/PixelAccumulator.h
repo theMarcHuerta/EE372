@@ -31,7 +31,7 @@ void CCS_BLOCK(run)(ac_channel<img_params> &accumulator_parms,
         bool blue_of = false;
 
         // set samples per pixel based on parameters passed in
-        ac_int<12, false> spp;
+        ac_int<11, false> spp;
         spp = (tmp_params.samp_per_pxl == 0) ? 32 :
               (tmp_params.samp_per_pxl == 1) ? 64 :
               (tmp_params.samp_per_pxl == 2) ? 256 : 1024;

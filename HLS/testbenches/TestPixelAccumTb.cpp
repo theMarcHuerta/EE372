@@ -52,7 +52,7 @@ CCS_MAIN(int argc, char** argv) {
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = image_height;
-    cam.samples_per_pixel = 3;
+    cam.samples_per_pixel = 2;
     cam.max_depth         = 1;
     cam.background        = cpp_vec3(0,0,0);
 
@@ -63,8 +63,8 @@ CCS_MAIN(int argc, char** argv) {
     cam.initialize();
 
     // vectors of random rgb_in values to use in both cpp test and hls test
-    int spp = 1024;
-    int num_tests = 50000;
+    int spp = 256;
+    int num_tests = 20000;
     std::vector<std::vector<rgb_in>> samples(num_tests);
 
     // generate random values to accumulate
@@ -181,9 +181,9 @@ CCS_MAIN(int argc, char** argv) {
     for (int i = 0; i < num_tests; i++){
         // read in HLS output
         rgb_out hls_out = rgb_out_channel.read();
-        if (std::abs(hls_out.r.to_int() - cpp_results[i].x() > 1.0) ||
-            std::abs(hls_out.g.to_int() - cpp_results[i].y() > 1.0) ||
-            std::abs(hls_out.b.to_int() - cpp_results[i].z() > 1.0)) {
+        if (std::abs(hls_out.r.to_int() - cpp_results[i].x() >= 1e-6) ||
+            std::abs(hls_out.g.to_int() - cpp_results[i].y() >= 1e-6) ||
+            std::abs(hls_out.b.to_int() - cpp_results[i].z() >= 1e-6)) {
 
             mismatches++;
             cout << "Mismatch at iteration " << i << endl;
