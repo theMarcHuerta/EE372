@@ -38,15 +38,20 @@ build/PixelAccumulator.v1/rtl.v: src/PixelAccumulator.h
 
 PixelAccumulator: build/PixelAccumulator.v1/rtl.v
 
-build/MemController.v1/rtl.v: src/MemController.h
-	$(CATAPULT) -shell -file scripts/MemController.tcl
+# build/MemController.v1/rtl.v: src/MemController.h
+# 	$(CATAPULT) -shell -file scripts/MemController.tcl
 
-MemController: build/MemController.v1/rtl.v
+# MemController: build/MemController.v1/rtl.v
 
-build/ShaderCores.v1/rtl.v: build/Shader.v1/rtl.v build/MemController.v1/rtl.v src/ShaderCores.h
+build/ShaderCores.v1/rtl.v: build/Shader.v1/rtl.v src/ShaderCores.h
 	$(CATAPULT) -shell -file scripts/ShaderCores.tcl
 
 ShaderCores: build/ShaderCores.v1/rtl.v
+
+build/Renderer*.v1/rtl.v: build/ShaderCores.v1/rtl.v build/RayGeneration.v1/rtl.v src/Renderer.h
+	$(CATAPULT) -shell -file scripts/Renderer.tcl
+
+Renderer: build/Renderer*.v1/rtl.v
 
 c_test: test/$(MODULE).v1
 	export MODULE=$(MODULE); \

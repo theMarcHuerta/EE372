@@ -10,7 +10,7 @@ public:
     PixelAccumulator() {}
 
 #pragma hls_design interface
-void run(ac_channel<img_params> &accumulator_parms,
+void CCS_BLOCK(run)(ac_channel<img_params> &accumulator_parms,
          ac_channel<rgb_in> &pxl_sample,
          ac_channel<rgb_out> &output_pxl_serial)
     {
