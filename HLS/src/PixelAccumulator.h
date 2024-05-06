@@ -29,21 +29,43 @@ void run(ac_channel<img_params> &accumulator_parms,
         bool red_of = false;
         bool green_of = false;
         bool blue_of = false;
-        for (int samps = 0; samps < tmp_params.samp_per_pxl; samps++){
-            #ifndef __SYNTHESIS__
-            while(pxl_sample.available(1))
-            #endif
-            {
+
+        // set samples per pixel based on parameters passed in
+        ac_int<12, false> spp;
+        spp = (tmp_params.samp_per_pxl == 0) ? 32 :
+              (tmp_params.samp_per_pxl == 1) ? 64 :
+              (tmp_params.samp_per_pxl == 2) ? 256 : 1024;
+
+
+        for (int samps = 0; samps < spp; samps++){
+            // #ifndef __SYNTHESIS__
+            // while(pxl_sample.available(1))
+            // #endif
+            // {
             rgb_in cur_sample;
             cur_sample = pxl_sample.read();
             accumulation_reg.x = accumulation_reg.x + cur_sample.r;
             accumulation_reg.y = accumulation_reg.y + cur_sample.g;
             accumulation_reg.z = accumulation_reg.z + cur_sample.b;
             // checks for saturations
-            if (accumulation_reg.x[32] == 1) red_of = true;
-            if (accumulation_reg.y[32] == 1) green_of = true;
-            if (accumulation_reg.z[32] == 1) blue_of = true;
+            if (tmp_params.samp_per_pxl == 3) {
+                if (accumulation_reg.x[32] == 1) red_of = true;
+                if (accumulation_reg.y[32] == 1) green_of = true;
+                if (accumulation_reg.z[32] == 1) blue_of = true;
+            } else if (tmp_params.samp_per_pxl == 2) {
+                if (accumulation_reg.x[30] == 1) red_of = true;
+                if (accumulation_reg.y[30] == 1) green_of = true;
+                if (accumulation_reg.z[30] == 1) blue_of = true;
+            } else if (tmp_params.samp_per_pxl == 1) {
+                if (accumulation_reg.x[28] == 1) red_of = true;
+                if (accumulation_reg.y[28] == 1) green_of = true;
+                if (accumulation_reg.z[28] == 1) blue_of = true;
+            } else {
+                if (accumulation_reg.x[27] == 1) red_of = true;
+                if (accumulation_reg.y[27] == 1) green_of = true;
+                if (accumulation_reg.z[27] == 1) blue_of = true;
             }
+            // }
         }
         if (red_of) accumulation_reg.x = max_value;
         if (green_of) accumulation_reg.y = max_value;
@@ -54,24 +76,24 @@ void run(ac_channel<img_params> &accumulator_parms,
         rgb_out pre_output_reg;
         // ac_int<4, false> bit_offset; // USE THIS BIT OFFSET FOR BIT SLICING/BIT SHIFTING INSTEAD OF THE 4 CASES 
         if (tmp_params.samp_per_pxl == 3){
-            rounded_accuracy_col.x = accumulation_reg.x.slc<15>(18); // bits [32:18]
-            rounded_accuracy_col.y = accumulation_reg.y.slc<15>(18);
-            rounded_accuracy_col.z = accumulation_reg.z.slc<15>(18);
+            rounded_accuracy_col.x.set_slc(0, accumulation_reg.x.slc<15>(18)); // bits [32:18]
+            rounded_accuracy_col.y.set_slc(0, accumulation_reg.y.slc<15>(18));
+            rounded_accuracy_col.z.set_slc(0, accumulation_reg.z.slc<15>(18));
         }
         else if (tmp_params.samp_per_pxl == 2){
-            rounded_accuracy_col.x = accumulation_reg.x.slc<15>(16); // bits [30:16]
-            rounded_accuracy_col.y = accumulation_reg.y.slc<15>(16);
-            rounded_accuracy_col.z = accumulation_reg.z.slc<15>(16);
+            rounded_accuracy_col.x.set_slc(0, accumulation_reg.x.slc<15>(16)); // bits [30:16]
+            rounded_accuracy_col.y.set_slc(0, accumulation_reg.y.slc<15>(16));
+            rounded_accuracy_col.z.set_slc(0, accumulation_reg.z.slc<15>(16));
         }
         else if (tmp_params.samp_per_pxl == 1){
-            rounded_accuracy_col.x = accumulation_reg.x.slc<15>(14); // bits [28:14]
-            rounded_accuracy_col.y = accumulation_reg.y.slc<15>(14);
-            rounded_accuracy_col.z = accumulation_reg.z.slc<15>(14);              
+            rounded_accuracy_col.x.set_slc(0, accumulation_reg.x.slc<15>(14)); // bits [28:14]
+            rounded_accuracy_col.y.set_slc(0, accumulation_reg.y.slc<15>(14));
+            rounded_accuracy_col.z.set_slc(0, accumulation_reg.z.slc<15>(14));              
         }
         else {
-            rounded_accuracy_col.x = accumulation_reg.x.slc<15>(13); // bits [28:13]
-            rounded_accuracy_col.y = accumulation_reg.y.slc<15>(13);
-            rounded_accuracy_col.z = accumulation_reg.z.slc<15>(13);             
+            rounded_accuracy_col.x.set_slc(0, accumulation_reg.x.slc<15>(13)); // bits [28:13]
+            rounded_accuracy_col.y.set_slc(0, accumulation_reg.y.slc<15>(13));
+            rounded_accuracy_col.z.set_slc(0, accumulation_reg.z.slc<15>(13));             
         }
 
         vec3<ac_fixed<15, 1, false>> gamme_corrected;
