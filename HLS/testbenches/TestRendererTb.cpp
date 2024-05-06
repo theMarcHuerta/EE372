@@ -190,7 +190,7 @@ CCS_MAIN(int argc, char** argv) {
         for (int i = 0; i < image_width; ++i) {
             cpp_vec3 pixel_color(0,0,0);
             for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
-                pixel_color += cam.ray_color(cpp_rays[j*image_width + i * cam.samples_per_pixel + sample], 8, world);
+                pixel_color += cam.ray_color(cpp_rays[j*(image_width*cam.samples_per_pixel) + i * cam.samples_per_pixel + sample], 8, world);
             }
             cpp_color_out.push_back(pixel_color);
         }

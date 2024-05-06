@@ -190,7 +190,7 @@ CCS_MAIN(int argc, char** argv) {
         for (int i = 0; i < image_width; ++i) {
             cpp_vec3 pixel_color(0,0,0);
             for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
-                pixel_color += cam.ray_color(cpp_rays[j*image_width + i * cam.samples_per_pixel + sample], 8, world);
+                pixel_color += cam.ray_color(cpp_rays[j*(image_width*cam.samples_per_pixel) + i * cam.samples_per_pixel + sample], 8, world);
             }
             cpp_color_out.push_back(pixel_color);
         }
@@ -234,7 +234,7 @@ CCS_MAIN(int argc, char** argv) {
                 }
 
                 params_in.write(params_in_obj);
-                ray_in.write(HLS_rays[j*image_width + i * cam.samples_per_pixel + sample]);
+                ray_in.write(HLS_rays[j*(image_width*cam.samples_per_pixel) + i * cam.samples_per_pixel + sample]);
 
                 core.run(quads_in, ray_in, params_in, output_pxl_serial);
 
@@ -278,8 +278,9 @@ CCS_MAIN(int argc, char** argv) {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    printf("Getting results\n");
     uint64_t mismatches = 0;
-    uint64_t tot_intersection_tests = cpp_rays.size();
+    uint64_t tot_intersection_tests = HLS_color_out.size();
     uint64_t testss = 0;
     int captures = 0;
     int captures_cpp = 0;
