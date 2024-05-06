@@ -60,6 +60,13 @@ class RayGeneration
         rayDiff.run(pixelSample, tmp_ray.orig, tmp_ray.dir);  // Direction from camera to sampled point.
 
         tmp_ray.camera_ray = true;
+        
+        // #ifndef __SYNTHESIS__
+        // int cur_num = 240*(tmp_indices.y_pxl).to_double()*32 + (tmp_indices.x_pxl).to_double()*32 + (tmp_indices.cur_samp).to_double();
+        // if (cur_num % 320 == 0)
+        //   std::cout << "Ray " << cur_num << std::endl;
+        // #endif
+        
 
         rayOut.write(tmp_ray);
         paramsOut.write(boc);

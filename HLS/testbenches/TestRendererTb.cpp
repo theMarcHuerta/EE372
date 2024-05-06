@@ -243,11 +243,13 @@ CCS_MAIN(int argc, char** argv) {
 
     render_params.write(params_in);
 
-    for (int i = 0; i < cpp_rays.size(); i++){
-        for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
-            for (int bounces = 0; bounces < 8; bounces++){
-                for (int quad_num = 0; quad_num < cpp_quads.size(); quad_num++){
-                    quads_in.write(HLS_quads[quad_num]);
+    for (int j = 0; j < image_height; ++j) {
+        for (int i = 0; i < image_width; ++i) {
+            for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
+                for (int bounces = 0; bounces < 8; bounces++){
+                    for (int quad_num = 0; quad_num < HLS_quads.size(); quad_num++){
+                        quads_in.write(HLS_quads[quad_num]);
+                    }
                 }
             }
         }
@@ -300,8 +302,9 @@ CCS_MAIN(int argc, char** argv) {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    printf("Getting results\n");
     uint64_t mismatches = 0;
-    uint64_t tot_intersection_tests = cpp_rays.size();
+    uint64_t tot_intersection_tests = HLS_color_out.size();
     uint64_t testss = 0;
     int captures = 0;
     int captures_cpp = 0;

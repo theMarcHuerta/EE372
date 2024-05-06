@@ -56,9 +56,10 @@ void run(ac_channel<img_params> &render_params,
                     loopIndicesOut.write(temp_idxs); 
                     if (samps == smp_p_pxl) break;
                 }
-                if (fx == tmp_params.image_width) break;
+                // std::cout << "Pixel " << 240*fy + fx << std::endl;
+                if (fx == tmp_params.image_width-1) break;
             }
-            if (fy == tmp_params.image_height) break;
+            if (fy == tmp_params.image_height-1) break;
         }
     }
 };

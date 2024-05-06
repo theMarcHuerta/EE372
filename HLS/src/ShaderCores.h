@@ -22,6 +22,11 @@ public:
     while(params_in.available(1))
     #endif
     {
+      // nums += 1;
+      // #ifndef __SYNTHESIS__
+      // if (nums % 320 == 0)
+      //   std::cout << "Pixel " << nums << std::endl;
+      // #endif
 
       attenuation_chan1.write(shader1_atten);
       accumalated_color_chan1.write(shader1_color);
@@ -78,6 +83,8 @@ private:
 
   ac_channel<rgb_in> attenuation_chan1;
   ac_channel<rgb_in> attenuation_chan2;
+
+  // int nums = 0;
 
 };
 
