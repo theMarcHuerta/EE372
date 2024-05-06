@@ -446,6 +446,34 @@ void write_color(std::ostream &out, cpp_vec3 pixel_color, int samples_per_pixel)
         << static_cast<int>(256 * intensity.clamp(b)) << '\n';
 }
 
+// Outputs a color to an ostream, applying gamma correction and averaging over samples per pixel.
+cpp_vec3 scale_and_clamp_color(cpp_vec3 pixel_color, int samples_per_pixel) {
+    auto r = pixel_color.x();
+    auto g = pixel_color.y();
+    auto b = pixel_color.z();
+
+
+    // std::cout << pixel_color * 255 << std::endl;
+    // Average the color by the number of samples to reduce noise (Anti-aliasing).
+    auto scale = 1.0 / samples_per_pixel;
+    r *= scale;
+    g *= scale;
+    b *= scale;
+
+    // Apply gamma correction (simplified form for gamma=2.0).
+    r = linear_to_gamma(r);
+    g = linear_to_gamma(g);
+    b = linear_to_gamma(b);
+
+    // Convert to integer [0,255] and output.
+    static const interval intensity(0.000, 0.999);  // Clamps color to prevent overflow.
+    auto rc = static_cast<int>(256 * intensity.clamp(r));
+    auto gc = static_cast<int>(256 * intensity.clamp(g));
+    auto bc = static_cast<int>(256 * intensity.clamp(b));
+
+    return cpp_vec3(rc, gc, bc);
+}
+
  /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
