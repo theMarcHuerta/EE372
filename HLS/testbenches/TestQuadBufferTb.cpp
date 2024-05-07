@@ -156,34 +156,36 @@ CCS_MAIN(int argc, char** argv) {
 
     for (int y = 0; y < image_height; y++) {
         for (int x = 0; x < image_width; x++) {
-            for (int i = 0; i < spp; i++) {
-                for (int j = 0; j < params_in.num_quads; j++) {
-                    quad_hittable q_out = quads_out.read();
+            for (int samps = 0; samps < spp; samps++) {
+                for (int bounces = 0; bounces < 8; bounces++) {
+                    for (int j = 0; j < params_in.num_quads; j++) {
+                        quad_hittable q_out = quads_out.read();
 
-                    // compare all quad data
-                    if ((q_out.corner_pt.x != quads[j].corner_pt.x) ||
-                        (q_out.corner_pt.y != quads[j].corner_pt.y) ||
-                        (q_out.corner_pt.z != quads[j].corner_pt.z) ||
-                        (q_out.u.x != quads[j].u.x) ||
-                        (q_out.u.y != quads[j].u.y) ||
-                        (q_out.u.z != quads[j].u.z) ||
-                        (q_out.v.x != quads[j].v.x) ||
-                        (q_out.v.y != quads[j].v.y) ||
-                        (q_out.v.z != quads[j].v.z) ||
-                        (q_out.mat_type != quads[j].mat_type) ||
-                        (q_out.is_invis != quads[j].is_invis) ||
-                        (q_out.normal.x != quads[j].normal.x) ||
-                        (q_out.normal.y != quads[j].normal.y) ||
-                        (q_out.normal.z != quads[j].normal.z) ||
-                        (q_out.w.x != quads[j].w.x) ||
-                        (q_out.w.y != quads[j].w.y) ||
-                        (q_out.w.z != quads[j].w.z) ||
-                        (q_out.d_plane != quads[j].d_plane) ||
-                        (q_out.quad_color.r != quads[j].quad_color.r) ||
-                        (q_out.quad_color.g != quads[j].quad_color.g) ||
-                        (q_out.quad_color.b != quads[j].quad_color.b)) {
-                            mismatches++;
-                        }
+                        // compare all quad data
+                        if ((q_out.corner_pt.x != quads[j].corner_pt.x) ||
+                            (q_out.corner_pt.y != quads[j].corner_pt.y) ||
+                            (q_out.corner_pt.z != quads[j].corner_pt.z) ||
+                            (q_out.u.x != quads[j].u.x) ||
+                            (q_out.u.y != quads[j].u.y) ||
+                            (q_out.u.z != quads[j].u.z) ||
+                            (q_out.v.x != quads[j].v.x) ||
+                            (q_out.v.y != quads[j].v.y) ||
+                            (q_out.v.z != quads[j].v.z) ||
+                            (q_out.mat_type != quads[j].mat_type) ||
+                            (q_out.is_invis != quads[j].is_invis) ||
+                            (q_out.normal.x != quads[j].normal.x) ||
+                            (q_out.normal.y != quads[j].normal.y) ||
+                            (q_out.normal.z != quads[j].normal.z) ||
+                            (q_out.w.x != quads[j].w.x) ||
+                            (q_out.w.y != quads[j].w.y) ||
+                            (q_out.w.z != quads[j].w.z) ||
+                            (q_out.d_plane != quads[j].d_plane) ||
+                            (q_out.quad_color.r != quads[j].quad_color.r) ||
+                            (q_out.quad_color.g != quads[j].quad_color.g) ||
+                            (q_out.quad_color.b != quads[j].quad_color.b)) {
+                                mismatches++;
+                            }
+                    }
                 }
             }
         }
