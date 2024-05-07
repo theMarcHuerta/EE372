@@ -22,18 +22,18 @@ public:
                         ac_channel<ray> &ray_out
                         )
     {   
-    #ifndef __SYNTHESIS__
-    while(params_in.available(1))
-    #endif
-    {
-        // #ifndef __SYNTHESIS__
-        // std::cout << "failed in check 2 "<< std::endl;
-        // #endif
+    // #ifndef __SYNTHESIS__
+    // while(params_in.available(1))
+    // #endif
+    // {
+        #ifndef __SYNTHESIS__
+        std::cout << "Running Shader OP "<< std::endl;
+        #endif
         worldHit.hit(ray_in, params_in, quad_in, attenuation_chan_in, accumalated_color_chan_in, 
                      attenuation_chan_through, accumalated_color_through, worldRec, rayToScatter, isWorldHit);
         materialScatter.scatter(rayToScatter, worldRec, attenuation_chan_through, accumalated_color_through, isWorldHit,
                                  attenuation_chan_out, accumalated_color_out, ray_out);
-    }
+    // }
     }
 private:
     WorldHit worldHit;

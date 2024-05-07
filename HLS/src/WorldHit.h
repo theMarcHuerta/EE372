@@ -26,15 +26,19 @@ public:
              ac_channel<bool> &isHit
              ) 
     {
-    #ifndef __SYNTHESIS__
-    while(params_in.available(1))
-    #endif
-    {
+    // #ifndef __SYNTHESIS__
+    // while(params_in.available(1))
+    // #endif
+    // {
+
         buffer_obj_count tmp_params;
         tmp_params = params_in.read();
 
         ray ray_temp;
         ray_temp = ray_in.read(); 
+        #ifndef __SYNTHESIS__
+        std::cout << "Read Ray from Mem Controller"<< std::endl;
+        #endif
 
         rgb_in tmp_color_in;
         tmp_color_in = accumalated_color_chan_in.read();
@@ -88,7 +92,7 @@ public:
         ray_temp.camera_ray = false;
         ray_out.write(ray_temp);
         attenuation_chan_out.write(tmp_accum_in);
-    }
+    // }
     }
 
 private:
