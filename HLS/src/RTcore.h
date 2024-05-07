@@ -155,12 +155,16 @@ struct buffer_params {
 struct buffer_obj_count {
   int_11          num_quads;
   rgb_in          background;
+  bool            firstsamp;
+  bool            lastsamp;
  };
 
 struct LoopIndices{
   uint_11 x_pxl;
   uint_11 y_pxl;
   uint_11 cur_samp;
+  bool firstsamp;
+  bool lastsamp;
 };
 
 template<typename T, int N>

@@ -214,6 +214,8 @@ CCS_MAIN(int argc, char** argv) {
 
     params_in_obj.num_quads = HLS_quads.size();
     params_in_obj.background = {0.0, 0.0, 0.0};
+    params_in_obj.lastsamp == false;
+    params_in_obj.firstsamp == true;
 
     printf("Running HLS C design\n");
 
@@ -225,7 +227,6 @@ CCS_MAIN(int argc, char** argv) {
 
     for (int j = 0; j < image_height; ++j) {
         for (int i = 0; i < image_width; ++i) {
-            rgb_in accum_col = {0, 0, 0};
             for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
                 for (int bounces = 0; bounces < 8; bounces++){
                     for (int quad_num = 0; quad_num < cpp_quads.size(); quad_num++){
@@ -233,10 +234,33 @@ CCS_MAIN(int argc, char** argv) {
                     }
                 }
 
+                if ((j == 0) && (i == 0) && (sample == 0)){
+                    params_in_obj.firstsamp == true;
+                }
+                else {
+                    params_in_obj.firstsamp == false;
+                }
+                
+                if ((j == image_height-1) && (i == image_width-1) && (sample == cam.samples_per_pixel-1)){
+                params_in_obj.lastsamp == true;
                 params_in.write(params_in_obj);
-                ray_in.write(HLS_rays[j*(image_width*cam.samples_per_pixel) + i * cam.samples_per_pixel + sample]);
+                }
 
-                core.run(quads_in, ray_in, params_in, output_pxl_serial);
+                for (int i = 0; i < 8; i++){
+                params_in.write(params_in_obj);
+                }
+
+                ray_in.write(HLS_rays[j*(image_width*cam.samples_per_pixel) + i * cam.samples_per_pixel + sample]);
+            }
+        }
+    }
+
+    core.run(quads_in, ray_in, params_in, output_pxl_serial);
+
+    for (int j = 0; j < image_height; ++j) {
+        for (int i = 0; i < image_width; ++i) {
+            rgb_in accum_col = {0, 0, 0};
+            for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
 
                 rgb_in tmp_out = output_pxl_serial.read();
 
@@ -288,7 +312,7 @@ CCS_MAIN(int argc, char** argv) {
 
     uint64_t avg_px_cpp = 0;
     uint64_t avg_px_hls = 0;
-    std::string filenme = "hls_image.ppm";
+    std::string filenme = "hls_image_new_core.ppm";
 
     for (int i = 0; i < tot_intersection_tests; i++){
         testss++;

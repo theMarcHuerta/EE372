@@ -312,7 +312,7 @@ CCS_MAIN(int argc, char** argv) {
 
     uint64_t avg_px_cpp = 0;
     uint64_t avg_px_hls = 0;
-    std::string filenme = "hls_image_renderer.ppm";
+    std::string filenme = "hls_image_renderer_new.ppm";
 
     for (int i = 0; i < tot_intersection_tests; i++){
         testss++;
