@@ -1,5 +1,5 @@
-#ifndef TESTRAYGEN_H
-#define TESTRAYGEN_H
+#ifndef TESTPIXELACCUM_H
+#define TESTPIXELACCUM_H
 
 #ifdef __SYNTHESIS__
     #define LABEL(x) x:

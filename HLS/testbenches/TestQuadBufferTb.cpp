@@ -9,7 +9,7 @@
 #include <ac_math.h>
 #include <ac_channel.h>
 
-#include "TestPixelAccum.cpp"
+#include "TestQuadBuffer.cpp"
 #include "../src/path_tracer_gold_model/camera.h"
 #include "read_stimulus.cpp"
 
@@ -45,14 +45,14 @@ CCS_MAIN(int argc, char** argv) {
     box(point3(265,0,275), point3(430,330,420), 0, white, 14, world);
     box(point3(105,0,85), point3(260,165,235), 0, white, -18, world);
 
-    int image_height = 240;
-    int image_width = 240;
+    int image_height = 30;
+    int image_width = 30;
 
     camera cam;
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = image_height;
-    cam.samples_per_pixel = 2;
+    cam.samples_per_pixel = 0;
     cam.max_depth         = 1;
     cam.background        = cpp_vec3(0,0,0);
 
@@ -62,53 +62,54 @@ CCS_MAIN(int argc, char** argv) {
     cam.vup      = cpp_vec3(0,1,0);
     cam.initialize();
 
-    // vectors of random rgb_in values to use in both cpp test and hls test
-    int spp = 256;
-    int num_tests = 20000;
-    std::vector<std::vector<rgb_in>> samples(num_tests);
+    int spp = (cam.samples_per_pixel == 0) ? 32 :
+              (cam.samples_per_pixel == 1) ? 64 :
+              (cam.samples_per_pixel == 2) ? 256 : 1024;
 
-    // generate random values to accumulate
-    cout << "Generating RGB samples" << endl;
-    for (int accum_tests = 0; accum_tests < num_tests; accum_tests++) {
-        // create random sample vales for both cpp and hls design
-        for (int i = 0; i < spp; i++) {
-            double r_d = random_double();
-            double g_d = random_double();
-            double b_d = random_double();
+    // vector of hls quad hittables to compare with output of buffer
+    std::vector<quad_hittable> quads;
 
-            rgb_in sample;
-            sample.r = r_d;
-            sample.g = g_d;
-            sample.b = b_d;
+    // ac channel of quads to be used as HLS input
+    ac_channel<quad_hittable> quad_chan_in;
 
-            samples[accum_tests].push_back(sample);
-        }
-    }
+    // populate quad hittable vector with quads added to world in previous section
+    for (int i = 0; i < world.size(); i++) {
+        quad_hittable q;
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////           Run C++ model         ///////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+        q.corner_pt.x = world[i]->Q.x();
+        q.corner_pt.y = world[i]->Q.y();
+        q.corner_pt.z = world[i]->Q.z();
 
-    printf("Running C++ design\n");
+        q.u.x = world[i]->u.x();
+        q.u.y = world[i]->u.y();
+        q.u.z = world[i]->u.z();
 
-    std::vector<cpp_vec3> cpp_results;
+        q.v.x = world[i]->v.x();
+        q.v.y = world[i]->v.y();
+        q.v.z = world[i]->v.z();
 
-    // accumulate samples
-    for (int i = 0; i < num_tests; i++) {
+        q.mat_type = world[i]->mat;
+        q.is_invis = world[i]->invis;
 
-        cpp_vec3 accumulated_color;
-        for (int j = 0; j < spp; j++) {
-            accumulated_color.e[0] += samples[i][j].r.to_double();
-            accumulated_color.e[1] += samples[i][j].g.to_double();
-            accumulated_color.e[2] += samples[i][j].b.to_double();
-        }
+        q.normal.x = world[i]->normal.x();
+        q.normal.y = world[i]->normal.y();
+        q.normal.z = world[i]->normal.z();
 
-        cpp_results.push_back(scale_and_clamp_color(accumulated_color, spp));
+        q.w.x = world[i]->w.x();
+        q.w.y = world[i]->w.y();
+        q.w.z = world[i]->w.z();
+
+        q.d_plane = world[i]->D;
+
+        q.quad_color.r = world[i]->obj_color.x();        
+        q.quad_color.g = world[i]->obj_color.y();
+        q.quad_color.b = world[i]->obj_color.z();
+
+        // add to cpp result vector
+        quads.push_back(q);
+
+        // add to hls input channel
+        quad_chan_in.write(q);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,51 +121,26 @@ CCS_MAIN(int argc, char** argv) {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    TestPixelAccum inst;
+    TestQuadBuffer inst;
 
     // create img_params for HLS design
-    img_params params_in;
+    buffer_params params_in;
 
-    params_in.num_quads = 5;
+    params_in.num_quads = quads.size();
     params_in.samp_per_pxl = cam.samples_per_pixel;
-    params_in.background = {0.0, 0.0, 0.0};
     params_in.image_height = image_height;
     params_in.image_width = image_width;
 
-    params_in.center.x = cam.lookfrom.x();
-    params_in.center.y = cam.lookfrom.y();
-    params_in.center.z = cam.lookfrom.z();
+    ac_channel<buffer_params> params_in_channel;
+    params_in_channel.write(params_in);
 
-    params_in.pixel00_loc.x = cam.pixel00_loc.x();
-    params_in.pixel00_loc.y = cam.pixel00_loc.y();
-    params_in.pixel00_loc.z = cam.pixel00_loc.z();
-
-    params_in.pixel_delta_u.x = cam.pixel_delta_u.x();
-    params_in.pixel_delta_u.y = cam.pixel_delta_u.y();
-    params_in.pixel_delta_u.z = cam.pixel_delta_u.z();
-
-    params_in.pixel_delta_v.x = cam.pixel_delta_v.x();
-    params_in.pixel_delta_v.y = cam.pixel_delta_v.y();
-    params_in.pixel_delta_v.z = cam.pixel_delta_v.z();
-
-    ac_channel<img_params> params_in_channel;
-
-    ac_channel<rgb_in> rgb_sample_channel;    
-
-    // output channels
-    ac_channel<rgb_out> rgb_out_channel;
+    // output quad channel
+    ac_channel<quad_hittable> quads_out;
 
     printf("Running HLS design\n");
-    // populate input channels
-    for (int i = 0; i < num_tests; i++) {
-        params_in_channel.write(params_in);
-        for (int j = 0; j < spp; j++) {
-            rgb_sample_channel.write(samples[i][j]);
-        }
-    }
 
     // run the design
-    inst.run(params_in_channel, rgb_sample_channel, rgb_out_channel);
+    inst.run(quad_chan_in, params_in_channel, quads_out);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -178,20 +154,42 @@ CCS_MAIN(int argc, char** argv) {
     // uint64_t num_rays_generated = image_height*image_width;
     uint64_t mismatches = 0;
 
-    for (int i = 0; i < num_tests; i++){
-        // read in HLS output
-        rgb_out hls_out = rgb_out_channel.read();
-        if (std::abs(hls_out.r.to_int() - cpp_results[i].x() >= 1e-6) ||
-            std::abs(hls_out.g.to_int() - cpp_results[i].y() >= 1e-6) ||
-            std::abs(hls_out.b.to_int() - cpp_results[i].z() >= 1e-6)) {
+    for (int y = 0; y < image_height; y++) {
+        for (int x = 0; x < image_width; x++) {
+            for (int i = 0; i < spp; i++) {
+                for (int j = 0; j < params_in.num_quads; j++) {
+                    quad_hittable q_out = quads_out.read();
 
-            mismatches++;
-            cout << "Mismatch at iteration " << i << endl;
+                    // compare all quad data
+                    if ((q_out.corner_pt.x != quads[j].corner_pt.x) ||
+                        (q_out.corner_pt.y != quads[j].corner_pt.y) ||
+                        (q_out.corner_pt.z != quads[j].corner_pt.z) ||
+                        (q_out.u.x != quads[j].u.x) ||
+                        (q_out.u.y != quads[j].u.y) ||
+                        (q_out.u.z != quads[j].u.z) ||
+                        (q_out.v.x != quads[j].v.x) ||
+                        (q_out.v.y != quads[j].v.y) ||
+                        (q_out.v.z != quads[j].v.z) ||
+                        (q_out.mat_type != quads[j].mat_type) ||
+                        (q_out.is_invis != quads[j].is_invis) ||
+                        (q_out.normal.x != quads[j].normal.x) ||
+                        (q_out.normal.y != quads[j].normal.y) ||
+                        (q_out.normal.z != quads[j].normal.z) ||
+                        (q_out.w.x != quads[j].w.x) ||
+                        (q_out.w.y != quads[j].w.y) ||
+                        (q_out.w.z != quads[j].w.z) ||
+                        (q_out.d_plane != quads[j].d_plane) ||
+                        (q_out.quad_color.r != quads[j].quad_color.r) ||
+                        (q_out.quad_color.g != quads[j].quad_color.g) ||
+                        (q_out.quad_color.b != quads[j].quad_color.b)) {
+                            mismatches++;
+                        }
+                }
+            }
         }
     }
 
     cout << "Test Completed with " << mismatches << " mismatches" << endl;
-    cout << "Number of Tests " << num_tests << endl;
     CCS_RETURN(0);
     
 }

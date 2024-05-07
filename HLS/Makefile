@@ -38,15 +38,23 @@ build/PixelAccumulator.v1/rtl.v: src/PixelAccumulator.h
 
 PixelAccumulator: build/PixelAccumulator.v1/rtl.v
 
-build/MemController.v1/rtl.v: src/MemController.h
-	$(CATAPULT) -shell -file scripts/MemController.tcl
-
-MemController: build/MemController.v1/rtl.v
-
-build/ShaderCores.v1/rtl.v: build/Shader.v1/rtl.v build/MemController.v1/rtl.v src/ShaderCores.h
+build/ShaderCores.v1/rtl.v: build/Shader.v1/rtl.v src/ShaderCores.h
 	$(CATAPULT) -shell -file scripts/ShaderCores.tcl
 
 ShaderCores: build/ShaderCores.v1/rtl.v
+
+build/Render*.v1/rtl.v: build/ShaderCores.v1/rtl.v build/RayGeneration.v1/rtl.v src/Renderer.h
+	$(CATAPULT) -shell -file scripts/Renderer.tcl
+
+Renderer: build/Render*.v1/rtl.v
+
+build/QuadBuffer.v1/rtl.v: src/QuadsBuffer.h
+	$(CATAPULT) -shell -file scripts/QuadBuffer.tcl
+
+QuadBuffer: build/QuadBuffer.v1/rtl.v
+
+build/PathTracer.v1/rtl.v: build/QuadBuffer.v1/rtl.v build/Render*.v1/rtl.v build/PixelAccumulator.v1/rtl.v src/PathTracer.cpp
+	$(CATAPULT) -shell -file scripts/PathTracer.tcl
 
 c_test: test/$(MODULE).v1
 	export MODULE=$(MODULE); \
