@@ -62,8 +62,8 @@ CCS_MAIN(int argc, char** argv) {
     box(point3(265,0,275), point3(430,330,420), 0, white, 14, world);
     box(point3(105,0,85), point3(260,165,235), 0, white, -18, world);
 
-    int image_height = 240;
-    int image_width = 240;
+    int image_height = 30;
+    int image_width = 30;
 
     camera cam;
 
@@ -251,6 +251,10 @@ CCS_MAIN(int argc, char** argv) {
                 ray_in.write(HLS_rays[j*(image_width*cam.samples_per_pixel) + i * cam.samples_per_pixel + sample]);
             }
         }
+    }
+    // for the extra bounce
+    for (int quad_num = 0; quad_num < cpp_quads.size(); quad_num++){
+        quads_in.write(HLS_quads[quad_num]);
     }
 
     core.run(quads_in, ray_in, params_in, output_pxl_serial);

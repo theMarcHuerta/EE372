@@ -28,7 +28,6 @@
 // #define METAL_MIN 1
 // #define METAL_MAX 6
 #define EMISSIVE 1
-#define MAX_SPHERES_IN_BUFFER 80
 #define MAX_QUADS_IN_BUFFER 80
 #define MAX_SAMPS_PER_PIXEL 1024
 #define MAX_IMAGE_WIDTH 2048
@@ -136,8 +135,8 @@ struct img_params {
   int_11          num_quads;
   uint_2          samp_per_pxl; // 32-64-256-1024
   rgb_in           background;
-  uint_10         image_height;   // Height of the image, computed from width and aspect ratio.
-  uint_10         image_width;   // Height of the image, computed from width and aspect ratio.
+  uint_11         image_height;   // Height of the image, computed from width and aspect ratio.
+  uint_11         image_width;   // Height of the image, computed from width and aspect ratio.
   vec3<int_11>        center;         // The position of the camera (same as lookfrom).
   vec3<sfp_11_22>   pixel00_loc;    // Location in space of the top-left pixel.
   vec3<sfp_3_22>   pixel_delta_u;  // Vector to move one pixel to the right on the image plane.
@@ -147,8 +146,8 @@ struct img_params {
 struct buffer_params {
   int_11          num_quads;
   uint_2          samp_per_pxl; // 32-64-256-1024
-  uint_10         image_height;   // Height of the image, computed from width and aspect ratio.
-  uint_10         image_width;   // Height of the image, computed from width and aspect ratio.
+  uint_11         image_height;   // Height of the image, computed from width and aspect ratio.
+  uint_11         image_width;   // Height of the image, computed from width and aspect ratio.
 };
 
 

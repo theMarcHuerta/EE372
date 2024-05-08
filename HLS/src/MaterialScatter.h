@@ -27,9 +27,9 @@ public:
         ray tmp_ray;
         tmp_ray = ray_in.read();
 
-        #ifndef __SYNTHESIS__
-        std::cout << "Read Ray from world hit \n"<< std::endl;
-        #endif
+        // #ifndef __SYNTHESIS__
+        // std::cout << "Read Ray from world hit \n"<< std::endl;
+        // #endif
 
         ray scattered_ray;
 

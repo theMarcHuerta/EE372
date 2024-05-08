@@ -10,7 +10,7 @@ public:
 
     #pragma hls_design interface
     #pragma hls_pipeline_init_interval 1
-    void CCS_BLOCK(run)(ac_channel<quad_hittable> &quads_in, 
+    void CCS_BLOCK(run)(ac_channel<ac_int<12,false>> &quads_in, 
                         ac_channel<buffer_params> &paramsIn,
                         ac_channel<quad_hittable> &quads_out)
     {
@@ -26,8 +26,71 @@ public:
             
             // Writing to buffer
             #pragma hls_pipeline_init_interval 1
-            for (int i = 0; i < params.num_quads; i++) {
-                buffer.data[i] = quads_in.read();
+            for (int i = 0; i < MAX_QUADS_IN_BUFFER-1; i++) {
+                quad_hittable quad_to_sram;
+                // CORNER POINT
+                quad_to_sram.corner_pt.x.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.corner_pt.y.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.corner_pt.z.set_slc(0, (inputChannel.read())<12>(0));
+                // U VECTOR
+                quad_to_sram.u.x.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.u.y.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.u.z.set_slc(0, (inputChannel.read())<12>(0));
+                // V VECTOR
+                quad_to_sram.v.x.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.v.y.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.v.z.set_slc(0, (inputChannel.read())<12>(0));
+                // MATERIAL TYPE
+                quad_to_sram.mat_type.set_slc(0, (inputChannel.read())<3>(0));
+                // IS INVISIBLE
+                ac_int<1,false> isinvis.set_slc(0, (inputChannel.read())<1>(0));
+                quad_to_sram.is_invis = isinvis ? true : false;
+                // NORMAL VECTOR
+                // x
+                quad_to_sram.normal.x.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.normal.x.set_slc(12, (inputChannel.read())<12>(0));
+                quad_to_sram.normal.x.set_slc(24, (inputChannel.read())<2>(0));
+                // y
+                quad_to_sram.normal.y.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.normal.y.set_slc(12, (inputChannel.read())<12>(0));
+                quad_to_sram.normal.y.set_slc(24, (inputChannel.read())<2>(0));
+                // z
+                quad_to_sram.normal.z.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.normal.z.set_slc(12, (inputChannel.read())<12>(0));
+                quad_to_sram.normal.z.set_slc(24, (inputChannel.read())<2>(0));
+                // W VECTOR
+                //x
+                quad_to_sram.w.x.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.w.x.set_slc(12, (inputChannel.read())<12>(0));
+                quad_to_sram.w.x.set_slc(24, (inputChannel.read())<1>(0));
+                // y
+                quad_to_sram.w.y.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.w.y.set_slc(12, (inputChannel.read())<12>(0));
+                quad_to_sram.w.y.set_slc(24, (inputChannel.read())<1>(0));
+                // z
+                quad_to_sram.w.z.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.w.z.set_slc(12, (inputChannel.read())<12>(0));
+                quad_to_sram.w.z.set_slc(24, (inputChannel.read())<1>(0));
+                // D PLANE
+                quad_to_sram.w.d_plane.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.w.d_plane.set_slc(12, (inputChannel.read())<12>(0));
+                quad_to_sram.w.d_plane.set_slc(24, (inputChannel.read())<7>(0));
+                // QUAD COLOR
+                //r
+                quad_to_sram.quad_color.r.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.quad_color.r.set_slc(12, (inputChannel.read())<12>(0));
+                quad_to_sram.quad_color.r.set_slc(24, (inputChannel.read())<3>(0));
+                //g
+                quad_to_sram.quad_color.g.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.quad_color.g.set_slc(12, (inputChannel.read())<12>(0));
+                quad_to_sram.quad_color.g.set_slc(24, (inputChannel.read())<3>(0));
+                //b
+                quad_to_sram.quad_color.b.set_slc(0, (inputChannel.read())<12>(0));
+                quad_to_sram.quad_color.b.set_slc(12, (inputChannel.read())<12>(0));
+                quad_to_sram.quad_color.b.set_slc(24, (inputChannel.read())<3>(0));
+                // end streaming for this quad definition
+                buffer.data[i] = quad_to_sram;
+                if (i == params.num_quads-1) break;
             }
 
             ac_int<11, false> spp;

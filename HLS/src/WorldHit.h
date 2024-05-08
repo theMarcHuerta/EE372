@@ -36,9 +36,9 @@ public:
 
         ray ray_temp;
         ray_temp = ray_in.read(); 
-        #ifndef __SYNTHESIS__
-        std::cout << "Read Ray from Mem Controller"<< std::endl;
-        #endif
+        // #ifndef __SYNTHESIS__
+        // std::cout << "Read Ray from Mem Controller"<< std::endl;
+        // #endif
 
         rgb_in tmp_color_in;
         tmp_color_in = accumalated_color_chan_in.read();

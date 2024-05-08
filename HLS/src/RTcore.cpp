@@ -8,10 +8,12 @@
     #define LABEL(x) {}
 #endif
 
-#include "Serializer.h"
 #include "RTcore.h"
+#include "deserializer.h"
+#include "QuadsBuffer.h"
 #include "Renderer.h"
-#include "Deserializer.h"
+#include "PixelAccumulator.h"
+
 #include <mc_scverify.h>
 
 #include <ac_int.h>
@@ -27,13 +29,12 @@ public:
     RT_core(){}
 
 #pragma hls_design interface
-    void CCS_BLOCK(run)(ac_channel<quad_hittable> &quad_serial, 
-                        ac_channel<int_11> &img_params_in,
+    void CCS_BLOCK(run)(ac_channel<ac_int<12,false>> &input_channel, 
                         ac_channel<rgb_out> &output_pxl_serial)
     {
         // will initialize the variables and all
         // find a way to find max buffer size
-        paramsDeserializer.run(img_params_in, quad_buffer_params, renderer_params, accumulator_params);
+        paramsDeserializer.run(input_channel, quad_buffer_params, renderer_params, accumulator_params, quad_serial);
 
         quadsBuffer.run(quad_serial, quad_buffer_params, quads_out);
 
@@ -49,6 +50,7 @@ private:
     RendererWrapper renderer;
     PixelAccumulator pixelAccumulator;
 
+    ac_channel<ac_int<12,false>> quad_serial;
     ac_channel<quad_hittable> quads_out;
     ac_channel<img_params> renderer_params;
     ac_channel<img_params> accumulator_params;

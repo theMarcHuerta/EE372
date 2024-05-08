@@ -23,10 +23,10 @@ public:
     while(params_in.available(1))
     #endif
     {
-      #ifndef __SYNTHESIS__
-      // if (iter % 320 == 0)
-        std::cout << "in loop " << std::endl;
-      #endif
+      // #ifndef __SYNTHESIS__
+      // // if (iter % 320 == 0)
+      //   std::cout << "in loop " << std::endl;
+      // #endif
       controller.run(ray_in, ray_out1, params_in, accumalated_color_chan2, attenuation_chan2, 
                       ray_into_shader, params_to_shader, accumalated_color_chan1, attenuation_chan1, output_pxl_serial);
       shader1.run(params_to_shader, quads_in, ray_into_shader, attenuation_chan1, accumalated_color_chan1, 
