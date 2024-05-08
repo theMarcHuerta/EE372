@@ -214,8 +214,8 @@ CCS_MAIN(int argc, char** argv) {
 
     params_in_obj.num_quads = HLS_quads.size();
     params_in_obj.background = {0.0, 0.0, 0.0};
-    params_in_obj.lastsamp == false;
-    params_in_obj.firstsamp == true;
+    params_in_obj.lastsamp = false;
+    params_in_obj.firstsamp = true;
 
     printf("Running HLS C design\n");
 
@@ -234,15 +234,13 @@ CCS_MAIN(int argc, char** argv) {
                     }
                 }
 
+                params_in_obj.firstsamp = false;
                 if ((j == 0) && (i == 0) && (sample == 0)){
-                    params_in_obj.firstsamp == true;
-                }
-                else {
-                    params_in_obj.firstsamp == false;
+                    params_in_obj.firstsamp = true;
                 }
                 
                 if ((j == image_height-1) && (i == image_width-1) && (sample == cam.samples_per_pixel-1)){
-                params_in_obj.lastsamp == true;
+                params_in_obj.lastsamp = true;
                 params_in.write(params_in_obj);
                 }
 
