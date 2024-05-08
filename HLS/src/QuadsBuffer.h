@@ -15,31 +15,37 @@ public:
                         ac_channel<quad_hittable> &quads_out)
     {
         // Reading buffer parameters
-        buffer_params params = paramsIn.read();
-        
-        // Temporary storage for quads
-        chanStruct<quad_hittable, size> buffer;
-        
-        // Writing to buffer
-        for (int i = 0; i < params.num_quads; i++) {
-            buffer.data[i] = quads_in.read();
-        }
+        #ifndef __SYNTHESIS__
+        while (paramsIn.available(1))
+        #endif
+        {
+            buffer_params params = paramsIn.read();
+            
+            // Temporary storage for quads
+            chanStruct<quad_hittable, size> buffer;
+            
+            // Writing to buffer
+            #pragma hls_pipeline_init_interval 1
+            for (int i = 0; i < params.num_quads; i++) {
+                buffer.data[i] = quads_in.read();
+            }
 
-        ac_int<11, false> spp;
-        spp = (params.samp_per_pxl == 0) ? 32 :
-              (params.samp_per_pxl == 1) ? 64 :
-              (params.samp_per_pxl == 2) ? 256 : 1024;
+            ac_int<11, false> spp;
+            spp = (params.samp_per_pxl == 0) ? 32 :
+                (params.samp_per_pxl == 1) ? 64 :
+                (params.samp_per_pxl == 2) ? 256 : 1024;
 
-        // Reading from buffer multiple times based on image parameters
-        for (int fy = 0; fy < params.image_height; fy++) {
-            for (int fx = 0; fx < params.image_width; fx++) {
-                for (int samps = 0; samps < spp; samps++) {
-                    for (int bounces = 0; bounces < 8; bounces++){
-                        for (int i = 0; i < params.num_quads; i++) {
-                            quads_out.write(buffer.data[i]);
-                        }
-                    }
-                }
+
+            #define MAXLOOP 2748779069440
+            ac_int<22, false> pixels_in_img = (params.image_height) * (params.image_width);
+            ac_int<33, false> tot_samples_in_img = pixels_in_img * (spp);
+            ac_int<36, false> tot_bounces = (tot_samples_in_img << 3) + 1; // multiply by 8 plus 1 for the extra end case bounce
+            ac_int<43, false> tot_read_requests = (tot_bounces * (params.num_quads)); // multiply by 8
+            // Reading from buffer multiple times based on image parameters
+            #pragma hls_pipeline_init_interval 1
+            for (ac_int<43,false> read_request = 0; read_request < MAXLOOP; read_request += 1){
+                quads_out.write(buffer.data[i]);
+                if (read_request == tot_read_requests-1) break;
             }
         }
     }
