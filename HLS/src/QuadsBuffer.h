@@ -25,11 +25,16 @@ public:
             buffer.data[i] = quads_in.read();
         }
 
+        ac_int<11, false> spp;
+        spp = (params.samp_per_pxl == 0) ? 32 :
+              (params.samp_per_pxl == 1) ? 64 :
+              (params.samp_per_pxl == 2) ? 256 : 1024;
+
         // Reading from buffer multiple times based on image parameters
         for (int fy = 0; fy < params.image_height; fy++) {
             for (int fx = 0; fx < params.image_width; fx++) {
-                for (int samps = 0; samps < params.samp_per_pxl; samps++) {
-                    for (int bounces = 0; bounces < 8; i++){
+                for (int samps = 0; samps < spp; samps++) {
+                    for (int bounces = 0; bounces < 8; bounces++){
                         for (int i = 0; i < params.num_quads; i++) {
                             quads_out.write(buffer.data[i]);
                         }
