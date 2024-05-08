@@ -34,17 +34,18 @@ void run(ac_channel<img_params> &render_params,
         tmp_params = render_params.read();
         ac_int<11, false> smp_p_pxl;
         if (tmp_params.samp_per_pxl == 0){
-            smp_p_pxl = 31;
+            smp_p_pxl = 32;
         }
         else if(tmp_params.samp_per_pxl == 1){
-            smp_p_pxl = 63;
+            smp_p_pxl = 64;
         }
         else if(tmp_params.samp_per_pxl == 2){
-            smp_p_pxl = 255;
+            smp_p_pxl = 256;
         }
         else{
-            smp_p_pxl = 1023;
+            smp_p_pxl = 1024;
         }
+
         for (int fy = 0; fy < MAX_IMAGE_HEIGHT; fy++){
             temp_idxs.y_pxl = fy;
             // one scanline below
@@ -54,7 +55,7 @@ void run(ac_channel<img_params> &render_params,
 
                     if (temp_idxs.x_pxl == tmp_params.image_width-1 && 
                     temp_idxs.y_pxl == tmp_params.image_height-1 && 
-                    temp_idxs.cur_samp == smp_p_pxl){
+                    temp_idxs.cur_samp == smp_p_pxl-1){
                         temp_idxs.lastsamp = true;
                         temp_idxs.firstsamp = false;
                     }
@@ -72,7 +73,7 @@ void run(ac_channel<img_params> &render_params,
                     temp_idxs.cur_samp = samps;
                     render_params_out.write(tmp_params);
                     loopIndicesOut.write(temp_idxs); 
-                    if (samps == smp_p_pxl) break;
+                    if (samps == smp_p_pxl-1) break;
                 }
                 // std::cout << "Pixel " << 240*fy + fx << std::endl;
                 if (fx == tmp_params.image_width-1) break;
