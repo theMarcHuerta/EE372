@@ -50,7 +50,7 @@ private:
     RendererWrapper renderer;
     PixelAccumulator pixelAccumulator;
 
-    ac_channel<ac_int<12,false>> quad_serial;
+    ac_channel<quad_hittable> quad_serial;
     ac_channel<quad_hittable> quads_out;
     ac_channel<img_params> renderer_params;
     ac_channel<img_params> accumulator_params;
