@@ -37,15 +37,18 @@ public:
                 (params.samp_per_pxl == 2) ? 256 : 1024;
 
 
-            #define MAXLOOP 2748779069440
+            #define MAXLOOP 34359738370
             ac_int<22, false> pixels_in_img = (params.image_height) * (params.image_width);
             ac_int<33, false> tot_samples_in_img = pixels_in_img * (spp);
-            ac_int<36, false> tot_bounces = (tot_samples_in_img << 3) + 1; // multiply by 8 plus 1 for the extra end case bounce
-            ac_int<43, false> tot_read_requests = (tot_bounces * (params.num_quads)); // multiply by 8
+            ac_int<36, false> tot_read_requests = (tot_samples_in_img << 3) + 1; // multiply by 8 plus 1 for the extra end case bounce
             // Reading from buffer multiple times based on image parameters
             #pragma hls_pipeline_init_interval 1
             for (ac_int<43,false> read_request = 0; read_request < MAXLOOP; read_request += 1){
-                quads_out.write(buffer.data[i]);
+                #pragma hls_pipeline_init_interval 1
+                for (ac_int<5, false> quad_idx = 0; quad_idx < MAX_QUADS_IN_BUFFER; quad_idx += 1) {
+                    quads_out.write(buffer.data[quad_idx]);
+                    if (quad_idx == params.num_quads-1) break;
+                }
                 if (read_request == tot_read_requests-1) break;
             }
         }
