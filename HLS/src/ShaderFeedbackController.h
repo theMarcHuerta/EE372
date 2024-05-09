@@ -3,7 +3,6 @@
 
 #include "RTcore.h"
 
-
 class ShaderFeedbackController
 {
 public:
@@ -25,10 +24,6 @@ public:
              ac_channel<rgb_in>& output_pxl_serial
             )
     {
-    // #ifndef __SYNTHESIS__
-    // while(params_in.available(1))
-    // #endif
-    // {
 
       buffer_obj_count tmp_params = params_in.read();
       rgb_in tmp_col_in = {0,0,0};

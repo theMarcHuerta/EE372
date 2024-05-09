@@ -58,8 +58,10 @@ build/QuadBuffer.v1/rtl.v: src/QuadsBuffer.h
 
 QuadBuffer: build/QuadBuffer.v1/rtl.v
 
-build/PathTracer.v1/rtl.v: build/QuadBuffer.v1/rtl.v build/Render*.v1/rtl.v build/PixelAccumulator.v1/rtl.v src/PathTracer.cpp
-	$(CATAPULT) -shell -file scripts/PathTracer.tcl
+build/Pathtracer.v1/rtl.v: build/QuadBuffer.v1/rtl.v build/Render*.v1/rtl.v build/PixelAccumulator.v1/rtl.v
+	$(CATAPULT) -shell -file scripts/Pathtracer.tcl
+
+Pathtracer: build/Pathtracer.v1/rtl.v
 
 c_test: test/$(MODULE).v1
 	export MODULE=$(MODULE); \
