@@ -34,7 +34,7 @@ class RayGeneration
         tmp_indices = loopIndicesIn.read();
 
         if (tmp_indices.x_pxl == 0 && tmp_indices.cur_samp == 0 && tmp_indices.y_pxl == 0){
-          boc.first_samp = true;
+          boc.firstsamp = true;
         }
 
         ac_fixed<13,12,true> x_pix = tmp_indices.x_pxl;

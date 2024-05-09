@@ -1,5 +1,5 @@
-#ifndef RENDERER_TOP
-#define RENDERER_TOP
+#ifndef RENDERER_H
+#define RENDERER_H
 
 #include <ac_int.h>
 #include <ac_fixed.h>
