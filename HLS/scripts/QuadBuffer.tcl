@@ -14,7 +14,7 @@ go libraries
 directive set -CLOCKS $clocks
 
 go assembly
-directive set -EFFORT_LEVEL high
+# directive set -EFFORT_LEVEL high
 
 # buffer directives from 272
 # directive set /InputDoubleBuffer<4096,${ARRAY_DIMENSION},${ARRAY_DIMENSION}>/InputDoubleBufferReader<4096,${ARRAY_DIMENSION},${ARRAY_DIMENSION}>/din -WORD_WIDTH [expr ${ARRAY_DIMENSION} * 8]

@@ -22,7 +22,7 @@ directive set /ShaderCores/ShaderFeedbackController -MAP_TO_MODULE "\[Block\] Sh
 directive set /ShaderCores -FIFO_DEPTH 3
 
 go assembly
-directive set -EFFORT_LEVEL high
+# directive set -EFFORT_LEVEL high
 
 go architect
 
