@@ -13,7 +13,7 @@ public:
     
 #pragma hls_design interface
 #pragma hls_pipeline_init_interval 1
-    void run(ac_channel<ray> &ray_in,
+    void CCS_BLOCK(run)(ac_channel<ray> &ray_in,
              ac_channel<ray> &ray_scattered,
              ac_channel<buffer_obj_count> &params_in,
              ac_channel<rgb_in>& color_chan_in,
@@ -31,10 +31,10 @@ public:
     // {
 
       buffer_obj_count tmp_params = params_in.read();
-      rgb_in tmp_col_in;
-      rgb_in tmp_atten_in;
-      ray tmp_ray_in;
-      ray tmp_camera_ray;
+      rgb_in tmp_col_in = {0,0,0};
+      rgb_in tmp_atten_in = {0,0,0};
+      ray tmp_ray_in = {{0,0,0},{0,0,0},false};
+      ray tmp_camera_ray = {{0,0,0},{0,0,0},false};
 
       // if its not the very first iteration of the first sample its safe to read
       // so if its not the first iteration of the first sampe
@@ -44,6 +44,10 @@ public:
         // if its either the first iteration or last special case, we can alwasy write out to chan now
         if ((iter == 0) || ((tmp_params.lastsamp == true) && (iter == 8))){
           output_pxl_serial.write(tmp_col_in);
+          #ifndef __SYNTHESIS__
+          sample += 1;
+          std::cout << "wrote sample: " << sample << std::endl;
+          #endif
         }
       }
 
@@ -81,6 +85,7 @@ private:
   const rgb_in shader1_atten = {1, 1, 1};
   const rgb_in shader1_color = {0, 0, 0};
   ac_int<4, false> iter;
+  int sample = 0;
 };
 
 #endif

@@ -240,32 +240,32 @@ CCS_MAIN(int argc, char** argv) {
                 }
                 
                 if ((j == image_height-1) && (i == image_width-1) && (sample == cam.samples_per_pixel-1)){
-                params_in_obj.lastsamp = true;
-                params_in.write(params_in_obj);
+                    params_in_obj.lastsamp = true;
+                    params_in.write(params_in_obj);
+                    // for the extra bounce
+                    for (int quad_num = 0; quad_num < cpp_quads.size(); quad_num++){
+                        quads_in.write(HLS_quads[quad_num]);
+                    }
                 }
 
                 for (int i = 0; i < 8; i++){
-                params_in.write(params_in_obj);
+                    params_in.write(params_in_obj);
                 }
 
                 ray_in.write(HLS_rays[j*(image_width*cam.samples_per_pixel) + i * cam.samples_per_pixel + sample]);
+
             }
         }
-    }
-    // for the extra bounce
-    for (int quad_num = 0; quad_num < cpp_quads.size(); quad_num++){
-        quads_in.write(HLS_quads[quad_num]);
     }
 
     core.run(quads_in, ray_in, params_in, output_pxl_serial);
 
-    for (int j = 0; j < image_height; ++j) {
-        for (int i = 0; i < image_width; ++i) {
+    for (int j = 0; j < image_height; j++) {
+        for (int i = 0; i < image_width; i++) {
             rgb_in accum_col = {0, 0, 0};
-            for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
+            for (int sample = 0; sample < cam.samples_per_pixel; sample++) {
 
                 rgb_in tmp_out = output_pxl_serial.read();
-
                 ac_fixed<28, 6, false> colx = tmp_out.r +  accum_col.r ;
                 ac_fixed<28, 6, false> coly = tmp_out.g +  accum_col.g ;
                 ac_fixed<28, 6, false> colz = tmp_out.b +  accum_col.b ;
