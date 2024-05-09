@@ -1,4 +1,4 @@
-MODULE ?= RTcore
+MODULE ?= Pathtracer
 
 CATAPULT = /cad/mentor/2019.11/Catapult_Synthesis_10.4b-841621/Mgc_home/bin/catapult
 
@@ -38,7 +38,12 @@ build/PixelAccumulator.v1/rtl.v: src/PixelAccumulator.h
 
 PixelAccumulator: build/PixelAccumulator.v1/rtl.v
 
-build/ShaderCores.v1/rtl.v: build/Shader.v1/rtl.v src/ShaderCores.h
+build/ShaderFeedbackController.v1/rtl.v: src/ShaderFeedbackController.h
+	$(CATAPULT) -shell -file scripts/ShaderFeedbackController.tcl
+
+ShaderFeedbackController: build/ShaderFeedbackController.v1/rtl.v
+
+build/ShaderCores.v1/rtl.v: build/Shader.v1/rtl.v build/ShaderFeedbackController.v1/rtl.v src/ShaderCores.h
 	$(CATAPULT) -shell -file scripts/ShaderCores.tcl
 
 ShaderCores: build/ShaderCores.v1/rtl.v
@@ -53,8 +58,10 @@ build/QuadBuffer.v1/rtl.v: src/QuadsBuffer.h
 
 QuadBuffer: build/QuadBuffer.v1/rtl.v
 
-build/PathTracer.v1/rtl.v: build/QuadBuffer.v1/rtl.v build/Render*.v1/rtl.v build/PixelAccumulator.v1/rtl.v src/PathTracer.cpp
-	$(CATAPULT) -shell -file scripts/PathTracer.tcl
+build/Pathtracer.v1/rtl.v: build/QuadBuffer.v1/rtl.v build/Render*.v1/rtl.v build/PixelAccumulator.v1/rtl.v
+	$(CATAPULT) -shell -file scripts/Pathtracer.tcl
+
+Pathtracer: build/Pathtracer.v1/rtl.v
 
 c_test: test/$(MODULE).v1
 	export MODULE=$(MODULE); \

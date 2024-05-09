@@ -14,7 +14,7 @@ go libraries
 directive set -CLOCKS $clocks
 
 go assembly
-directive set -EFFORT_LEVEL high
+# directive set -EFFORT_LEVEL high
 
 go architect
 

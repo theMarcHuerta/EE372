@@ -22,7 +22,7 @@ directive set /RendererWrapper/RayGeneration -MAP_TO_MODULE "\[Block\] RayGenera
 directive set /RendererWrapper -FIFO_DEPTH 3
 
 go assembly
-directive set -EFFORT_LEVEL high
+# directive set -EFFORT_LEVEL high
 
 go architect
 

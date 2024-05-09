@@ -1,5 +1,5 @@
-#ifndef RENDERER_TOP
-#define RENDERER_TOP
+#ifndef RENDERER_H
+#define RENDERER_H
 
 #include <ac_int.h>
 #include <ac_fixed.h>
@@ -24,7 +24,7 @@ public:
 
 #pragma hls_design interface
 #pragma hls_pipeline_init_interval 1
-void run(ac_channel<img_params> &render_params,
+void CCS_BLOCK(run)(ac_channel<img_params> &render_params,
          ac_channel<img_params> &render_params_out,
          ac_channel<LoopIndices> &loopIndicesOut)
         {
@@ -89,7 +89,7 @@ public:
     RendererWrapper(){}
     
 #pragma hls_design interface
-    void run(ac_channel<quad_hittable> &quads_in, 
+    void CCS_BLOCK(run)(ac_channel<quad_hittable> &quads_in, 
              ac_channel<img_params> &render_params,
              ac_channel<rgb_in> &output_pxl_sample)
     {

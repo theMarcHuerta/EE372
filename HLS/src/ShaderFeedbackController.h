@@ -3,7 +3,6 @@
 
 #include "RTcore.h"
 
-
 class ShaderFeedbackController
 {
 public:
@@ -12,7 +11,7 @@ public:
     }
     
 #pragma hls_design interface
-// #pragma hls_pipeline_init_interval 1
+#pragma hls_pipeline_init_interval 1
     void CCS_BLOCK(run)(ac_channel<ray> &ray_in,
              ac_channel<ray> &ray_scattered,
              ac_channel<buffer_obj_count> &params_in,
@@ -22,21 +21,15 @@ public:
              ac_channel<buffer_obj_count> &params_out,
              ac_channel<rgb_in>& color_chan_out,
              ac_channel<rgb_in>& atten_chan_out,
-             ac_channel<rgb_in>& output_pxl_serial,
-             ac_channel<bool>& last
+             ac_channel<rgb_in>& output_pxl_serial
             )
     {
-    // #ifndef __SYNTHESIS__
-    // while(params_in.available(1))
-    // #endif
-    // {
-    if (iter < 9){
+
       buffer_obj_count tmp_params = params_in.read();
       rgb_in tmp_col_in = {0,0,0};
       rgb_in tmp_atten_in = {0,0,0};
       ray tmp_ray_in = {{0,0,0},{0,0,0},false};
       ray tmp_camera_ray = {{0,0,0},{0,0,0},false};
-      bool tmp_last;
 
       // if its not the very first iteration of the first sample its safe to read
       // so if its not the first iteration of the first sampe
@@ -53,13 +46,6 @@ public:
         }
       }
 
-      if ((tmp_params.lastsamp == true) && (iter == 8)){
-        tmp_last = true;
-      }
-      else{
-        tmp_last = false;
-      }
-
       // these will always be safe to read from and set to under these conditions
       // if it was first pixel first sample first bounce, it will handle the case and set
       // tmp_col_in to 0 accumulated color and on any iterations of 0
@@ -69,29 +55,26 @@ public:
         tmp_col_in = shader1_color;
         tmp_atten_in = shader1_atten;
       }
-      else {
-        ray_in.read();
+
+      // will only equal 8 on the very last iteration of the last pixel sample
+      // but essentially, if its not the
+      if (iter != 0) {
         // will make sure shader 1 gets it's old output 
         // tmp col in already set so dont need to set it again
         tmp_ray_in = ray_scattered.read();
         tmp_atten_in = atten_chan_in.read();
       }
 
-      // if (iter != 8){
-        atten_chan_out.write(tmp_atten_in);
-        color_chan_out.write(tmp_col_in);
-        ray_out.write(tmp_ray_in);
-        params_out.write(tmp_params);
-        last.write(tmp_last);
-      // }
+      atten_chan_out.write(tmp_atten_in);
+      color_chan_out.write(tmp_col_in);
+      ray_out.write(tmp_ray_in);
 
       iter += 1;
       if ((tmp_params.lastsamp == false) && (iter == 8)) iter = 0;
 
-      // if ((tmp_params.lastsamp == true) && (iter == 9)) iter = 0;
+      if ((tmp_params.lastsamp == true) && (iter == 9)) iter = 0;
 
-    // }
-    }
+      params_out.write(tmp_params);
   }
 private:
   const rgb_in shader1_atten = {1, 1, 1};
@@ -101,5 +84,4 @@ private:
 };
 
 #endif
-
 

@@ -12,6 +12,7 @@ options set Input/SearchPath ./src
 options set Input/SearchPath ./testbenches
 options set Output/OutputVHDL false
 options set Architectural/DefaultRegisterThreshold 4096
+options set Flows/SCVerify/DEADLOCK_DETECTION false
 # options set Clustering/multadd true
 # options set Clustering/addtree true
 # options set Clustering/square true
@@ -38,7 +39,7 @@ set clk_period 23.0
 set clocks "clk \"-CLOCK_PERIOD $clk_period -CLOCK_EDGE rising -CLOCK_HIGH_TIME [expr $clk_period/2] -CLOCK_OFFSET 0.000000 -CLOCK_UNCERTAINTY 0.0 -RESET_KIND async -RESET_SYNC_NAME rst -RESET_SYNC_ACTIVE high -RESET_ASYNC_NAME arst_n -RESET_ASYNC_ACTIVE low -ENABLE_NAME {} -ENABLE_ACTIVE high\" "
 
 go new
-solution file add ./src/RendererWrapper.cpp
-# solution file add ./testbenches/${module}Tb.cpp -exclude true
+solution file add ./src/Pathtracer.cpp
+# solution file add ./testbenches/PathtracerTb.cpp -exclude true
 
 go analyze

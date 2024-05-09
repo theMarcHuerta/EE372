@@ -11,7 +11,7 @@ class QuadHit {
   public:
     QuadHit() {}
 
-    #pragma hls_design ccore
+    #pragma hls_design
     void run(ray& r, ac_fixed<47, 17, true>& closest_so_far, quad_hittable& _quad, HitRecord& rec, bool& hitWorld) {        
 
         if (r.camera_ray && _quad.is_invis){

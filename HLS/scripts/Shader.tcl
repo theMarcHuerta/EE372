@@ -22,7 +22,7 @@ directive set /Shader/MaterialScatter -MAP_TO_MODULE "\[Block\] MaterialScatter.
 directive set /Shader -FIFO_DEPTH 3
 
 go assembly
-directive set -EFFORT_LEVEL high
+# directive set -EFFORT_LEVEL high
 
 go architect
 
