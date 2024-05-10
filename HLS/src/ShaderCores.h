@@ -11,8 +11,7 @@ class ShaderCores
 public:
     ShaderCores(){}
     
-#pragma hls_design interface
-#pragma hls_pipeline_init_interval 1
+    #pragma hls_design interface
     void CCS_BLOCK(run)(ac_channel<quad_hittable> &quads_in, 
              ac_channel<ray> &ray_in,
              ac_channel<buffer_obj_count> &params_in,

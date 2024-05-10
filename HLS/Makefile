@@ -23,7 +23,7 @@ build/MaterialScatter.v1/rtl.v: src/MaterialScatter.h
 
 MaterialScatter: build/MaterialScatter.v1/rtl.v
 
-build/Shader.v1/rtl.v: build/WorldHit.v1/rtl.v build/MaterialScatter.v1/rtl.v src/Shader.h
+build/Shader.v1/rtl.v: src/Shader.h
 	$(CATAPULT) -shell -file scripts/Shader.tcl
 
 Shader: build/Shader.v1/rtl.v
@@ -43,12 +43,12 @@ build/ShaderFeedbackController.v1/rtl.v: src/ShaderFeedbackController.h
 
 ShaderFeedbackController: build/ShaderFeedbackController.v1/rtl.v
 
-build/ShaderCores.v1/rtl.v: build/Shader.v1/rtl.v build/ShaderFeedbackController.v1/rtl.v src/ShaderCores.h
+build/ShaderCores.v1/rtl.v: src/ShaderCores.h
 	$(CATAPULT) -shell -file scripts/ShaderCores.tcl
 
 ShaderCores: build/ShaderCores.v1/rtl.v
 
-build/Render*.v1/rtl.v: build/ShaderCores.v1/rtl.v build/RayGeneration.v1/rtl.v src/Renderer.h
+build/Render*.v1/rtl.v: src/Renderer.h
 	$(CATAPULT) -shell -file scripts/Renderer.tcl
 
 Renderer: build/Render*.v1/rtl.v
@@ -58,7 +58,7 @@ build/QuadBuffer.v1/rtl.v: src/QuadsBuffer.h
 
 QuadBuffer: build/QuadBuffer.v1/rtl.v
 
-build/Pathtracer.v1/rtl.v: build/QuadBuffer.v1/rtl.v build/Render*.v1/rtl.v build/PixelAccumulator.v1/rtl.v
+build/Pathtracer.v1/rtl.v:
 	$(CATAPULT) -shell -file scripts/Pathtracer.tcl
 
 Pathtracer: build/Pathtracer.v1/rtl.v
