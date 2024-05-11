@@ -62,14 +62,14 @@ CCS_MAIN(int argc, char** argv) {
     box(point3(265,0,275), point3(430,330,420), 0, white, 14, world);
     box(point3(105,0,85), point3(260,165,235), 0, white, -18, world);
 
-    int image_height = 4;
-    int image_width = 4;
+    int image_height = 480;
+    int image_width = 480;
 
     camera cam;
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = image_height;
-    cam.samples_per_pixel = 32;
+    cam.samples_per_pixel = 256;
     cam.max_depth         = 8;
     cam.background        = cpp_vec3(0,0,0);
 
@@ -213,7 +213,7 @@ CCS_MAIN(int argc, char** argv) {
     img_params params_in;
 
     params_in.num_quads = HLS_quads.size();
-    params_in.samp_per_pxl = 0;
+    params_in.samp_per_pxl = 2;
     params_in.background = {0.0, 0.0, 0.0};
     params_in.image_height = image_height;
     params_in.image_width = image_width;
