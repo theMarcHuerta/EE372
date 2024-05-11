@@ -121,9 +121,6 @@ class QuadHit {
         if (abs_y < rounding_val3) {rec.hit_loc.y = (intersection.y[74] == 1) ? rounding_val_neg3 : rounding_val3;}
         if (abs_z < rounding_val3) {rec.hit_loc.z = (intersection.z[74] == 1) ? rounding_val_neg3 : rounding_val3;}
 
-        
-       
-
         rec.color = _quad.quad_color;
 
         // HitRecord_setNorm<T> setfacenorm; 

@@ -9,9 +9,11 @@
 class Shader
 {
 public:
-    Shader(){}
+    Shader() {
+    }
     
     #pragma hls_design interface
+    //  #pragma hls_pipeline_init_interval 4
     void CCS_BLOCK(run)(ac_channel<buffer_obj_count> &params_in,
                         ac_channel<quad_hittable> &quad_in,
                         ac_channel<ray> &ray_in,
@@ -36,9 +38,10 @@ public:
     // }
     }
 private:
+    bool start;
     WorldHit worldHit;
     MaterialScatter materialScatter;
-
+    // ac_channel<bool> lastthru;
     ac_channel<ray> rayToScatter;
     ac_channel<rgb_in> attenuation_chan_through;
     ac_channel<rgb_in> accumalated_color_through;
