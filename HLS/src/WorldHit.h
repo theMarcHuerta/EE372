@@ -12,7 +12,11 @@ public:
     WorldHit(){start=true;}
     // Function to find the closest hit from channels of quads
     #pragma hls_design interface
+<<<<<<< HEAD
     // #pragma hls_pipeline_init_interval 1
+=======
+    #pragma hls_pipeline_init_interval 1
+>>>>>>> 6b35beecc7aef5f5649b34672c794f19a1d64f51
     void CCS_BLOCK(hit)(ac_channel<ray>& ray_in,
              ac_channel<buffer_obj_count> &params_in,
              ac_channel<quad_hittable>& quads,
@@ -25,10 +29,15 @@ public:
              ac_channel<bool> &isHit
              ) 
     {
+<<<<<<< HEAD
         // accumalated_color_out.write(accumalated_color_chan_in.read());
     
     // if (start){
         buffer_obj_count tmp_params = {0,{0,0,0}, false, false};
+=======
+
+        buffer_obj_count tmp_params;
+>>>>>>> 6b35beecc7aef5f5649b34672c794f19a1d64f51
         tmp_params = params_in.read();
 
         ray ray_temp = {{0,0,0},{0,0,0},false};

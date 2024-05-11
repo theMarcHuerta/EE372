@@ -8,7 +8,7 @@ class ParamsDeserializer{
     ParamsDeserializer(){}
 
     #pragma hls_design interface
-    #pragma hls_pipeline_init_interval 43
+    #pragma hls_pipeline_init_interval 84
     void CCS_BLOCK(run)(ac_channel<ac_int<12,false>> &inputChannel,
                         ac_channel<buffer_params> &qbuffer_params,
                         ac_channel<img_params> &render_params,
@@ -82,8 +82,6 @@ class ParamsDeserializer{
         render_params.write(image_params);
         accum_params.write(image_params);
         
-
-        #pragma hls_pipeline_init_interval 41
         for (int i = 0; i < MAX_QUADS_IN_BUFFER-1; i++) {
             quad_hittable quad_to_sram;
             // CORNER POINT
