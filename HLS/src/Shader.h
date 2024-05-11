@@ -13,7 +13,7 @@ public:
     }
     
     #pragma hls_design interface
-    //  #pragma hls_pipeline_init_interval 4
+    //  #pragma hls_pipeline_init_interval 1
     void CCS_BLOCK(run)(ac_channel<buffer_obj_count> &params_in,
                         ac_channel<quad_hittable> &quad_in,
                         ac_channel<ray> &ray_in,

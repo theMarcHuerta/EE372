@@ -62,8 +62,8 @@ CCS_MAIN(int argc, char** argv) {
     box(point3(265,0,275), point3(430,330,420), 0, white, 14, world);
     box(point3(105,0,85), point3(260,165,235), 0, white, -18, world);
 
-    int image_height = 240;
-    int image_width = 240;
+    int image_height = 4;
+    int image_width = 4;
 
     camera cam;
 
@@ -253,6 +253,10 @@ CCS_MAIN(int argc, char** argv) {
                 }
             }
         }
+    }
+    // for the 9th iteration on the last sample
+    for (int quad_num = 0; quad_num < HLS_quads.size(); quad_num++){
+        quads_in.write(HLS_quads[quad_num]);
     }
 
     render.run(quads_in, render_params, output_pxl_sample);

@@ -9,10 +9,11 @@ class ShaderFeedbackController
 public:
     ShaderFeedbackController(){
       iter = 0;
+      sample = 0;
     }
     
 #pragma hls_design interface
-// #pragma hls_pipeline_init_interval 5
+// #pragma hls_pipeline_init_interval 1
     void CCS_BLOCK(run)(ac_channel<ray> &ray_chan_in,
              ac_channel<ray> &ray_scattered_chan,
              ac_channel<buffer_obj_count> &params_in,
@@ -159,7 +160,7 @@ private:
   const rgb_in shader1_atten = {1, 1, 1};
   const rgb_in shader1_color = {0, 0, 0};
   ac_int<4, false> iter;
-  int sample = 0;
+  int sample;
 };
 
 #endif

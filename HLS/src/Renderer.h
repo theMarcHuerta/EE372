@@ -53,24 +53,15 @@ void CCS_BLOCK(run)(ac_channel<img_params> &render_params,
                 temp_idxs.x_pxl = fx;
                 for (int samps = 0; samps < MAX_SAMPS_PER_PIXEL; samps++){
 
-                    if (temp_idxs.x_pxl == tmp_params.image_width-1 && 
-                    temp_idxs.y_pxl == tmp_params.image_height-1 && 
-                    temp_idxs.cur_samp == smp_p_pxl-1){
+                    if (fx == tmp_params.image_width-1 && 
+                    fy == tmp_params.image_height-1 && 
+                    samps == smp_p_pxl-1){
                         temp_idxs.lastsamp = true;
-                        temp_idxs.firstsamp = false;
-                    }
-                    else if(temp_idxs.x_pxl == 0 && 
-                    temp_idxs.y_pxl == 0 && 
-                    temp_idxs.cur_samp == 0){
-                        temp_idxs.lastsamp = false;
-                        temp_idxs.firstsamp = true;
                     }
                     else {
                         temp_idxs.lastsamp = false;
-                        temp_idxs.firstsamp = false;
                     }
 
-                    temp_idxs.cur_samp = samps;
                     render_params_out.write(tmp_params);
                     loopIndicesOut.write(temp_idxs); 
                     if (samps == smp_p_pxl-1) break;

@@ -33,10 +33,6 @@ class RayGeneration
         LoopIndices tmp_indices;
         tmp_indices = loopIndicesIn.read();
 
-        if (tmp_indices.x_pxl == 0 && tmp_indices.cur_samp == 0 && tmp_indices.y_pxl == 0){
-          boc.firstsamp = true;
-        }
-
         ac_fixed<13,12,true> x_pix = tmp_indices.x_pxl;
         ac_fixed<13,12,true> y_pix = tmp_indices.y_pxl;
 
@@ -72,10 +68,9 @@ class RayGeneration
         // #endif
         
 
-        rayOut.write(tmp_ray);
+        // rayOut.write(tmp_ray);
 
         // let em know this is the first ray
-        boc.firstsamp = tmp_indices.firstsamp;
         boc.lastsamp = tmp_indices.lastsamp;
         // send params 1 extra time on last pixel so that we can get the last pixel out
         // if (tmp_indices.lastsamp){
@@ -85,6 +80,7 @@ class RayGeneration
         for (int i = 0; i < 9; i++){
           if ((i < 8) || ((i == 8) && tmp_indices.lastsamp)) {
             paramsOut.write(boc);
+            rayOut.write(tmp_ray);
           }
         }
       }
