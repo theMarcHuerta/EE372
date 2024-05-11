@@ -36,7 +36,7 @@ class ParamsDeserializer{
         image_params.background.b.set_slc(24, (inputChannel.read()).slc<3>(0)); 
         // IMAGE HEIGHT AND WIDTH /////////////////////////////////////////
         image_params.image_height.set_slc(0, (inputChannel.read()).slc<11>(0));
-        image_params.image_height.set_slc(0, (inputChannel.read()).slc<11>(0));
+        image_params.image_width.set_slc(0, (inputChannel.read()).slc<11>(0));
         // CAMERA CENTER //////////////////////////////////////////////
         image_params.center.x.set_slc(0, (inputChannel.read()).slc<11>(0));
         image_params.center.y.set_slc(0, (inputChannel.read()).slc<11>(0));
