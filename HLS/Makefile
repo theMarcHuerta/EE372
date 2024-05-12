@@ -33,7 +33,7 @@ build/RayGeneration.v1/rtl.v: src/RayGeneration.h
 
 RayGeneration: build/RayGeneration.v1/rtl.v
 
-build/PixelAccumulator.v1/rtl.v: src/PixelAccumulator.h
+build/PixelAccumulator*.v1/rtl.v: src/PixelAccumulator.h
 	$(CATAPULT) -shell -file scripts/PixelAccumulator.tcl
 
 PixelAccumulator: build/PixelAccumulator.v1/rtl.v

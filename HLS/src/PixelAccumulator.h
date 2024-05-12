@@ -3,6 +3,31 @@
 
 #include "RTcore.h"
 
+class PixelAccumulatorLooper
+{
+public:
+    PixelAccumulatorLooper() {}
+
+#pragma hls_design interface
+#pragma hls_pipeline_init_interval 1
+void CCS_BLOCK(run)(ac_channel<img_params> &accumulator_parms,
+         ac_channel<img_params> &accumulator_parms_out)
+        {
+        img_params tmp_params;
+
+        tmp_params = accumulator_parms.read();
+
+        for (int fy = 0; fy < MAX_IMAGE_HEIGHT; fy++){
+            for (int fx = 0; fx < MAX_IMAGE_WIDTH; fx++) {
+
+                accumulator_parms_out.write(tmp_params);
+                
+                if (fx == tmp_params.image_width-1) break;
+            }
+            if (fy == tmp_params.image_height-1) break;
+        }
+    }
+};
 
 class PixelAccumulator
 {
@@ -113,18 +138,24 @@ void CCS_BLOCK(run)(ac_channel<img_params> &accumulator_parms,
     }
 };
 
-// #ifndef __ACCUM__
-// 2 #define __ACCUM__
-// 3 #include <ac_int.h>
-// 4 #include “../../helper_classes/src/log2ceil.h”
-// 5 template<int W, bool S, int N>
-// 6 ac_int<W+LOG2_CEIL<N>::val,S> accumulate(ac_int<W,S> din[N]){
-// 7 ac_int<W+LOG2_CEIL<N>::val,S> acc = 0;
-// 8
-// 9 ACCUM:for(int i=0;i<N;i++){
-// 10 acc += din[i];
-// 11 }
-// 12 return acc;
-// 13 }
+class PixelAccumulatorWrapper
+{
+public:
+    PixelAccumulatorWrapper(){}
+    
+#pragma hls_design interface
+    void CCS_BLOCK(run)(ac_channel<img_params> &accumulator_parms,
+         ac_channel<rgb_in> &pxl_sample,
+         ac_channel<rgb_out> &output_pxl_serial)
+    {
+        pixelAccumulatorLooper.run(accumulator_parms, paramToAccum);
+        pixelAccumulator.run(paramToAccum, pxl_sample, output_pxl_serial);
+    }
+private:
+    PixelAccumulatorLooper pixelAccumulatorLooper;
+    PixelAccumulator pixelAccumulator;
+
+    ac_channel<img_params> paramToAccum;
+};
 
 #endif

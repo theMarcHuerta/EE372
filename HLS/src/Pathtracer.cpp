@@ -32,14 +32,14 @@ class Pathtracer {
 
         renderer.run(quads_out, renderer_params, pxl_sample);
 
-        pixelAccumulator.run(accumulator_params, pxl_sample, output_pxl_serial);
+        pixelAccumulatorWrapper.run(accumulator_params, pxl_sample, output_pxl_serial);
     }
 
   private:
     ParamsDeserializer paramsDeserializer;
     QuadBuffer<MAX_QUADS_IN_BUFFER> quadsBuffer;
     RendererWrapper renderer;
-    PixelAccumulator pixelAccumulator;
+    PixelAccumulatorWrapper pixelAccumulatorWrapper;
 
     ac_channel<quad_hittable> quad_serial;
     ac_channel<quad_hittable> quads_out;

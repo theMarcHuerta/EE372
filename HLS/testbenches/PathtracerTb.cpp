@@ -45,14 +45,14 @@ CCS_MAIN(int argc, char** argv) {
     box(point3(265,0,275), point3(430,330,420), 0, white, 14, world);
     box(point3(105,0,85), point3(260,165,235), 0, white, -18, world);
 
-    int image_height = 100;
-    int image_width = 100;
+    int image_height = 40;
+    int image_width = 40;
 
     camera cam;
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = image_height;
-    cam.samples_per_pixel = 1;
+    cam.samples_per_pixel = 0;
     cam.max_depth         = 1;
     cam.background        = cpp_vec3(0,0,0);
 

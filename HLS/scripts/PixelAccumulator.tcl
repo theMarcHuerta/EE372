@@ -3,7 +3,7 @@ set blockname [file rootname [file tail [info script] ]]
 source scripts/common_no_mod.tcl
 
 directive set -DESIGN_HIERARCHY " 
-    {PixelAccumulator} 
+    {PixelAccumulatorWrapper} 
 "
 
 go compile
