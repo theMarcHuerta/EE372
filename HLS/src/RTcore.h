@@ -29,6 +29,7 @@
 // #define METAL_MAX 6
 #define EMISSIVE 1
 #define MAX_QUADS_IN_BUFFER 80
+#define MAX_QUADS_IN_BUFFER_HALF 40
 #define MAX_SAMPS_PER_PIXEL 1024
 #define MAX_IMAGE_WIDTH 2048
 #define MAX_IMAGE_HEIGHT 2048
@@ -132,7 +133,7 @@ struct pxl_deltas {
 };
 
 struct img_params {
-  int_11          num_quads;
+  uint_11          num_quads;
   uint_2          samp_per_pxl; // 32-64-256-1024
   rgb_in           background;
   uint_11         image_height;   // Height of the image, computed from width and aspect ratio.
@@ -144,7 +145,7 @@ struct img_params {
 };
 
 struct buffer_params {
-  int_11          num_quads;
+  uint_11          num_quads;
   uint_2          samp_per_pxl; // 32-64-256-1024
   uint_11         image_height;   // Height of the image, computed from width and aspect ratio.
   uint_11         image_width;   // Height of the image, computed from width and aspect ratio.
@@ -152,7 +153,7 @@ struct buffer_params {
 
 
 struct buffer_obj_count {
-  int_11          num_quads;
+  uint_11          num_quads;
   rgb_in          background;
   bool            lastsamp;
  };

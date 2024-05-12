@@ -21,10 +21,11 @@ class TestRenderer {
 
     #pragma hls_design interface
     void CCS_BLOCK(run)(ac_channel<quad_hittable> &quads_in, 
+                        ac_channel<quad_hittable>& quads_two,
                         ac_channel<img_params> &render_params,
                         ac_channel<rgb_in> &output_pxl_sample) {
 
-        render.run(quads_in, render_params, output_pxl_sample);
+        render.run(quads_in, quads_two, render_params, output_pxl_sample);
     } 
 
   private:

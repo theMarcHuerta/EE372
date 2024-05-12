@@ -9,13 +9,14 @@
 
 class WorldHit {
 public:
-    WorldHit(){start=true;}
+    WorldHit(){}
     // Function to find the closest hit from channels of quads
     #pragma hls_design interface
     // #pragma hls_pipeline_init_interval 1
     void CCS_BLOCK(hit)(ac_channel<ray>& ray_in,
              ac_channel<buffer_obj_count> &params_in,
              ac_channel<quad_hittable>& quads,
+             ac_channel<quad_hittable>& quads_two,
              ac_channel<rgb_in> &attenuation_chan_in,
              ac_channel<rgb_in> &accumalated_color_chan_in,
              ac_channel<rgb_in> &attenuation_chan_out,
@@ -25,9 +26,7 @@ public:
              ac_channel<bool> &isHit
              ) 
     {
-        // accumalated_color_out.write(accumalated_color_chan_in.read());
     
-    // if (start){
         buffer_obj_count tmp_params = {0,{0,0,0}, false};
         tmp_params = params_in.read();
 
@@ -43,7 +42,10 @@ public:
         // rgb_in color_tbd_out = {0,0,0};
 
         bool quad_hit_anything = false;
+        bool quad_hit_anything_two = false;
+        
         ac_fixed<47, 17, true> closest_so_far_quad = LONGEST_DISTANCE;  // Use t_max from the ray as the initial closest distance
+        ac_fixed<47, 17, true> closest_so_far_quad_two = LONGEST_DISTANCE;  // Use t_max from the ray as the initial closest distance
 
         HitRecord record_out = {{0,0,0}, {0,0,0}, false, 0, {0,0,0}};
         bool isHit_out = false;
@@ -51,6 +53,12 @@ public:
 
         // WE CAN HAVE THE READS HAPPEN IN PARALLEL THEN DECIDE WHICH ONE WAS THE CLOSEST OUT OF ALL QUADS
         // MIGHT BE TOO MUCH AREA AND RELIES ON EVEN SPLIT SO PROBABLY NOT
+        
+        uint_11 quad_max_one = (tmp_params.num_quads) >> 1;
+        uint_11 quad_max_two = tmp_params.num_quads - quad_max_one;
+
+        HitRecord rec_quad = {{0,0,0}, {0,0,0}, false, 0, {0,0,0}};
+        HitRecord rec_quad_two = {{0,0,0}, {0,0,0}, false, 0, {0,0,0}};
         
         // PROBABLY COMBINE LOOPS TO SERIALIZE AND NOT HAVE TO KEEP TRACK OF 2 VARIABLES
         // #pragma hls_pipeline_init_interval 1
@@ -63,16 +71,32 @@ public:
                 quad_hit_anything = true;
                 rec_quad = temp_rec;
             }
-            if (i == (tmp_params.num_quads - 1)) break;
+            if (i == (quad_max_one- 1)) break;
         }
 
-        if (quad_hit_anything) {
-            record_out = rec_quad;
+        for (int j = 0; j < MAX_QUADS_IN_BUFFER; j++) {
+            quad_hittable quad_two = quads_two.read();
+            HitRecord temp_rec_two = {{0,0,0}, {0,0,0}, false, 0, {0,0,0}};
+            bool hitWorld_two = false;
+            ray ray_temp_two = ray_temp;
+            quadInters_two.run(ray_temp_two, closest_so_far_quad_two, quad_two, temp_rec_two, hitWorld_two);
+            if (hitWorld_two) {
+                quad_hit_anything_two = true;
+                rec_quad_two = temp_rec_two;
+            }
+            if (j == (quad_max_two - 1)) break;
+        }
+
+        if (quad_hit_anything | quad_hit_anything_two) {
+            // std::cout << "WAS HIT" << std::endl;
+            if (closest_so_far_quad < closest_so_far_quad_two){
+                record_out = rec_quad;
+            }
+            else {
+                record_out = rec_quad_two;
+            }
             isHit_out = true;
             rgb_color_out = tmp_color_in;
-            // hit_out.write(rec_quad);  // Write the closest hit record to the output channel
-            // isHit.write(true);
-            // accumalated_color_out.write(tmp_color_in);
         }
         else {
             rgb_in colorMulOut = {0,0,0};
@@ -90,9 +114,6 @@ public:
             record_out = empty_rec;
             isHit_out = false;
             rgb_color_out = colorAddOut;
-            // accumalated_color_out.write(colorAddOut);
-            // isHit.write(false);
-            // hit_out.write(empty_rec);  // doesnt really matter which one we write out as long as we write somethign out
         }
         //any ray going out is not a camera ray anymore
 
@@ -103,16 +124,24 @@ public:
         ray_temp.camera_ray = false;
         ray_out.write(ray_temp);
         attenuation_chan_out.write(tmp_accum_in);
-    // }
-    // }
     }
 
 private:
-    bool start;
     QuadHit quadInters;
+    QuadHit quadInters_two;
 
-    HitRecord rec_quad;
-    HitRecord empty_rec = {{0,0,0}, {0,0,0}, false, 0, {0,0,0}};
+    const HitRecord empty_rec = {{0,0,0}, {0,0,0}, false, 0, {0,0,0}};
 };
 
 #endif
+
+
+
+
+
+
+
+
+
+
+

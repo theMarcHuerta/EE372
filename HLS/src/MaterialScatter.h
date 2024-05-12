@@ -20,18 +20,9 @@ public:
                  ac_channel<ray> &ray_out
                  )
     {
-    // accumalated_color_out.write(accumalated_color_chan_in.read());
-    // if (start){
-        // #ifndef __SYNTHESIS__
-        // std::cout << "In Scatter"<< std::endl;
-        // #endif
 
         ray tmp_ray = {{0,0,0},{0,0,0},false};
         tmp_ray = ray_in.read();
-
-        // #ifndef __SYNTHESIS__
-        // std::cout << "Read Ray from world hit \n"<< std::endl;
-        // #endif
 
         ray scattered_ray = {{0,0,0},{0,0,0},false};
 
@@ -61,10 +52,6 @@ public:
             rgb_color_out = tmp_color_in;
             rgb_atten_out = max_atten;
             ray_scattered_out = tmp_ray;
-            // attenuation_chan_out.write(max_atten);
-            // accumalated_color_out.write(tmp_color_in); // color from background is added in worldhit.h
-            // ray_out.write(tmp_ray);
-            // std::cout << "NOT hit on pixel " << pixel << std::endl;
             
         }
         else {
@@ -95,17 +82,11 @@ public:
             rgb_color_out = color_out;
             rgb_atten_out = attenuation_from_scatter;
             ray_scattered_out = scattered_ray;
-            // std::cout << "was hit on pixel " << pixel << std::endl;
-            // attenuation_chan_out.write(attenuation_from_scatter);
-            // ray_out.write(scattered_ray);
-            // accumalated_color_out.write(color_out);
         }
 
         attenuation_chan_out.write(rgb_atten_out);
         ray_out.write(ray_scattered_out);
         accumalated_color_out.write(rgb_color_out);
-
-        pixel+=1;
 
     // }
     }
@@ -114,7 +95,6 @@ private:
 const rgb_in shader1_atten = {1, 1, 1};
     bool start;
     LambertianScatter lambertianScatter;
-    int pixel = 0;
 };
 
 #endif

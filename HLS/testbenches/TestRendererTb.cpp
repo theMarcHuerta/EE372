@@ -62,14 +62,14 @@ CCS_MAIN(int argc, char** argv) {
     box(point3(265,0,275), point3(430,330,420), 0, white, 14, world);
     box(point3(105,0,85), point3(260,165,235), 0, white, -18, world);
 
-    int image_height = 480;
-    int image_width = 480;
+    int image_height = 30;
+    int image_width = 30;
 
     camera cam;
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = image_height;
-    cam.samples_per_pixel = 256;
+    cam.samples_per_pixel = 32;
     cam.max_depth         = 8;
     cam.background        = cpp_vec3(0,0,0);
 
@@ -213,7 +213,7 @@ CCS_MAIN(int argc, char** argv) {
     img_params params_in;
 
     params_in.num_quads = HLS_quads.size();
-    params_in.samp_per_pxl = 2;
+    params_in.samp_per_pxl = 0;
     params_in.background = {0.0, 0.0, 0.0};
     params_in.image_height = image_height;
     params_in.image_width = image_width;
@@ -238,8 +238,14 @@ CCS_MAIN(int argc, char** argv) {
 
     TestRenderer render;
     ac_channel<quad_hittable> quads_in;
+    ac_channel<quad_hittable> quads_two;
     ac_channel<img_params> render_params;
     ac_channel<rgb_in> output_pxl_sample;
+    uint16_t quad_max_one = (HLS_quads.size() >> 1);
+    uint16_t quad_max_two = HLS_quads.size() - quad_max_one;
+
+    std::cout << quad_max_one << std::endl;
+    std::cout << quad_max_two << std::endl;
 
     render_params.write(params_in);
 
@@ -247,20 +253,26 @@ CCS_MAIN(int argc, char** argv) {
         for (int i = 0; i < image_width; ++i) {
             for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
                 for (int bounces = 0; bounces < 8; bounces++){
-                    for (int quad_num = 0; quad_num < HLS_quads.size(); quad_num++){
+                    for (int quad_num = 0; quad_num < quad_max_one; quad_num++){
                         quads_in.write(HLS_quads[quad_num]);
+                    }
+                    for (int quad_num = 0; quad_num < quad_max_two; quad_num++){
+                        quads_two.write(HLS_quads[quad_num+quad_max_one]);
                     }
                 }
             }
         }
     }
     // for the 9th iteration on the last sample
-    for (int quad_num = 0; quad_num < HLS_quads.size(); quad_num++){
+    for (int quad_num = 0; quad_num < quad_max_one; quad_num++){
         quads_in.write(HLS_quads[quad_num]);
     }
+    for (int quad_num = 0; quad_num < quad_max_two; quad_num++){
+        quads_two.write(HLS_quads[quad_num+quad_max_one]);
+    }
 
-    render.run(quads_in, render_params, output_pxl_sample);
-
+    render.run(quads_in, quads_two, render_params, output_pxl_sample);
+    printf("Reading out samples in C design\n");
     for (int j = 0; j < image_height; ++j) {
         for (int i = 0; i < image_width; ++i) {
             rgb_in accum_col = {0, 0, 0};
@@ -268,9 +280,9 @@ CCS_MAIN(int argc, char** argv) {
                 
                 rgb_in tmp_out = output_pxl_sample.read();
 
-                ac_fixed<28, 6, false> colx = tmp_out.r +  accum_col.r ;
-                ac_fixed<28, 6, false> coly = tmp_out.g +  accum_col.g ;
-                ac_fixed<28, 6, false> colz = tmp_out.b +  accum_col.b ;
+                ac_fixed<31, 9, false> colx = tmp_out.r +  accum_col.r ;
+                ac_fixed<31, 9, false> coly = tmp_out.g +  accum_col.g ;
+                ac_fixed<31, 9, false> colz = tmp_out.b +  accum_col.b ;
 
                 if (colx[27] == 1){
                     accum_col.r = 31;
@@ -295,6 +307,7 @@ CCS_MAIN(int argc, char** argv) {
             }
             HLS_color_out.push_back(accum_col);
         }
+        std::cout << "Scanlines Remaining: " << image_height - (j + 1)<< std::endl;
     }
 
 
@@ -316,7 +329,7 @@ CCS_MAIN(int argc, char** argv) {
 
     uint64_t avg_px_cpp = 0;
     uint64_t avg_px_hls = 0;
-    std::string filenme = "hls_image_renderer_new.ppm";
+    // std::string filenme = "hls_image_renderer_new.ppm";
 
     for (int i = 0; i < tot_intersection_tests; i++){
         testss++;
@@ -331,7 +344,7 @@ CCS_MAIN(int argc, char** argv) {
         double tmp_col_z = color_hls.b.to_double();
         cpp_vec3 pxl_col = cpp_vec3(tmp_col_x, tmp_col_y, tmp_col_z);
 
-        write_color(filenme, pxl_col, cam.samples_per_pixel);
+        // write_color(filenme, pxl_col, cam.samples_per_pixel);
 
         bool col_x = isWithinTolerance(color_cpp.e[0],  tmp_col_x, 10.0);
         bool col_y = isWithinTolerance(color_cpp.e[1],  tmp_col_y, 10.0);
@@ -369,8 +382,8 @@ CCS_MAIN(int argc, char** argv) {
     cout << "HLS with color " << captures << endl;
     cout << "cpp with color " << captures_cpp << endl;
     cout << "shared color " << captures_shared << endl;
-    cout << "Avg color position HLS: " << avg_px_hls/captures << endl;
-    cout << "Avg color position cpp: " << avg_px_cpp/captures_cpp << endl;
+    // cout << "Avg color position HLS: " << avg_px_hls/captures << endl;
+    // cout << "Avg color position cpp: " << avg_px_cpp/captures_cpp << endl;
     cout << endl;
     cout << endl;
     CCS_RETURN(0);
