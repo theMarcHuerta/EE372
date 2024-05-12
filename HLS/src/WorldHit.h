@@ -62,7 +62,7 @@ public:
         
         // PROBABLY COMBINE LOOPS TO SERIALIZE AND NOT HAVE TO KEEP TRACK OF 2 VARIABLES
         // #pragma hls_pipeline_init_interval 1
-        for (int i = 0; i < MAX_QUADS_IN_BUFFER; i++) {
+        for (int i = 0; i < MAX_QUADS_IN_BUFFER_HALF; i++) {
             quad_hittable quad = quads.read();
             HitRecord temp_rec = {{0,0,0}, {0,0,0}, false, 0, {0,0,0}};
             bool hitWorld = false;
@@ -74,7 +74,7 @@ public:
             if (i == (quad_max_one- 1)) break;
         }
 
-        for (int j = 0; j < MAX_QUADS_IN_BUFFER; j++) {
+        for (int j = 0; j < MAX_QUADS_IN_BUFFER_HALF; j++) {
             quad_hittable quad_two = quads_two.read();
             HitRecord temp_rec_two = {{0,0,0}, {0,0,0}, false, 0, {0,0,0}};
             bool hitWorld_two = false;
