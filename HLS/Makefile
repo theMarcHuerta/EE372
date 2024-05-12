@@ -75,6 +75,13 @@ rtl_test: build/$(MODULE).v1/rtl.v
 	export MODULE=$(MODULE); \
 	$(CATAPULT) -shell -file scripts/run_rtl_test.tcl
 
+Pathtracer_c_test:
+	$(CATAPULT) -shell -file scripts/Pathtracer_c_test.tcl
+	cd test/Pathtracer.v1 && make -f scverify/Verify_orig_cxx_osci.mk sim
+
+Pathtracer_rtl_test: build/Pathtracer.v1/rtl.v
+	$(CATAPULT) -shell -file scripts/run_rtl_test_no_gui.tcl
+
 .PHONY: clean gui c_test
 clean:
 	rm -rf build.ccs
