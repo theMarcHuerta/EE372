@@ -45,8 +45,8 @@ CCS_MAIN(int argc, char** argv) {
     box(point3(265,0,275), point3(430,330,420), 0, white, 14, world);
     box(point3(105,0,85), point3(260,165,235), 0, white, -18, world);
 
-    int image_height = 40;
-    int image_width = 40;
+    int image_height = 80;
+    int image_width = 80;
 
     camera cam;
 
@@ -535,10 +535,25 @@ CCS_MAIN(int argc, char** argv) {
     
     // uint64_t num_rays_generated = image_height*image_width;
     uint64_t mismatches = 0;
+    std::ofstream out("hls_image_pathtracer_new.ppm");  // Open file for appending
+    // Handle possible file opening errors
+    if (!out.is_open()) {
+        std::cerr << "Failed to open file for writing.\n";
+        CCS_RETURN(1);
+    }
+
+    // set up ppm file
+    out << "P3\n";
+    out << image_width << " " << image_height << "\n";
+    out << "255\n";
 
     for (int y = 0; y < image_height; y++) {
         for (int x = 0; x < image_width; x++) {
             rgb_out hout = pixels_hls.read();
+
+            out << hout.r << ' '
+                << hout.g << ' '
+                << hout.g << ' ';
 
             if ((abs(hout.r.to_int() - static_cast<int>(std::round(pixels_cpp[y][x].x()))) > 2) ||
                 (abs(hout.g.to_int() - static_cast<int>(std::round(pixels_cpp[y][x].y()))) > 2) ||
@@ -546,7 +561,10 @@ CCS_MAIN(int argc, char** argv) {
                     mismatches++;
                 }
         }
+        out << "\n";
     }
+
+    out.close();  // Close the file
 
     cout << "Test Completed with " << mismatches << " mismatches" << endl;
 
