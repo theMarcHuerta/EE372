@@ -930,9 +930,9 @@ class camera {
     void render_gold(const std::vector<shared_ptr<quad>>& world, cpp_vec3** pixels) {
         initialize();
 
-        int spp = (cam.samples_per_pixel == 0) ? 32 :
-              (cam.samples_per_pixel == 1) ? 64 :
-              (cam.samples_per_pixel == 2) ? 256 : 1024;
+        int spp = (samples_per_pixel == 0) ? 32 :
+              (samples_per_pixel == 1) ? 64 :
+              (samples_per_pixel == 2) ? 256 : 1024;
 
         // Loop over each pixel in the image, from top to bottom.
         for (int j = 0; j < image_height; ++j) {

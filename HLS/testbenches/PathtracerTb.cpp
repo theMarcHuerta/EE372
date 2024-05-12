@@ -9,7 +9,7 @@
 #include <ac_math.h>
 #include <ac_channel.h>
 
-#include "Pathtracer.cpp"
+#include "../src/Pathtracer.cpp"
 #include "../src/path_tracer_gold_model/camera.h"
 #include "read_stimulus.cpp"
 
@@ -73,6 +73,9 @@ CCS_MAIN(int argc, char** argv) {
 
     // create gold model pixel array
     cpp_vec3** pixels_cpp = new cpp_vec3*[image_height];
+    for (int j = 0; j < image_height; ++j) {
+        pixels_cpp[j] = new cpp_vec3[image_width];  // Allocate memory for each row.
+    }
     cam.render_gold(world, pixels_cpp);
 
 
@@ -89,7 +92,7 @@ CCS_MAIN(int argc, char** argv) {
     // INITIALIZE HLS IMAGE PARAMS
     ////////////////////////////////
     img_params ip;
-    ip.num_quads = quads.size();
+    ip.num_quads = 17;
     ip.samp_per_pxl = cam.samples_per_pixel;
     ip.background.r = cam.background.x();
     ip.background.g = cam.background.y();
@@ -108,6 +111,46 @@ CCS_MAIN(int argc, char** argv) {
     ip.pixel_delta_v.x = cam.pixel_delta_v.x();
     ip.pixel_delta_v.y = cam.pixel_delta_v.y();
     ip.pixel_delta_v.z = cam.pixel_delta_v.z();
+
+    // create expected results for comparison
+    std::vector<quad_hittable> quads;
+
+    // populate quad hittable vector with quads added to world in previous section
+    for (int i = 0; i < world.size(); i++) {
+        quad_hittable q;
+
+        q.corner_pt.x = world[i]->Q.x();
+        q.corner_pt.y = world[i]->Q.y();
+        q.corner_pt.z = world[i]->Q.z();
+
+        q.u.x = world[i]->u.x();
+        q.u.y = world[i]->u.y();
+        q.u.z = world[i]->u.z();
+
+        q.v.x = world[i]->v.x();
+        q.v.y = world[i]->v.y();
+        q.v.z = world[i]->v.z();
+
+        q.mat_type = world[i]->mat;
+        q.is_invis = world[i]->invis;
+
+        q.normal.x = world[i]->normal.x();
+        q.normal.y = world[i]->normal.y();
+        q.normal.z = world[i]->normal.z();
+
+        q.w.x = world[i]->w.x();
+        q.w.y = world[i]->w.y();
+        q.w.z = world[i]->w.z();
+
+        q.d_plane = world[i]->D;
+
+        q.quad_color.r = world[i]->obj_color.x();        
+        q.quad_color.g = world[i]->obj_color.y();
+        q.quad_color.b = world[i]->obj_color.z();
+
+        // add to cpp result vector
+        quads.push_back(q);
+    }
 
     ////////////////////////////////
     // INITIALIZE HLS BUFFER PARAMS
@@ -497,9 +540,9 @@ CCS_MAIN(int argc, char** argv) {
         for (int x = 0; x < image_width; x++) {
             rgb_out hout = pixels_hls.read();
 
-            if ((abs(hout.r.to_int() - static_cast<int>(std::round(pixels_cpp.x()))) > 2) ||
-                (abs(hout.g.to_int() - static_cast<int>(std::round(pixels_cpp.y()))) > 2) ||
-                (abs(hout.b.to_int() - static_cast<int>(std::round(pixels_cpp.z()))) > 2) ||) {
+            if ((abs(hout.r.to_int() - static_cast<int>(std::round(pixels_cpp[y][x].x()))) > 2) ||
+                (abs(hout.g.to_int() - static_cast<int>(std::round(pixels_cpp[y][x].y()))) > 2) ||
+                (abs(hout.b.to_int() - static_cast<int>(std::round(pixels_cpp[y][x].z()))) > 2)) {
                     mismatches++;
                 }
         }
