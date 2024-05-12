@@ -33,9 +33,6 @@ class random_in_unit_sphere {
       // std::cout << "STATE1 " << state1.to_double() << "  STATE2 "<< state2.to_double() << std::endl;
       random1.run(state1, xi1);
       random2.run(state2, xi2);
-      // std::cout << "STATE1 " << state1.to_double() << "  STATE2 "<< state2.to_double() << std::endl;
-      ac_fixed<36, 4,  true> xi1_s = xi1;
-      ac_fixed<36, 4, true> xi2_s = xi2;
       // extend the integer part to account for overflow
       ac_fixed<36, 4,  true> fixed_pi = 3.14159; // pi with 32 fractional bits 
       ac_fixed<37, 5,  true> fixed_pi_sq = 9.86960; // pi with 32 fractional bits 
