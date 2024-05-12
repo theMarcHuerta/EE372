@@ -58,6 +58,11 @@ build/QuadBuffer.v1/rtl.v: src/QuadsBuffer.h
 
 QuadBuffer: build/QuadBuffer.v1/rtl.v
 
+build/ParamsDeserializer.v1/rtl.v: src/deserializer.h
+	$(CATAPULT) -shell -file scripts/Deserializer.tcl
+
+Deserializer: build/ParamsDeserializer.v1/rtl.v
+
 build/Pathtracer.v1/rtl.v:
 	$(CATAPULT) -shell -file scripts/Pathtracer.tcl
 
