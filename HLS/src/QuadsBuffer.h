@@ -3,7 +3,7 @@
 
 #include "RTcore.h"
 
-template <int size>
+template <int size = MAX_QUADS_IN_BUFFER>
 class QuadBuffer {
 public:
     QuadBuffer(){}

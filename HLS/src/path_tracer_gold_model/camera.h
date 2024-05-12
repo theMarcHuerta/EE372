@@ -927,6 +927,29 @@ class camera {
         std::clog << "\rDone.                 \n";  // Completion message.
     }
 
+    void render_gold(const std::vector<shared_ptr<quad>>& world, cpp_vec3** pixels) {
+        initialize();
+
+        int spp = (cam.samples_per_pixel == 0) ? 32 :
+              (cam.samples_per_pixel == 1) ? 64 :
+              (cam.samples_per_pixel == 2) ? 256 : 1024;
+
+        // Loop over each pixel in the image, from top to bottom.
+        for (int j = 0; j < image_height; ++j) {
+            // Loop over each pixel in a row, from left to right.
+            for (int i = 0; i < image_width; ++i) {
+                cpp_vec3 pixel_color(0,0,0);
+                // Sample the pixel color multiple times and average the results for anti-aliasing.
+                for (int sample = 0; sample < spp; ++sample) {
+                    c_ray r = get_ray(i, j);  // Generate a ray for this pixel and sample.
+                    r = c_ray(r.origin(), cpp_vec3(FixedPoint<23>(r.direction().x()).toDouble(), FixedPoint<23>(r.direction().y()).toDouble(), FixedPoint<23>(r.direction().z()).toDouble()));
+                    pixel_color += ray_color(r, max_depth, world);  // Accumulate color.
+                }
+                pixels[j][i] = scale_and_clamp_color(pixel_color, spp);  // Output color to PPM.
+            }
+        }
+    }
+
     int    image_height;   // Height of the image, computed from width and aspect ratio.
     point3 center;         // The position of the camera (same as lookfrom).
     point3 pixel00_loc;    // Location in space of the top-left pixel.
