@@ -5,6 +5,7 @@
 #include "ray.h"
 #include "HitRecord.h"
 #include "QuadHit.h"
+#include "IntersecLoop.h"
 
 
 class WorldHit {
@@ -32,6 +33,7 @@ public:
 
         ray ray_temp = {{0,0,0},{0,0,0},false};
         ray_temp = ray_in.read(); 
+        ray ray_temp_two = ray_temp; 
 
         rgb_in tmp_color_in = {0,0,0};
         tmp_color_in = accumalated_color_chan_in.read();
@@ -61,31 +63,10 @@ public:
         HitRecord rec_quad_two = {{0,0,0}, {0,0,0}, false, 0, {0,0,0}};
         
         // PROBABLY COMBINE LOOPS TO SERIALIZE AND NOT HAVE TO KEEP TRACK OF 2 VARIABLES
-        // #pragma hls_pipeline_init_interval 1
-        for (int i = 0; i < MAX_QUADS_IN_BUFFER_HALF; i++) {
-            quad_hittable quad = quads.read();
-            HitRecord temp_rec = {{0,0,0}, {0,0,0}, false, 0, {0,0,0}};
-            bool hitWorld = false;
-            quadInters.run(ray_temp, closest_so_far_quad, quad, temp_rec, hitWorld);
-            if (hitWorld) {
-                quad_hit_anything = true;
-                rec_quad = temp_rec;
-            }
-            if (i == (quad_max_one- 1)) break;
-        }
-
-        for (int j = 0; j < MAX_QUADS_IN_BUFFER_HALF; j++) {
-            quad_hittable quad_two = quads_two.read();
-            HitRecord temp_rec_two = {{0,0,0}, {0,0,0}, false, 0, {0,0,0}};
-            bool hitWorld_two = false;
-            ray ray_temp_two = ray_temp;
-            quadInters_two.run(ray_temp_two, closest_so_far_quad_two, quad_two, temp_rec_two, hitWorld_two);
-            if (hitWorld_two) {
-                quad_hit_anything_two = true;
-                rec_quad_two = temp_rec_two;
-            }
-            if (j == (quad_max_two - 1)) break;
-        }
+        // #pragma hls_pipeline_init_interval 2
+        // #pragma hls_unroll 2
+        intersec_loop_one.hit(quads, ray_temp, quad_max_one, closest_so_far_quad, quad_hit_anything, rec_quad);
+        intersec_loop_two.hit(quads_two, ray_temp_two, quad_max_two, closest_so_far_quad_two, quad_hit_anything_two, rec_quad_two);
 
         if (quad_hit_anything | quad_hit_anything_two) {
             // std::cout << "WAS HIT" << std::endl;
@@ -127,10 +108,9 @@ public:
     }
 
 private:
-    QuadHit quadInters;
-    QuadHit quadInters_two;
-
     const HitRecord empty_rec = {{0,0,0}, {0,0,0}, false, 0, {0,0,0}};
+    IntersecLoop intersec_loop_one;
+    IntersecLoop intersec_loop_two;
 };
 
 #endif
