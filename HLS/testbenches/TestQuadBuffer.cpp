@@ -18,9 +18,10 @@ class TestQuadBuffer {
     #pragma hls_design interface
     void CCS_BLOCK(run)(ac_channel<quad_hittable> &quads_in, 
                         ac_channel<buffer_params> &paramsIn,
-                        ac_channel<quad_hittable> &quads_out)
+                        ac_channel<quad_hittable> &quads_out,
+                        ac_channel<quad_hittable> &quads_out_two)
     {
-        buf.run(quads_in, paramsIn, quads_out);
+        buf.run(quads_in, paramsIn, quads_out, quads_out_two);
     }
 
   private:
