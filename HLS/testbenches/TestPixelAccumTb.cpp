@@ -45,14 +45,14 @@ CCS_MAIN(int argc, char** argv) {
     box(point3(265,0,275), point3(430,330,420), 0, white, 14, world);
     box(point3(105,0,85), point3(260,165,235), 0, white, -18, world);
 
-    int image_height = 240;
-    int image_width = 240;
+    int image_height = 100;
+    int image_width = 100;
 
     camera cam;
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = image_height;
-    cam.samples_per_pixel = 2;
+    cam.samples_per_pixel = 0;
     cam.max_depth         = 1;
     cam.background        = cpp_vec3(0,0,0);
 
@@ -62,14 +62,17 @@ CCS_MAIN(int argc, char** argv) {
     cam.vup      = cpp_vec3(0,1,0);
     cam.initialize();
 
+    int spp = (cam.samples_per_pixel == 0) ? 32 :
+              (cam.samples_per_pixel == 1) ? 64 :
+              (cam.samples_per_pixel == 2) ? 256 : 1024;
+
     // vectors of random rgb_in values to use in both cpp test and hls test
-    int spp = 256;
-    int num_tests = 20000;
-    std::vector<std::vector<rgb_in>> samples(num_tests);
+    int num_pixels = image_height*image_width;
+    std::vector<std::vector<rgb_in>> samples(num_pixels);
 
     // generate random values to accumulate
     cout << "Generating RGB samples" << endl;
-    for (int accum_tests = 0; accum_tests < num_tests; accum_tests++) {
+    for (int pix = 0; pix < num_pixels; pix++) {
         // create random sample vales for both cpp and hls design
         for (int i = 0; i < spp; i++) {
             double r_d = random_double();
@@ -81,7 +84,7 @@ CCS_MAIN(int argc, char** argv) {
             sample.g = g_d;
             sample.b = b_d;
 
-            samples[accum_tests].push_back(sample);
+            samples[pix].push_back(sample);
         }
     }
 
@@ -99,7 +102,7 @@ CCS_MAIN(int argc, char** argv) {
     std::vector<cpp_vec3> cpp_results;
 
     // accumulate samples
-    for (int i = 0; i < num_tests; i++) {
+    for (int i = 0; i < num_pixels; i++) {
 
         cpp_vec3 accumulated_color;
         for (int j = 0; j < spp; j++) {
@@ -125,7 +128,7 @@ CCS_MAIN(int argc, char** argv) {
     // create img_params for HLS design
     img_params params_in;
 
-    params_in.num_quads = 5;
+    params_in.num_quads = 17;
     params_in.samp_per_pxl = cam.samples_per_pixel;
     params_in.background = {0.0, 0.0, 0.0};
     params_in.image_height = image_height;
@@ -148,6 +151,7 @@ CCS_MAIN(int argc, char** argv) {
     params_in.pixel_delta_v.z = cam.pixel_delta_v.z();
 
     ac_channel<img_params> params_in_channel;
+    params_in_channel.write(params_in);
 
     ac_channel<rgb_in> rgb_sample_channel;    
 
@@ -156,8 +160,7 @@ CCS_MAIN(int argc, char** argv) {
 
     printf("Running HLS design\n");
     // populate input channels
-    for (int i = 0; i < num_tests; i++) {
-        params_in_channel.write(params_in);
+    for (int i = 0; i < num_pixels; i++) {
         for (int j = 0; j < spp; j++) {
             rgb_sample_channel.write(samples[i][j]);
         }
@@ -178,7 +181,7 @@ CCS_MAIN(int argc, char** argv) {
     // uint64_t num_rays_generated = image_height*image_width;
     uint64_t mismatches = 0;
 
-    for (int i = 0; i < num_tests; i++){
+    for (int i = 0; i < num_pixels; i++){
         // read in HLS output
         rgb_out hls_out = rgb_out_channel.read();
         if (std::abs(hls_out.r.to_int() - cpp_results[i].x() >= 1e-6) ||
@@ -191,7 +194,7 @@ CCS_MAIN(int argc, char** argv) {
     }
 
     cout << "Test Completed with " << mismatches << " mismatches" << endl;
-    cout << "Number of Tests " << num_tests << endl;
+    cout << "Number of Tests " << num_pixels << endl;
     CCS_RETURN(0);
     
 }

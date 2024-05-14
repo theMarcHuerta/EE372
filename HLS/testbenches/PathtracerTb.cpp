@@ -45,15 +45,15 @@ CCS_MAIN(int argc, char** argv) {
     box(point3(265,0,275), point3(430,330,420), 0, white, 14, world);
     box(point3(105,0,85), point3(260,165,235), 0, white, -18, world);
 
-    int image_height = 80;
-    int image_width = 80;
+    int image_height = 150;
+    int image_width = 150;
 
     camera cam;
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = image_height;
     cam.samples_per_pixel = 0;
-    cam.max_depth         = 1;
+    cam.max_depth         = 8;
     cam.background        = cpp_vec3(0,0,0);
 
     cam.vfov     = 40;
@@ -535,7 +535,7 @@ CCS_MAIN(int argc, char** argv) {
     
     // uint64_t num_rays_generated = image_height*image_width;
     uint64_t mismatches = 0;
-    std::ofstream out("hls_image_pathtracer_new.ppm");  // Open file for appending
+    std::ofstream out("pathtracer.ppm");  // Open file for appending
     // Handle possible file opening errors
     if (!out.is_open()) {
         std::cerr << "Failed to open file for writing.\n";
@@ -553,7 +553,12 @@ CCS_MAIN(int argc, char** argv) {
 
             out << hout.r << ' '
                 << hout.g << ' '
-                << hout.g << ' ';
+                << hout.b << ' ';
+
+            // out << static_cast<int>(std::round(pixels_cpp[y][x].x())) << ' '
+            //     << static_cast<int>(std::round(pixels_cpp[y][x].y())) << ' '
+            //     << static_cast<int>(std::round(pixels_cpp[y][x].z())) << ' ';
+
 
             if ((abs(hout.r.to_int() - static_cast<int>(std::round(pixels_cpp[y][x].x()))) > 2) ||
                 (abs(hout.g.to_int() - static_cast<int>(std::round(pixels_cpp[y][x].y()))) > 2) ||

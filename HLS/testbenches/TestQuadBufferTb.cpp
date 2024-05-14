@@ -134,13 +134,17 @@ CCS_MAIN(int argc, char** argv) {
     ac_channel<buffer_params> params_in_channel;
     params_in_channel.write(params_in);
 
+    uint8_t quad_max_one = (params_in.num_quads >> 1);
+    uint8_t quad_max_two = params_in.num_quads - quad_max_one;
+
     // output quad channel
     ac_channel<quad_hittable> quads_out;
+    ac_channel<quad_hittable> quads_out_two;
 
     printf("Running HLS design\n");
 
     // run the design
-    inst.run(quad_chan_in, params_in_channel, quads_out);
+    inst.run(quad_chan_in, params_in_channel, quads_out, quads_out_two);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,7 +163,7 @@ CCS_MAIN(int argc, char** argv) {
     ac_int<36, false> tot_read_requests = (tot_samples_in_img << 3) + 1; // multiply by 8 plus 1 for the extra end case bounce
 
     for (int i = 0; i < tot_read_requests; i++) {
-        for (int j = 0; j < quads.size(); j++) {
+        for (int j = 0; j < quad_max_one; j++) {
             quad_hittable q_out = quads_out.read();
 
             // compare all quad data
@@ -184,6 +188,35 @@ CCS_MAIN(int argc, char** argv) {
                 (q_out.quad_color.r != quads[j].quad_color.r) ||
                 (q_out.quad_color.g != quads[j].quad_color.g) ||
                 (q_out.quad_color.b != quads[j].quad_color.b)) {
+                    mismatches++;
+            }
+        }
+
+        for (int j = 0; j < quad_max_two; j++) {
+            quad_hittable q_out = quads_out_two.read();
+
+            // compare all quad data
+            if ((q_out.corner_pt.x != quads[quad_max_one+j].corner_pt.x) ||
+                (q_out.corner_pt.y != quads[quad_max_one+j].corner_pt.y) ||
+                (q_out.corner_pt.z != quads[quad_max_one+j].corner_pt.z) ||
+                (q_out.u.x != quads[quad_max_one+j].u.x) ||
+                (q_out.u.y != quads[quad_max_one+j].u.y) ||
+                (q_out.u.z != quads[quad_max_one+j].u.z) ||
+                (q_out.v.x != quads[quad_max_one+j].v.x) ||
+                (q_out.v.y != quads[quad_max_one+j].v.y) ||
+                (q_out.v.z != quads[quad_max_one+j].v.z) ||
+                (q_out.mat_type != quads[quad_max_one+j].mat_type) ||
+                (q_out.is_invis != quads[quad_max_one+j].is_invis) ||
+                (q_out.normal.x != quads[quad_max_one+j].normal.x) ||
+                (q_out.normal.y != quads[quad_max_one+j].normal.y) ||
+                (q_out.normal.z != quads[quad_max_one+j].normal.z) ||
+                (q_out.w.x != quads[quad_max_one+j].w.x) ||
+                (q_out.w.y != quads[quad_max_one+j].w.y) ||
+                (q_out.w.z != quads[quad_max_one+j].w.z) ||
+                (q_out.d_plane != quads[quad_max_one+j].d_plane) ||
+                (q_out.quad_color.r != quads[quad_max_one+j].quad_color.r) ||
+                (q_out.quad_color.g != quads[quad_max_one+j].quad_color.g) ||
+                (q_out.quad_color.b != quads[quad_max_one+j].quad_color.b)) {
                     mismatches++;
             }
         }
