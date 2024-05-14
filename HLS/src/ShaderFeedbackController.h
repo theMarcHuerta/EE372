@@ -26,6 +26,47 @@ public:
              ac_channel<rgb_in>& output_pxl_serial
             )
     {
+      // rgb_in col_in = {0,0,0};
+      // col_in = color_chan_in.read();
+
+      // rgb_in atten_in = {0,0,0};
+      // atten_in = atten_chan_in.read();
+
+      // ray camera_ray_in = {{0,0,0},{0,0,0},false};
+      // camera_ray_in = ray_chan_in.read();
+
+      // ray scattered_ray_in = {{0,0,0},{0,0,0},false};
+      // scattered_ray_in = ray_scattered_chan.read();
+
+      // rgb_in tmp_col = {0,0,0};
+      // rgb_in tmp_atten = {1,1,1};
+      // ray tmp_ray = {{0,0,0},{0,0,0},false};
+
+      // if (iter == 0 || iter == 1){
+      //   if ((sample != 0) && (sample != 1)){
+      //     output_pxl_serial.write(col_in);
+      //   }
+      //   tmp_col = shader1_color;
+      //   tmp_atten = shader1_atten;
+      //   tmp_ray = camera_ray_in;
+      //   iter += 1;
+      // }
+      // else {
+      //   tmp_col = col_in;
+      //   tmp_atten = atten_in;
+      //   tmp_ray = scattered_ray_in;
+      //   iter += 1;
+      //   if (iter == 16){
+      //     iter = 0;
+      //   }
+      // }
+      // // TO SHADER
+      // atten_chan_out.write(tmp_atten);
+      // color_chan_out.write(tmp_col);
+      // ray_out.write(tmp_ray);
+      // params_out.write(params_in.read());
+      // // COUNTER
+      // sample += 1;
       rgb_in col_in = {0,0,0};
       col_in = color_chan_in.read();
 

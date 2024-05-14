@@ -62,8 +62,8 @@ CCS_MAIN(int argc, char** argv) {
     box(point3(265,0,275), point3(430,330,420), 0, white, 14, world);
     box(point3(105,0,85), point3(260,165,235), 0, white, -18, world);
 
-    int image_height = 30;
-    int image_width = 30;
+    int image_height = 4;
+    int image_width = 4;
 
     camera cam;
 
@@ -238,14 +238,8 @@ CCS_MAIN(int argc, char** argv) {
 
     TestRenderer render;
     ac_channel<quad_hittable> quads_in;
-    ac_channel<quad_hittable> quads_two;
     ac_channel<img_params> render_params;
     ac_channel<rgb_in> output_pxl_sample;
-    uint16_t quad_max_one = (HLS_quads.size() >> 1);
-    uint16_t quad_max_two = HLS_quads.size() - quad_max_one;
-
-    std::cout << quad_max_one << std::endl;
-    std::cout << quad_max_two << std::endl;
 
     render_params.write(params_in);
 
@@ -253,25 +247,19 @@ CCS_MAIN(int argc, char** argv) {
         for (int i = 0; i < image_width; ++i) {
             for (int sample = 0; sample < cam.samples_per_pixel; ++sample) {
                 for (int bounces = 0; bounces < 8; bounces++){
-                    for (int quad_num = 0; quad_num < quad_max_one; quad_num++){
+                    for (int quad_num = 0; quad_num < HLS_quads.size(); quad_num++){
                         quads_in.write(HLS_quads[quad_num]);
-                    }
-                    for (int quad_num = 0; quad_num < quad_max_two; quad_num++){
-                        quads_two.write(HLS_quads[quad_num+quad_max_one]);
                     }
                 }
             }
         }
     }
     // for the 9th iteration on the last sample
-    for (int quad_num = 0; quad_num < quad_max_one; quad_num++){
+    for (int quad_num = 0; quad_num < HLS_quads.size(); quad_num++){
         quads_in.write(HLS_quads[quad_num]);
     }
-    for (int quad_num = 0; quad_num < quad_max_two; quad_num++){
-        quads_two.write(HLS_quads[quad_num+quad_max_one]);
-    }
 
-    render.run(quads_in, quads_two, render_params, output_pxl_sample);
+    render.run(quads_in, render_params, output_pxl_sample);
     printf("Reading out samples in C design\n");
     for (int j = 0; j < image_height; ++j) {
         for (int i = 0; i < image_width; ++i) {

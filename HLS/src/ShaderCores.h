@@ -14,7 +14,6 @@ public:
 #pragma hls_design interface
 // #pragma hls_pipeline_init_interval 10
     void CCS_BLOCK(run)(ac_channel<quad_hittable> &quads_in, 
-            ac_channel<quad_hittable>& quads_two,
              ac_channel<ray> &ray_in,
              ac_channel<buffer_obj_count> &params_in,
              ac_channel<rgb_in> &output_pxl_serial
@@ -30,7 +29,7 @@ public:
       controller.run(ray_in, ray_out1, params_in, accumalated_color_chan2, attenuation_chan2,
                 ray_into_shader, params_to_shader, accumalated_color_chan1, attenuation_chan1, output_pxl_serial);
 
-      shader1.run(params_to_shader, quads_in, quads_two, ray_into_shader, attenuation_chan1, accumalated_color_chan1, 
+      shader1.run(params_to_shader, quads_in, ray_into_shader, attenuation_chan1, accumalated_color_chan1, 
                   attenuation_chan2, accumalated_color_chan2, ray_out1);
     }
   }

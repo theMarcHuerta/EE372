@@ -80,14 +80,14 @@ public:
     RendererWrapper(){}
     
 #pragma hls_design interface
+// #pragma hls_pipeline_init_interval 1
     void CCS_BLOCK(run)(ac_channel<quad_hittable> &quads_in, 
-            ac_channel<quad_hittable>& quads_two,
              ac_channel<img_params> &render_params,
              ac_channel<rgb_in> &output_pxl_sample)
     {
         renderLooper.run(render_params, paramsChanneltoRayGen, loopIndicesChanneltoRayGen);
         rayGeneration.run(loopIndicesChanneltoRayGen, paramsChanneltoRayGen, paramsChanneltoShader, rayOut); // TO DO ADD LOOP INDICIES OUT CHANNEL
-        shaderCores.run(quads_in, quads_two, rayOut, paramsChanneltoShader, output_pxl_sample);
+        shaderCores.run(quads_in, rayOut, paramsChanneltoShader, output_pxl_sample);
     }
 private:
     RenderLooper renderLooper;

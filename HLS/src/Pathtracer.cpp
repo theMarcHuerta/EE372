@@ -28,9 +28,9 @@ class Pathtracer {
         // find a way to find max buffer size
         paramsDeserializer.run(inputChannel, quad_buffer_params, renderer_params, accumulator_params, quad_serial);
 
-        quadsBuffer.run(quad_serial, quad_buffer_params, quads_out, quads_out_two);
+        quadsBuffer.run(quad_serial, quad_buffer_params, quads_out);
 
-        renderer.run(quads_out, quads_out_two, renderer_params, pxl_sample);
+        renderer.run(quads_out, renderer_params, pxl_sample);
 
         pixelAccumulator.run(accumulator_params, pxl_sample, output_pxl_serial);
     }

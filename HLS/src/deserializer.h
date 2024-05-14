@@ -5,10 +5,12 @@
 
 class ParamsDeserializer{
   public:
-    ParamsDeserializer(){}
+    ParamsDeserializer(){
+        image_params = {0, 0, {0,0,0}, 0, 0, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}};
+    }
 
     #pragma hls_design interface
-    #pragma hls_pipeline_init_interval 84
+    // #pragma hls_pipeline_init_interval 84
     void CCS_BLOCK(run)(ac_channel<ac_int<12,false>> &inputChannel,
                         ac_channel<buffer_params> &qbuffer_params,
                         ac_channel<img_params> &render_params,
@@ -16,7 +18,10 @@ class ParamsDeserializer{
                         ac_channel<quad_hittable> &quad_serial_out
                         )
     {
-        img_params image_params;
+    #ifndef __SYNTHESIS__
+    while(inputChannel.available(84))
+    #endif
+    {
         // QUAD NUM //////////////////////////////////////////////////////
         image_params.num_quads.set_slc(0, (inputChannel.read()).slc<11>(0));
         // SAMPLES PER PIXEL /////////////////////////////////////////////
@@ -148,8 +153,11 @@ class ParamsDeserializer{
             quad_serial_out.write(quad_to_sram);
             if (i == params_to_buffer.num_quads-1) break; 
         }
+    }
 
     }
+private:
+    img_params image_params;
 };
 
 #endif

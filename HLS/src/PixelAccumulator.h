@@ -9,6 +9,7 @@ public:
     PixelAccumulator() {}
 
 #pragma hls_design interface
+#pragma hls_pipeline_init_interval 1
 void CCS_BLOCK(run)(ac_channel<img_params> &accumulator_parms,
          ac_channel<rgb_in> &pxl_sample,
          ac_channel<rgb_out> &output_pxl_serial)
@@ -25,7 +26,7 @@ void CCS_BLOCK(run)(ac_channel<img_params> &accumulator_parms,
         spp = (tmp_params.samp_per_pxl == 0) ? 32 :
             (tmp_params.samp_per_pxl == 1) ? 64 :
             (tmp_params.samp_per_pxl == 2) ? 256 : 1024;
-
+        
         for (int fy = 0; fy < MAX_IMAGE_HEIGHT; fy++){
             for (int fx = 0; fx < MAX_IMAGE_WIDTH; fx++) {
 
@@ -39,7 +40,7 @@ void CCS_BLOCK(run)(ac_channel<img_params> &accumulator_parms,
                 bool green_of = false;
                 bool blue_of = false;
 
-                for (int samps = 0; samps < spp; samps++){
+                for (int samps = 0; samps < 1024; samps++){
                     // #ifndef __SYNTHESIS__
                     // while(pxl_sample.available(1))
                     // #endif
@@ -68,6 +69,7 @@ void CCS_BLOCK(run)(ac_channel<img_params> &accumulator_parms,
                         if (accumulation_reg.z[27] == 1) blue_of = true;
                     }
                     // }
+                    if (samps == spp-1) break;
                 }
                 if (red_of) accumulation_reg.x = max_value;
                 if (green_of) accumulation_reg.y = max_value;

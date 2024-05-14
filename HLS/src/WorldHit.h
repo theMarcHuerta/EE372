@@ -17,7 +17,6 @@ public:
     void CCS_BLOCK(hit)(ac_channel<ray>& ray_in,
              ac_channel<buffer_obj_count> &params_in,
              ac_channel<quad_hittable>& quads,
-             ac_channel<quad_hittable>& quads_two,
              ac_channel<rgb_in> &attenuation_chan_in,
              ac_channel<rgb_in> &accumalated_color_chan_in,
              ac_channel<rgb_in> &attenuation_chan_out,
@@ -66,7 +65,7 @@ public:
         // #pragma hls_pipeline_init_interval 2
         // #pragma hls_unroll 2
         intersec_loop_one.hit(quads, ray_temp, quad_max_one, closest_so_far_quad, quad_hit_anything, rec_quad);
-        intersec_loop_two.hit(quads_two, ray_temp_two, quad_max_two, closest_so_far_quad_two, quad_hit_anything_two, rec_quad_two);
+        intersec_loop_two.hit(quads, ray_temp_two, quad_max_two, closest_so_far_quad_two, quad_hit_anything_two, rec_quad_two);
 
         if (quad_hit_anything | quad_hit_anything_two) {
             // std::cout << "WAS HIT" << std::endl;

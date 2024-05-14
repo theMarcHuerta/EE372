@@ -21,7 +21,7 @@ public:
                         HitRecord &rec_quad
                         ) 
     {
-    #pragma hls_pipeline_init_interval 8
+    #pragma hls_pipeline_init_interval 18
     for (int i = 0; i < MAX_QUADS_IN_BUFFER_HALF; i++) {
         quad_hittable quad = quads.read();
         HitRecord temp_rec = {{0,0,0}, {0,0,0}, false, 0, {0,0,0}};
