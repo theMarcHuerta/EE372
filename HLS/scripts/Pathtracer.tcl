@@ -24,7 +24,7 @@ directive set -CLOCKS $clocks
 # directive set /Pathtracer -FIFO_DEPTH 3
 
 go assembly
-# directive set -EFFORT_LEVEL high
+directive set -EFFORT_LEVEL high
 
 go architect
 

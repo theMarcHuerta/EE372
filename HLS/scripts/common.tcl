@@ -14,6 +14,7 @@ options set Input/SearchPath ./src
 options set Input/SearchPath ./testbenches
 options set Output/OutputVHDL false
 options set Architectural/DefaultRegisterThreshold 4096
+options set Architectural/DefaultLoopMerging true
 # options set Clustering/multadd true
 # options set Clustering/addtree true
 # options set Clustering/square true
