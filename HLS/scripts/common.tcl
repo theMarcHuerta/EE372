@@ -12,6 +12,7 @@ options set Input/CppStandard c++11
 options set Input/TargetPlatform x86_64
 options set Input/SearchPath ./src
 options set Input/SearchPath ./testbenches
+solution options set ComponentLibs/SearchPath /home/users/bkaether/EE372/HLS/generated_mems -append
 options set Output/OutputVHDL false
 options set Architectural/DefaultRegisterThreshold 4096
 options set Architectural/DefaultLoopMerging true

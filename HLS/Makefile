@@ -99,3 +99,4 @@ clean:
 	rm -rf design_checker_constraints.tcl
 	rm -rf design_checker_pre_build.tcl
 	rm -rf Catapult*
+	rm -rf pathtracer.ppm
