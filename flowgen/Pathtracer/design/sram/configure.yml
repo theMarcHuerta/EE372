@@ -1,0 +1,32 @@
+#=========================================================================
+# OpenRAM SRAM Compiler 
+#=========================================================================
+# Author : Kartik Prabhu
+# Date   : February 15, 2020
+#
+
+name: sram
+
+#-------------------------------------------------------------------------
+# Outputs
+#-------------------------------------------------------------------------
+
+outputs:
+  - sram1.sp
+  - sram1.v
+  - sram1.lef
+  - sram1_tt_1p8V_25C.lib
+  - sram1_tt_1p8V_25C.db
+  - sram1.gds
+
+#-------------------------------------------------------------------------
+# Commands
+#-------------------------------------------------------------------------
+
+commands:
+  - cp /farmshare/home/classes/ee/272/sky130_sram_macros/sky130_sram_1kbyte_1rw1r_32x256_8/sky130_sram_1kbyte_1rw1r_32x256_8.sp              outputs/sram1.sp
+  - cp /farmshare/home/classes/ee/272/sky130_sram_macros/sky130_sram_1kbyte_1rw1r_32x256_8/sky130_sram_1kbyte_1rw1r_32x256_8.v               outputs/sram1.v
+  - cp /farmshare/home/classes/ee/272/sky130_sram_macros/sky130_sram_1kbyte_1rw1r_32x256_8/sky130_sram_1kbyte_1rw1r_32x256_8.lef             outputs/sram1.lef
+  - cp /farmshare/home/classes/ee/272/sky130_sram_macros/sky130_sram_1kbyte_1rw1r_32x256_8/sky130_sram_1kbyte_1rw1r_32x256_8_TT_1p8V_25C.lib outputs/sram1_tt_1p8V_25C.lib
+  - cp /farmshare/home/classes/ee/272/sky130_sram_macros/sky130_sram_1kbyte_1rw1r_32x256_8/sky130_sram_1kbyte_1rw1r_32x256_8.gds             outputs/sram1.gds
+  - cp /farmshare/home/classes/ee/272/sky130_sram_macros/sky130_sram_1kbyte_1rw1r_32x256_8/sky130_sram_1kbyte_1rw1r_32x256_8_TT_1p8V_25C.db  outputs/sram1_tt_1p8V_25C.db
