@@ -1,8 +1,0 @@
-#!/bin/csh
-#path to Catapult Mgc_home dir
-setenv CCS_HOME /wv/hlsb/CATAPULT/8.0/PRODUCTION/ixl/Mgc_home
-
-clear
-$CCS_HOME/bin/g++ -g -O0 -I$CCS_HOME/shared/include transpose_filter.cpp tb.cpp -o tb.exe
-
-./tb.exe

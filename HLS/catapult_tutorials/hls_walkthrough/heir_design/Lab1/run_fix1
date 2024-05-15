@@ -1,6 +1,0 @@
-#!/bin/csh
-
-clear
-$MGC_HOME/bin/g++ -g -O0 -I$MGC_HOME/shared/include avg2.cpp tb_fix.cpp -o tb.exe
-
-./tb.exe
