@@ -2,20 +2,20 @@
 #define __INCLUDED_sram_64_32_1w1r_trans_rsc_H__
 #include <mc_transactors.h>
 
-class sram_64_32_1w1r_trans_rsc : public mc_wire_trans_rsc_base<32,64>
+class sram_64_32_1w1r_trans_rsc : public mc_wire_trans_rsc_base<32,256>
 {
 public:
   sc_in< bool >   clk0;
   sc_in< sc_logic >   csb0;
   sc_in< sc_logic >   web0;
-  sc_in< sc_lv<6> >   addr0;
+  sc_in< sc_lv<8> >   addr0;
   sc_in< sc_lv<32> >   din0;
   sc_in< bool >   clk1;
   sc_in< sc_logic >   csb1;
-  sc_in< sc_lv<6> >   addr1;
+  sc_in< sc_lv<8> >   addr1;
   sc_out< sc_lv<32> >   dout1;
 
-  typedef mc_wire_trans_rsc_base<32,64> base;
+  typedef mc_wire_trans_rsc_base<32,256> base;
   MC_EXPOSE_NAMES_OF_BASE(base);
 
   SC_HAS_PROCESS( sram_64_32_1w1r_trans_rsc );
@@ -125,13 +125,13 @@ private:
     this->_value_changed.notify(SC_ZERO_TIME);
   }
 
-  int get_addr(const sc_lv<6>& addr, const char* pin_name) {
+  int get_addr(const sc_lv<8>& addr, const char* pin_name) {
     if (addr.is_01()) {
       const int cur_addr = addr.to_uint();
-      if (cur_addr < 0 || cur_addr >= 64) {
+      if (cur_addr < 0 || cur_addr >= 256) {
 #ifdef CCS_SYSC_DEBUG
         std::ostringstream msg;
-        msg << "Invalid address '" << cur_addr << "' out of range [0:" << 64-1 << "]";
+        msg << "Invalid address '" << cur_addr << "' out of range [0:" << 256-1 << "]";
         SC_REPORT_WARNING(pin_name, msg.str().c_str());
 #endif
         return -1;
@@ -152,20 +152,20 @@ private:
     this->zero_data();
     _csb0 = SC_LOGIC_X;
     _web0 = SC_LOGIC_X;
-    _addr0 = sc_lv<6>();
+    _addr0 = sc_lv<8>();
     _din0 = sc_lv<32>();
     _csb1 = SC_LOGIC_X;
-    _addr1 = sc_lv<6>();
+    _addr1 = sc_lv<8>();
     _is_connected_port_0 = true;
     _is_connected_port_0_messaged = false;
   }
 
   sc_logic _csb0;
   sc_logic _web0;
-  sc_lv<6>  _addr0;
+  sc_lv<8>  _addr0;
   sc_lv<32>  _din0;
   sc_logic _csb1;
-  sc_lv<6>  _addr1;
+  sc_lv<8>  _addr1;
   sc_lv<32>  _dout1;
   bool _is_connected_port_0;
   bool _is_connected_port_0_messaged;

@@ -1,28 +1,28 @@
 module sram_64_32_1w1r#(
   parameter NUM_WMASKS = 4,
   parameter DATA_WIDTH = 32,
-  parameter ADDR_WIDTH = 6,
-  parameter RAM_DEPTH = 64,
+  parameter ADDR_WIDTH = 8,
+  parameter RAM_DEPTH = 256,
   parameter DELAY = 0
 )(
   input  clk0, // clock
   input   csb0, // active low chip select
   input  web0, // active low write control
-  input [6-1:0]  addr0,
-  input [32-1:0]  din0,
+  input [7:0]  addr0,
+  input [31:0]  din0,
   input  clk1, // clock
   input   csb1, // active low chip select
-  input [6-1:0]  addr1,
-  output [32-1:0] dout1
+  input [7:0]  addr1,
+  output [31:0] dout1
 );
 
-  wire [32-1:0] dout0;
+  wire [31:0] dout0;
 
-  sky130_sram_1kbyte_1rw1r_32x256_8   #(.NUM_WMASKS(NUM_WMASKS),
-                                        .DATA_WIDTH(DATA_WIDTH),
-                                        .ADDR_WIDTH(ADDR_WIDTH),
-                                        .RAM_DEPTH(RAM_DEPTH),
-                                        .DELAY(DELAY)) sram_macro (
+  sky130_sram_1kbyte_1rw1r_32x256_8   #(.NUM_WMASKS(4),
+                                        .DATA_WIDTH(32),
+                                        .ADDR_WIDTH(8),
+                                        .RAM_DEPTH(256),
+                                        .DELAY(0)) sram_macro (
       .clk0(clk0),.csb0(csb0),.web0(web0),.wmask0(4'hF),.addr0(addr0),.din0(din0), .dout0(dout0),
       .clk1(clk1),.csb1(csb1),.addr1(addr1),.dout1(dout1)
     );
