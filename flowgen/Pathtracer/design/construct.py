@@ -49,7 +49,7 @@ def construct():
 
   # Custom steps
 
-  # sram          = Step( this_dir + '/sram'          )
+  sram          = Step( this_dir + '/sram'          )
   # rtl           = Step( this_dir + '/rtl'           )
   hls           = Step( this_dir + '/hls'           )
   # testbench     = Step( this_dir + '/testbench'     )
@@ -69,7 +69,7 @@ def construct():
   #-----------------------------------------------------------------------
 
   g.add_step( info         )
-  # g.add_step( sram         )
+  g.add_step( sram         )
   # g.add_step( rtl          )
   g.add_step( hls          )
   # g.add_step( testbench    )
@@ -84,14 +84,14 @@ def construct():
   
   # Dynamically add edges
 
-  # dc.extend_inputs(['sram1_tt_1p8V_25C.db'])
-  # dc.extend_inputs(['sram2_tt_1p8V_25C.db'])
+  dc.extend_inputs(['sram1_tt_1p8V_25C.db'])
+  dc.extend_inputs(['sram2_tt_1p8V_25C.db'])
   # rtl_sim.extend_inputs(['sram.v'])
 
   # Connect by name
 
   g.connect_by_name( adk,          dc           )
-  # g.connect_by_name( sram,         dc           )
+  g.connect_by_name( sram,         dc           )
   g.connect_by_name( hls,          dc           )
   g.connect_by_name( constraints,  dc           )
   # g.connect_by_name( hls,          rtl_sim      ) 
@@ -106,7 +106,7 @@ def construct():
   #-----------------------------------------------------------------------
 
   g.update_params( parameters )
-  g.param_space( 'synopsys-dc-synthesis', 'clock_period', [20, 10, 9, 6 ] )
+  g.param_space( 'synopsys-dc-synthesis', 'clock_period', [100, 50] )
 
   return g
 
