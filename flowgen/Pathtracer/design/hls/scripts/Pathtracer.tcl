@@ -21,6 +21,20 @@ directive set -CLOCKS $clocks
 # directive set /Pathtracer/RendererWrapper -MAP_TO_MODULE "\[Block\] RendererWrapper.v1"
 # directive set /Pathtracer/PixelAccumulator -MAP_TO_MODULE "\[Block\] PixelAccumulator.v1"
 
+# directives for using register memory
+directive set /Pathtracer/QuadBuffer<64>/run/buffer_bank0.data:rsc -MAP_TO_MODULE {[Register]}
+directive set /Pathtracer/QuadBuffer<64>/run/buffer_bank1.data:rsc -MAP_TO_MODULE {[Register]}
+directive set /Pathtracer/QuadBuffer<64>/run/buffer_bank2.data:rsc -MAP_TO_MODULE {[Register]}
+directive set /Pathtracer/QuadBuffer<64>/run/buffer_bank3.data:rsc -MAP_TO_MODULE {[Register]}
+directive set /Pathtracer/QuadBuffer<64>/run/buffer_bank4.data:rsc -MAP_TO_MODULE {[Register]}
+directive set /Pathtracer/QuadBuffer<64>/run/buffer_bank5.data:rsc -MAP_TO_MODULE {[Register]}
+directive set /Pathtracer/QuadBuffer<64>/run/buffer_bank6.data:rsc -MAP_TO_MODULE {[Register]}
+directive set /Pathtracer/QuadBuffer<64>/run/buffer_bank7.data:rsc -MAP_TO_MODULE {[Register]}
+directive set /Pathtracer/QuadBuffer<64>/run/buffer_bank8.data:rsc -MAP_TO_MODULE {[Register]}
+directive set /Pathtracer/QuadBuffer<64>/run/buffer_bank9.data:rsc -MAP_TO_MODULE {[Register]}
+directive set /Pathtracer/QuadBuffer<64>/run/buffer_bank10.data:rsc -MAP_TO_MODULE {[Register]}
+directive set /Pathtracer/QuadBuffer<64>/run/buffer_bank11.data:rsc -MAP_TO_MODULE {[Register]}
+
 # directive set /Pathtracer -FIFO_DEPTH 3
 
 go assembly
