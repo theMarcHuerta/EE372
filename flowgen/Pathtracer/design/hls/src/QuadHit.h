@@ -5,6 +5,8 @@
 #include "vec3.h"
 #include "ray.h"
 #include "HitRecord.h"
+#include <math/mgc_ac_math.h>
+using namespace ac_math;
 
 class QuadHit {
 
@@ -52,7 +54,12 @@ class QuadHit {
 
         //20fractioanl bits + 23 fractional bits from denom = 43 fractional bits from result at least, 43+17
         ac_fixed<34, 14, true> sub_result = (_quad.d_plane - x_trunc);
-        ac_fixed<60, 17, true> t = sub_result / rounded_denom; // initate correct dot product format and all
+
+        // ac_fixed<60, 17, true> t = sub_result / rounded_denom; // initate correct dot product format and all
+        ac_fixed<60, 17, true> t = 0;
+
+        div(sub_result, rounded_denom, t); // BIG DIVISION
+
         ac_fixed<47, 17, true> t_trunc = t; 
         // now truncate fractional bits to 30 
         ac_fixed<31,1, true> rounding_val2 = 9.3132257e-10; // 2^-30 - hope it sets lowest bit

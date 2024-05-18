@@ -37,6 +37,9 @@ directive set /Pathtracer/QuadBuffer<64>/run/buffer_bank11.data:rsc -MAP_TO_MODU
 
 # directive set /Pathtracer -FIFO_DEPTH 3
 
+directive set /Pathtracer/WorldHit/hit/div<34,14,AC_TRN,AC_WRAP,34,11,AC_TRN,AC_WRAP,60,17,AC_TRN,AC_WRAP>#1:for -UNROLL yes
+directive set /Pathtracer/WorldHit/hit/div<34,14,AC_TRN,AC_WRAP,34,11,AC_TRN,AC_WRAP,60,17,AC_TRN,AC_WRAP>#3:for -UNROLL yes
+
 go assembly
 directive set -EFFORT_LEVEL high
 

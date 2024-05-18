@@ -50,7 +50,7 @@ def test_rtl_test():
             'initial begin\n',
             '  $dumpfile("Pathtracer.vcd");\n',
             '  $dumpvars(0, Pathtracer);\n',
-            '  #200000000;\n',
+            '  #50000;\n',
             '  $finish(2);\n',
             'end\n'
         ]

@@ -17,7 +17,7 @@ if endmodule_index >= 0:
         'initial begin\n',
         '  $dumpfile("Conv.vcd");\n',
         '  $dumpvars(0, Conv);\n',
-        '  #200000000;\n',
+        '  #50000;\n',
         '  $finish(2);\n',
         'end\n'
     ]
