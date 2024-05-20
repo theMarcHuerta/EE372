@@ -1,0 +1,18 @@
+build_dir: 4-gen-saif-rtl
+build_id: '4'
+commands:
+- vcd2saif -input inputs/run.vcd -output outputs/run.saif
+edges_i:
+  run.vcd:
+  - f: run.vcd
+    step: 1-hls
+edges_o:
+  run.saif:
+  - f: run.saif
+    step: 5-synopsys-dc-synthesis-clock_period-8
+inputs:
+- run.vcd
+name: gen-saif-rtl
+outputs:
+- run.saif
+source: /home/users/mah2001/ee372/EE372/flowgen/venv/lib/python3.7/site-packages/steps/synopsys-vcd2saif-convert

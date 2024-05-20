@@ -1,0 +1,16 @@
+build_dir: 0-constraints
+build_id: '0'
+commands:
+- cat constraints.tcl > outputs/constraints.tcl
+edges_i: {}
+edges_o:
+  constraints.tcl:
+  - f: constraints.tcl
+    step: 5-synopsys-dc-synthesis-clock_period-8
+name: constraints
+outputs:
+- constraints.tcl
+parameters:
+  clock_period: 6.0
+  design_name: Pathtracer
+source: /home/users/mah2001/ee372/EE372/flowgen/Pathtracer/design/constraints

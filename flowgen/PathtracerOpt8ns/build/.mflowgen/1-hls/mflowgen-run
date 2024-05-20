@@ -1,0 +1,26 @@
+#! /usr/bin/env bash
+set -euo pipefail
+#=========================================================================
+# mflowgen-run
+#=========================================================================
+# Generator : /home/users/mah2001/ee372/EE372/flowgen/venv/lib/python3.7/site-packages/mflowgen/core/build_orchestrator.py
+
+# Pre
+
+rm -f .time_end
+date +%Y-%m%d-%H%M-%S > .time_start
+MFLOWGEN_STEP_HOME=$PWD
+export clock_period=6.0
+
+# Commands
+
+python3 rtl_vcd_gen.py
+python3 remove_duplicate_modules.py
+cp ../../build/1-hls/build/Pathtracer.v1/concat_rtl_trimmed.v  outputs/design.v
+cp ../../build/1-hls/Pathtracer.vcd outputs/run.vcd
+
+# Post
+
+cd $MFLOWGEN_STEP_HOME
+date +%Y-%m%d-%H%M-%S > .time_end
+

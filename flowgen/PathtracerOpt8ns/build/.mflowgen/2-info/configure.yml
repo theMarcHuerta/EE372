@@ -1,0 +1,20 @@
+build_dir: 2-info
+build_id: '2'
+commands:
+- echo "Design name      -- $design_name"
+- echo "Clock period     -- $clock_period"
+- echo "ADK              -- $adk"
+- echo "ADK view         -- $adk_view"
+- echo
+- echo "Constructed from -- $construct_path"
+- echo
+edges_i: {}
+edges_o: {}
+name: info
+parameters:
+  adk: skywater-130nm-adk.v2021
+  adk_view: view-standard
+  clock_period: 6.0
+  construct_path: /home/users/mah2001/ee372/EE372/flowgen/Pathtracer/design/construct.py
+  design_name: Pathtracer
+source: /home/users/mah2001/ee372/EE372/flowgen/venv/lib/python3.7/site-packages/steps/info

@@ -1,0 +1,22 @@
+build_dir: 1-hls
+build_id: '1'
+commands:
+- python3 rtl_vcd_gen.py
+- python3 remove_duplicate_modules.py
+- cp ../../build/1-hls/build/Pathtracer.v1/concat_rtl_trimmed.v  outputs/design.v
+- cp ../../build/1-hls/Pathtracer.vcd outputs/run.vcd
+edges_i: {}
+edges_o:
+  design.v:
+  - f: design.v
+    step: 5-synopsys-dc-synthesis-clock_period-8
+  run.vcd:
+  - f: run.vcd
+    step: 4-gen-saif-rtl
+name: hls
+outputs:
+- design.v
+- run.vcd
+parameters:
+  clock_period: 6.0
+source: /home/users/mah2001/ee372/EE372/flowgen/Pathtracer/design/hls

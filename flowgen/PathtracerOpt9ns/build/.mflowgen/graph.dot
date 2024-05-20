@@ -1,0 +1,26 @@
+digraph {
+label="";
+labelloc="t";
+fontsize=60;
+size="8.5;11";
+ratio="fill";
+margin=0;
+pad=1;
+rankdir="TB";
+concentrate=true;
+splines=polyline;
+center=true;
+nodesep=1.2;
+ranksep=0.8;
+constraints [ fontsize=24, width=2, penwidth=2, shape=Mrecord, label="{ {  } | \nconstraints\n\n | { <o_constraints_tcl> constraints.tcl } }", color=black ];
+gen_saif_rtl [ fontsize=24, width=2, penwidth=2, shape=Mrecord, label="{ { <i_run_vcd> run.vcd } | \ngen-saif-rtl\n\n | { <o_run_saif> run.saif } }", color=black ];
+hls [ fontsize=24, width=2, penwidth=2, shape=Mrecord, label="{ {  } | \nhls\n\n | { <o_design_v> design.v | <o_run_vcd> run.vcd } }", color=black ];
+info [ fontsize=24, width=2, penwidth=2, shape=Mrecord, label="{ {  } | \ninfo\n\n | {  } }", color=black ];
+skywater_130nm [ fontsize=24, width=2, penwidth=2, shape=Mrecord, label="{ {  } | \nskywater-130nm\n\n | { <o_adk> adk } }", color=black ];
+synopsys_dc_synthesis_clock_period_8 [ fontsize=24, width=2, penwidth=2, shape=Mrecord, label="{ { <i_adk> adk | <i_constraints_tcl> constraints.tcl | <i_design_upf> design.upf | <i_design_v> design.v | <i_run_saif> run.saif } | \nsynopsys-dc-synthesis-clock_period-8\n\n | { <o_design_namemap> design.namemap | <o_design_sdc> design.sdc | <o_design_svf> design.svf | <o_design_upf> design.upf | <o_design_v> design.v } }", color=black ];
+hls:o_run_vcd:s -> gen_saif_rtl:i_run_vcd:n [ arrowsize=2, penwidth=2 ];
+skywater_130nm:o_adk:s -> synopsys_dc_synthesis_clock_period_8:i_adk:n [ arrowsize=2, penwidth=2 ];
+constraints:o_constraints_tcl:s -> synopsys_dc_synthesis_clock_period_8:i_constraints_tcl:n [ arrowsize=2, penwidth=2 ];
+hls:o_design_v:s -> synopsys_dc_synthesis_clock_period_8:i_design_v:n [ arrowsize=2, penwidth=2 ];
+gen_saif_rtl:o_run_saif:s -> synopsys_dc_synthesis_clock_period_8:i_run_saif:n [ arrowsize=2, penwidth=2 ];
+}
