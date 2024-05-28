@@ -1,0 +1,217 @@
+# 
+# Info: scverify_top.user_tb.rec_normal_y_comp: Incorrect Data Detected @ 1283739100500 ps
+# 
+# Info: scverify_top.user_tb.rec_normal_y_comp:  iteration count = 979206
+# 
+# Info: scverify_top.user_tb.rec_normal_y_comp:    compare count = 979206
+# 
+# Info: scverify_top.user_tb.rec_normal_y_comp:      error count = 6
+# 
+# Info: scverify_top.user_tb.rec_normal_y_comp:     ignore count = 0
+# 
+# Info: scverify_top.user_tb.rec_normal_y_comp:           golden = 0
+# 
+# Info: scverify_top.user_tb.rec_normal_y_comp:              dut = 1
+# 
+# Info: scverify_top.user_tb.rec_normal_z_comp: Incorrect Data Detected @ 1283739100500 ps
+# 
+# Info: scverify_top.user_tb.rec_normal_z_comp:  iteration count = 979206
+# 
+# Info: scverify_top.user_tb.rec_normal_z_comp:    compare count = 979206
+# 
+# Info: scverify_top.user_tb.rec_normal_z_comp:      error count = 6
+# 
+# Info: scverify_top.user_tb.rec_normal_z_comp:     ignore count = 0
+# 
+# Info: scverify_top.user_tb.rec_normal_z_comp:           golden = 4294967295.3125
+# 
+# Info: scverify_top.user_tb.rec_normal_z_comp:              dut = 0
+# Test Completed with 0 mismatches
+# Number of Tests 979200
+# Number of Rays 57600
+# Number of Hits CPP 70895
+# Number of Hits HLS 70895
+# Number of Hits Shared 70895
+# 
+# 
+# Bounced Test Completed with 39 mismatches
+# Bounced Number of Tests 979200
+# Bounced Number of Rays 57600
+# Bounced Number of Hits CPP 71857
+# Bounced Number of Hits HLS 71828
+# Bounced Number of Hits Shared 71823
+# Info: Execution of user-supplied C++ testbench 'main()' has completed with exit code = 0
+# 
+# Info: Collecting data completed
+#    captured 1958400 values of r_orig_x
+#    captured 1958400 values of r_orig_y
+#    captured 1958400 values of r_orig_z
+#    captured 1958400 values of r_dir_x
+#    captured 1958400 values of r_dir_y
+#    captured 1958400 values of r_dir_z
+#    captured 1958400 values of r_camera_ray
+#    captured 1958400 values of closest_so_far_IN
+#    captured 1958400 values of closest_so_far
+#    captured 1958400 values of quad_corner_pt_x
+#    captured 1958400 values of quad_corner_pt_y
+#    captured 1958400 values of quad_corner_pt_z
+#    captured 1958400 values of quad_u_x
+#    captured 1958400 values of quad_u_y
+#    captured 1958400 values of quad_u_z
+#    captured 1958400 values of quad_v_x
+#    captured 1958400 values of quad_v_y
+#    captured 1958400 values of quad_v_z
+#    captured 1958400 values of quad_mat_type
+#    captured 1958400 values of quad_is_invis
+#    captured 1958400 values of quad_normal_x
+#    captured 1958400 values of quad_normal_y
+#    captured 1958400 values of quad_normal_z
+#    captured 1958400 values of quad_w_x
+#    captured 1958400 values of quad_w_y
+#    captured 1958400 values of quad_w_z
+#    captured 1958400 values of quad_d_plane
+#    captured 1958400 values of quad_quad_color_r
+#    captured 1958400 values of quad_quad_color_g
+#    captured 1958400 values of quad_quad_color_b
+#    captured 1958400 values of rec_hit_loc_x
+#    captured 1958400 values of rec_hit_loc_y
+#    captured 1958400 values of rec_hit_loc_z
+#    captured 1958400 values of rec_normal_x
+#    captured 1958400 values of rec_normal_y
+#    captured 1958400 values of rec_normal_z
+#    captured 1958400 values of rec_front_face_IN
+#    captured 1958400 values of rec_front_face
+#    captured 1958400 values of rec_mat
+#    captured 1958400 values of rec_color_r
+#    captured 1958400 values of rec_color_g
+#    captured 1958400 values of rec_color_b
+#    captured 1958400 values of hitWorld
+# 
+# Info: scverify_top.user_tb: Simulation completed
+# 
+# Checking results
+# 'closest_so_far'
+#    capture count        = 1958400
+#    comparison count     = 1958400
+#    ignore count         = 0
+#    error count          = 0
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# 'rec_hit_loc_x'
+#    capture count        = 1958400
+#    comparison count     = 1958400
+#    ignore count         = 0
+#    error count          = 6
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# Error: output 'rec_hit_loc_x' had comparison errors
+# 'rec_hit_loc_y'
+#    capture count        = 1958400
+#    comparison count     = 1958400
+#    ignore count         = 0
+#    error count          = 20299
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# Error: output 'rec_hit_loc_y' had comparison errors
+# 'rec_hit_loc_z'
+#    capture count        = 1958400
+#    comparison count     = 1958400
+#    ignore count         = 0
+#    error count          = 6
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# Error: output 'rec_hit_loc_z' had comparison errors
+# 'rec_normal_x'
+#    capture count        = 1958400
+#    comparison count     = 1958400
+#    ignore count         = 0
+#    error count          = 20305
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# Error: output 'rec_normal_x' had comparison errors
+# 'rec_normal_y'
+#    capture count        = 1958400
+#    comparison count     = 1958400
+#    ignore count         = 0
+#    error count          = 6
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# Error: output 'rec_normal_y' had comparison errors
+# 'rec_normal_z'
+#    capture count        = 1958400
+#    comparison count     = 1958400
+#    ignore count         = 0
+#    error count          = 6
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# Error: output 'rec_normal_z' had comparison errors
+# 'rec_front_face'
+#    capture count        = 1958400
+#    comparison count     = 1958400
+#    ignore count         = 0
+#    error count          = 0
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# 'rec_mat'
+#    capture count        = 1958400
+#    comparison count     = 1958400
+#    ignore count         = 0
+#    error count          = 20305
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# Error: output 'rec_mat' had comparison errors
+# 'rec_color_r'
+#    capture count        = 1958400
+#    comparison count     = 1958400
+#    ignore count         = 0
+#    error count          = 6
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# Error: output 'rec_color_r' had comparison errors
+# 'rec_color_g'
+#    capture count        = 1958400
+#    comparison count     = 1958400
+#    ignore count         = 0
+#    error count          = 20305
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# Error: output 'rec_color_g' had comparison errors
+# 'rec_color_b'
+#    capture count        = 1958400
+#    comparison count     = 1958400
+#    ignore count         = 0
+#    error count          = 6
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# Error: output 'rec_color_b' had comparison errors
+# 'hitWorld'
+#    capture count        = 1958400
+#    comparison count     = 1958400
+#    ignore count         = 0
+#    error count          = 0
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# 
+# 
+# Info: scverify_top.user_tb: Simulation FAILED @ 2567462435500 ps
+# 
+# 
+# SC simulation stopped by user.
+# 
+# SystemC : SystemC stopped at time 2567462435500
+# 
+# Info: scverify_top.Monitor: runs with constant clock period 23 ns
+# 
+# Info: scverify_top.Monitor: Throughput: 1 transaction per 1311 ns
+# 
+# Info: scverify_top.Monitor: Latency: 2576 ns
+# 
+# Warning: scverify_top.Monitor: Latency: 112 cycles does not match expected 57 cycles.
+# In file: /cad/mentor/2019.11/Catapult_Synthesis_10.4b-841621/Mgc_home/shared/include/mc_monitor.h:298
+# ncsim> exit
+# make[1]: Leaving directory `/home/users/mah2001/ee372/EE372/HLS/build/TestQuadHit.v1'
+# Input file has changed
+solution new -state new -solution TestQuadHit.v1 TestQuadHit
+# Info: Branching solution 'TestQuadHit.v2' at state 'new' (PRJ-2)
+# TestQuadHit.v2
+# > end dofile ./scripts/run_rtl_test_no_gui.tcl
