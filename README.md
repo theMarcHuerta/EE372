@@ -12,6 +12,8 @@ The chip was made with the intention of getting multiple chips and created some 
 
 To generate a scene with 18-ish primatices such as the one shown below, in HD (720p) it would take about 10s according to my estimates. Definitely much work to make up but super cool to have even got it that far!
 
+Supports up to 4k scenes in any aspect ratio. 8 bounces and 32, 64, 512, 1024 samples.
+
 ![Screenshot 2024-06-05 155419](https://github.com/user-attachments/assets/455d3773-c339-4651-aba6-c7107fcaf499)
 
 ![IMG_5623](https://github.com/user-attachments/assets/97bb9f28-58ec-4393-9fe5-eb2744415b50)
